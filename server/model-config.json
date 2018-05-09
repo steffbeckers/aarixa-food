@@ -10,11 +10,18 @@
       "loopback/common/mixins",
       "loopback/server/mixins",
       "../common/mixins",
-      "./mixins"
+      "./mixins",
+      "../node_modules/loopback-ds-timestamp-mixin",
+      "../node_modules/loopback-softdelete-mixin2"
     ]
   },
   "User": {
-    "dataSource": "db"
+    "dataSource": "db",
+    "public": false
+  },
+  "UserModel": {
+    "dataSource": "db",
+    "public": true
   },
   "AccessToken": {
     "dataSource": "db",
@@ -34,5 +41,8 @@
   "Role": {
     "dataSource": "db",
     "public": false
+  },
+  "Email": {
+    "dataSource": "email"
   }
 }

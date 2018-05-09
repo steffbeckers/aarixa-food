@@ -1,6 +1,11 @@
 {
   "db": {
     "name": "db",
-    "connector": "memory"
+    "connector": "memory",
+    "file": "database.json"
+  },
+  "email": {
+    "name": "email",
+    "connector": "mail"
   }
 }
