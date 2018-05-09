@@ -1,5 +1,6 @@
 'use strict';
 
-module.exports = {
-  'loopback-component-explorer': null,
-};
+// To disable explorer
+// module.exports = {
+//   'loopback-component-explorer': null,
+// };
