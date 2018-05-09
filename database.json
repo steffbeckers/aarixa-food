@@ -1,0 +1,30 @@
+{
+  "ids": {
+    "User": 1,
+    "UserModel": 2,
+    "AccessToken": 5,
+    "ACL": 1,
+    "RoleMapping": 1,
+    "Role": 1,
+    "Supplier": 3
+  },
+  "models": {
+    "User": {},
+    "UserModel": {
+      "1": "{\"firstName\":\"Steff\",\"lastName\":\"Beckers\",\"username\":\"steff\",\"password\":\"$2a$10$1a2/odBkQeO9XVcaIkU8Se96zckyUN2IB7GlewGaIGJ3DnRWKeGUa\",\"email\":\"steff@steffbeckers.eu\",\"createdOn\":\"2018-05-09T21:02:51.206Z\",\"updatedOn\":\"2018-05-09T21:02:51.207Z\",\"id\":1}"
+    },
+    "AccessToken": {
+      "cHQlfWUvAEQ1HnBMjvHlL8F2kIpJ4fwoCrE9g5XJB6ZsTTC53I1OVCa4phmQuxcm": "{\"id\":\"cHQlfWUvAEQ1HnBMjvHlL8F2kIpJ4fwoCrE9g5XJB6ZsTTC53I1OVCa4phmQuxcm\",\"ttl\":1209600,\"created\":\"2018-05-09T21:04:21.480Z\",\"userId\":1}",
+      "iwHcks4NgEeEMdIkALp11B6QOgHrOvltcMLvX7sq2vOrBM4EYVF4tgTEPcvsej0y": "{\"id\":\"iwHcks4NgEeEMdIkALp11B6QOgHrOvltcMLvX7sq2vOrBM4EYVF4tgTEPcvsej0y\",\"ttl\":1209600,\"created\":\"2018-05-09T21:05:27.883Z\",\"userId\":1}",
+      "liuEFK1wp1DN1X63wfAZlUJf3jOzEwIpLlQjlUsOPr9rlk25VyTBbcS4hK7KCiHq": "{\"id\":\"liuEFK1wp1DN1X63wfAZlUJf3jOzEwIpLlQjlUsOPr9rlk25VyTBbcS4hK7KCiHq\",\"ttl\":1209600,\"created\":\"2018-05-09T21:07:55.233Z\",\"userId\":1}",
+      "VKXhOzA5E14BMzI41DKD1XfyPrEYB7ZcrcqspIEH1FCFGpKcFcmvP4I7b13h2s1z": "{\"id\":\"VKXhOzA5E14BMzI41DKD1XfyPrEYB7ZcrcqspIEH1FCFGpKcFcmvP4I7b13h2s1z\",\"ttl\":1209600,\"created\":\"2018-05-09T21:14:49.820Z\",\"userId\":1}"
+    },
+    "ACL": {},
+    "RoleMapping": {},
+    "Role": {},
+    "Supplier": {
+      "1": "{\"name\":\"Chanry\",\"id\":1}",
+      "2": "{\"name\":\"Orient\",\"id\":2}"
+    }
+  }
+}

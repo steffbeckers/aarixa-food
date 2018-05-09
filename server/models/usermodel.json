@@ -30,6 +30,10 @@
       "model": "Role",
       "foreignKey": "principalId",
       "through": "RoleMapping"
+    },
+    "Orders": {
+      "type": "hasMany",
+      "model": "Order"
     }
   },
   "acls": [

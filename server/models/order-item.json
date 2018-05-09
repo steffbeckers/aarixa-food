@@ -1,0 +1,32 @@
+{
+  "name": "OrderItem",
+  "plural": "OrderItems",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "quantity": {
+      "type": "number",
+      "required": true,
+      "default": 1
+    },
+    "info": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "Order": {
+      "type": "belongsTo",
+      "model": "Order"
+    },
+    "MenuItem": {
+      "type": "hasOne",
+      "model": "MenuItem"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

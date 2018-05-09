@@ -44,5 +44,21 @@
   },
   "Email": {
     "dataSource": "email"
+  },
+  "Supplier": {
+    "dataSource": "db",
+    "public": true
+  },
+  "Order": {
+    "dataSource": "db",
+    "public": true
+  },
+  "MenuItem": {
+    "dataSource": "db",
+    "public": true
+  },
+  "OrderItem": {
+    "dataSource": "db",
+    "public": true
   }
 }

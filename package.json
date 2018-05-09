@@ -7,7 +7,8 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "start": "npm run kill && forever -l forever.log -o output.log -e error.log --minUptime 3000 --spinSleepTime 3000 --verbose --uid \"aariXaFood\" --watch server/server.js",
+    "start": "node .",
+    "forever": "npm run kill && forever -l forever.log -o output.log -e error.log --minUptime 3000 --spinSleepTime 3000 --verbose --uid \"aariXaFood\" --watch server/server.js --watchIgnore database.json",
     "posttest": "npm run lint && nsp check",
     "kill": "powershell.exe If (Get-NetTCPConnection -LocalPort 3333) { Stop-Process -Id (Get-NetTCPConnection -LocalPort 3333).OwningProcess -Force }",
     "deploy": "powershell git checkout master; git merge develop; git push; git push live; git checkout develop; pause; npm run kill; npm start"

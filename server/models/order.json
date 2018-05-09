@@ -1,0 +1,23 @@
+{
+  "name": "Order",
+  "plural": "Orders",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {},
+  "validations": [],
+  "relations": {
+    "UserModel": {
+      "type": "belongsTo",
+      "model": "UserModel"
+    },
+    "Items": {
+      "type": "hasMany",
+      "model": "OrderItem"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}
