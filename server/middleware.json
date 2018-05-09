@@ -1,7 +1,7 @@
 {
   "initial:before": {
     "loopback#favicon": {
-      "params": "$!../client/aariXa-X.png"
+      "params": "$!../client/dist/static/aariXa-X.png"
     }
   },
   "initial": {
@@ -44,7 +44,7 @@
   },
   "files": {
     "loopback#static": {
-      "params": "$!../client"
+      "params": "$!../client/dist"
     }
   },
   "final": {
