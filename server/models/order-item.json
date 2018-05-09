@@ -20,11 +20,13 @@
   "relations": {
     "Order": {
       "type": "belongsTo",
-      "model": "Order"
+      "model": "Order",
+      "foreignKey": "orderId"
     },
     "MenuItem": {
-      "type": "hasOne",
-      "model": "MenuItem"
+      "type": "belongsTo",
+      "model": "MenuItem",
+      "foreignKey": "menuItemId"
     }
   },
   "acls": [],

@@ -11,7 +11,8 @@
   "relations": {
     "UserModel": {
       "type": "belongsTo",
-      "model": "UserModel"
+      "model": "UserModel",
+      "foreignKey": "userModelId"
     },
     "Items": {
       "type": "hasMany",
