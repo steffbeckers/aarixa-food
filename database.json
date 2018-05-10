@@ -6,7 +6,7 @@
     "ACL": 1,
     "RoleMapping": 1,
     "Role": 1,
-    "Supplier": 3
+    "Supplier": 2
   },
   "models": {
     "User": {},
@@ -23,8 +23,7 @@
     "RoleMapping": {},
     "Role": {},
     "Supplier": {
-      "1": "{\"name\":\"Chanry\",\"id\":1}",
-      "2": "{\"name\":\"Orient\",\"id\":2}"
+      "1": "{\"name\":\"Chanry\",\"createdOn\":\"2018-05-10T10:24:48.807Z\",\"updatedOn\":\"2018-05-10T10:24:48.808Z\",\"id\":1}"
     }
   }
 }

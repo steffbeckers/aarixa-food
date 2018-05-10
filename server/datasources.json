@@ -4,6 +4,13 @@
     "connector": "memory",
     "file": "database.json"
   },
+  "mongodb": {
+    "host": "localhost",
+    "port": 27017,
+    "database": "aariXaFood",
+    "name": "mongodb",
+    "connector": "mongodb"
+  },
   "email": {
     "name": "email",
     "connector": "mail"
