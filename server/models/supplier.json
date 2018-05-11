@@ -21,6 +21,16 @@
     "name": {
       "type": "string",
       "required": true
+    },
+    "telephone": {
+      "type": "string",
+      "required": true
+    },
+    "website": {
+      "type": "string"
+    },
+    "openingHours": {
+      "type": "object"
     }
   },
   "validations": [],
@@ -30,6 +40,25 @@
       "model": "MenuItem"
     }
   },
-  "acls": [],
+  "acls": [
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "Administrator",
+      "permission": "ALLOW"
+    }
+  ],
   "methods": {}
 }

@@ -38,7 +38,15 @@ export default {
 </script>
 
 <style>
+body {
+  font-family: "Calibri Light", sans-serif;
+}
+
 ons-splitter-side[side=left][animation=overlay] {
   border-right: 1px solid #BBB;
+}
+
+ons-page > div.page__background {
+  background-color: #f6f6f6;
 }
 </style>

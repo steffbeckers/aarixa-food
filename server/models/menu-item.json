@@ -39,8 +39,33 @@
       "type": "belongsTo",
       "model": "Supplier",
       "foreignKey": "supplierId"
+    },
+    "Orders": {
+      "type": "hasMany",
+      "model": "Order",
+      "foreignKey": "menuItemId",
+      "through": "OrderItem"
     }
   },
-  "acls": [],
+  "acls": [
+    {
+      "accessType": "READ",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "Administrator",
+      "permission": "ALLOW"
+    }
+  ],
   "methods": {}
 }

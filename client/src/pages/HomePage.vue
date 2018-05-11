@@ -6,35 +6,24 @@
           <v-ons-icon icon="fa-bars"></v-ons-icon>
         </v-ons-toolbar-button>
       </div>
-      <div class="center">{{ msg }}</div>
+      <div class="center">{{ toolBarTitle }}</div>
     </v-ons-toolbar>
-    <v-ons-list-title>Vue.js Essential Links</v-ons-list-title>
+
+    <v-ons-pull-hook
+      :action="loadOrders"
+      @changestate="pullHookState = $event.state"
+    >
+      <span v-show="pullHookState === 'initial'"> Sleep om te vernieuwen </span>
+      <span v-show="pullHookState === 'preaction'"> Loslaten </span>
+      <span v-show="pullHookState === 'action'"> Laden ... </span>
+    </v-ons-pull-hook>
+
+    <v-ons-list-title>Bestellingen voor vandaag</v-ons-list-title>
     <v-ons-list>
-      <v-ons-list-item v-for="item in essentialLinks" @click="goTo(item.link)" :key="item.link">
-        <div class="left"><v-ons-icon fixed-width :icon="item.icon"></v-ons-icon></div>
-        <div class="center">{{ item.label }}</div>
-        <div class="right"><v-ons-icon icon="fa-external-link"></v-ons-icon></div>
+      <v-ons-list-item v-for="order in orders" :key="order">
+        {{ order }}
       </v-ons-list-item>
     </v-ons-list>
-
-    <v-ons-list-title>Vue.js Ecosystem</v-ons-list-title>
-    <v-ons-row>
-      <v-ons-col>
-        <v-ons-card @click="goTo('http://router.vuejs.org/')">vue-router</v-ons-card>
-      </v-ons-col>
-      <v-ons-col>
-        <v-ons-card @click="goTo('http://vuex.vuejs.org/')">vuex</v-ons-card>
-      </v-ons-col>
-    </v-ons-row>
-    <v-ons-row>
-      <v-ons-col>
-        <v-ons-card @click="goTo('http://vue-loader.vuejs.org/')">vue-loader</v-ons-card>
-      </v-ons-col>
-      <v-ons-col>
-        <v-ons-card @click="goTo('https://github.com/vuejs/awesome-vue')">awesome-vue</v-ons-card>
-      </v-ons-col>
-    </v-ons-row>
-
   </v-ons-page>
 </template>
 
@@ -43,41 +32,17 @@ export default {
   name: 'home',
   data () {
     return {
-      msg: 'aariXaFood',
-      essentialLinks: [
-        {
-          label: 'Core Docs',
-          link: 'https://vuejs.org',
-          icon: 'fa-book'
-        },
-        {
-          label: 'Community Chat',
-          link: 'https://chat.vuejs.org',
-          icon: 'fa-commenting'
-        },
-        {
-          label: 'Forum',
-          link: 'https://forum.vuejs.org',
-          icon: 'fa-comments'
-        },
-        {
-          label: 'Twitter',
-          link: 'https://twitter.com/vuejs',
-          icon: 'fa-twitter'
-        },
-        {
-          label: 'Docs for this template',
-          link: 'http://vuejs-templates.github.io/webpack/',
-          icon: 'fa-file-text'
-        }
-      ]
+      toolBarTitle: 'aariXaFood',
+      pullHookState: 'initial',
+      orders: [1]
     }
   },
   methods: {
-    goTo (url) {
-      const newWindow = window.open(url, '_blank')
-      newWindow.opener = null
-      newWindow.location = url
+    loadOrders (done) {
+      setTimeout(() => {
+        this.orders = [...this.orders, this.orders.length + 1]
+        done()
+      }, 200)
     }
   }
 }
