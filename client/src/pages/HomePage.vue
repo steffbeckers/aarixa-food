@@ -8,11 +8,6 @@
       </div>
       <div class="center">{{ msg }}</div>
     </v-ons-toolbar>
-
-    <div class="header">
-      <img src="../assets/logo.png" alt="vue-logo">
-    </div>
-
     <v-ons-list-title>Vue.js Essential Links</v-ons-list-title>
     <v-ons-list>
       <v-ons-list-item v-for="item in essentialLinks" @click="goTo(item.link)" :key="item.link">
@@ -102,8 +97,8 @@ ons-list-title {
   text-transform: none;
 }
 
-ons-list-title:not(:first-of-type) {
-  margin-top: 30px;
+ons-list-title {
+  margin-top: 10px;
 }
 
 ons-card {
