@@ -2,12 +2,12 @@
   <v-ons-page>
     <v-ons-toolbar modifier="transparent"></v-ons-toolbar>
     <div class="header">
-      <img src="../assets/aariXa_Shield_1x1.png" alt="onsenui-logo">
+      <img src="../assets/aariXa_Shield_1x1.png" alt="aariXa Schild">
     </div>
     <v-ons-list>
-      <v-ons-list-item modifier="chevron" v-for="item in essentialLinks" @click="goTo(item.link)" :key="item.link">
-        <div class="left"><v-ons-icon fixed-width :icon="item.icon"></v-ons-icon></div>
-        <div class="center">{{ item.label }}</div>
+      <v-ons-list-item modifier="chevron">
+        <div class="left"><v-ons-icon fixed-width :icon="'fa-list-ul'"></v-ons-icon></div>
+        <div class="center">Bestellingen</div>
       </v-ons-list-item>
     </v-ons-list>
   </v-ons-page>
@@ -15,45 +15,7 @@
 
 <script>
 export default {
-  name: 'navigation-menu',
-  data () {
-    return {
-      essentialLinks: [
-        {
-          label: 'Docs',
-          link: 'https://onsen.io/v2/docs/guide/vue/',
-          icon: 'fa-book'
-        },
-        {
-          label: 'Gitter Chat',
-          link: 'https://gitter.im/OnsenUI/OnsenUI',
-          icon: 'fa-commenting'
-        },
-        {
-          label: 'Forum',
-          link: 'https://community.onsen.io',
-          icon: 'fa-comments'
-        },
-        {
-          label: 'Twitter',
-          link: 'https://twitter.com/Onsen_UI',
-          icon: 'fa-twitter'
-        },
-        {
-          label: 'Playground',
-          link: 'https://tutorial.onsen.io/',
-          icon: 'fa-graduation-cap'
-        }
-      ]
-    }
-  },
-  methods: {
-    goTo (url) {
-      const newWindow = window.open(url, '_blank')
-      newWindow.opener = null
-      newWindow.location = url
-    }
-  }
+  name: 'navigation-menu'
 }
 </script>
 

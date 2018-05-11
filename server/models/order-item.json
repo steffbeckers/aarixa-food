@@ -29,12 +29,12 @@
   },
   "validations": [],
   "relations": {
-    "Order": {
+    "order": {
       "type": "belongsTo",
       "model": "Order",
       "foreignKey": "orderId"
     },
-    "MenuItem": {
+    "menuItem": {
       "type": "belongsTo",
       "model": "MenuItem",
       "foreignKey": "menuItemId"

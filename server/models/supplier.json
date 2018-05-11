@@ -35,7 +35,7 @@
   },
   "validations": [],
   "relations": {
-    "MenuItems": {
+    "menuItems": {
       "type": "hasMany",
       "model": "MenuItem"
     }

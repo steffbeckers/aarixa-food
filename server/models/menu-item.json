@@ -35,12 +35,12 @@
   },
   "validations": [],
   "relations": {
-    "Supplier": {
+    "supplier": {
       "type": "belongsTo",
       "model": "Supplier",
       "foreignKey": "supplierId"
     },
-    "Orders": {
+    "orders": {
       "type": "hasMany",
       "model": "Order",
       "foreignKey": "menuItemId",

@@ -6,7 +6,7 @@
           <v-ons-icon icon="fa-bars"></v-ons-icon>
         </v-ons-toolbar-button>
       </div>
-      <div class="center">{{ toolBarTitle }}</div>
+      <div class="center">aariXaFood</div>
     </v-ons-toolbar>
 
     <v-ons-pull-hook
@@ -18,7 +18,7 @@
       <span v-show="pullHookState === 'action'"> Laden ... </span>
     </v-ons-pull-hook>
 
-    <v-ons-list-title>Bestellingen voor vandaag</v-ons-list-title>
+    <v-ons-list-title>Bestellingen</v-ons-list-title>
     <v-ons-list>
       <v-ons-list-item v-for="order in orders" :key="order">
         {{ order }}
@@ -32,7 +32,6 @@ export default {
   name: 'home',
   data () {
     return {
-      toolBarTitle: 'aariXaFood',
       pullHookState: 'initial',
       orders: [1]
     }
@@ -42,7 +41,7 @@ export default {
       setTimeout(() => {
         this.orders = [...this.orders, this.orders.length + 1]
         done()
-      }, 200)
+      }, 500)
     }
   }
 }

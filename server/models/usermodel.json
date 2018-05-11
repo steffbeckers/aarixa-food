@@ -31,7 +31,7 @@
       "foreignKey": "principalId",
       "through": "RoleMapping"
     },
-    "Orders": {
+    "orders": {
       "type": "hasMany",
       "model": "Order"
     }

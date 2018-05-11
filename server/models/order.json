@@ -20,12 +20,12 @@
   "properties": {},
   "validations": [],
   "relations": {
-    "UserModel": {
+    "userModel": {
       "type": "belongsTo",
       "model": "UserModel",
       "foreignKey": "userModelId"
     },
-    "MenuItems": {
+    "menuItems": {
       "type": "hasMany",
       "model": "MenuItem",
       "foreignKey": "orderId",
