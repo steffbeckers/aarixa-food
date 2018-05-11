@@ -1,23 +1,44 @@
 <template>
-  <div id="app">
-    <img src="./assets/logo.png">
-    <router-view/>
-  </div>
+  <v-ons-page id="app">
+    <v-ons-splitter>
+      <v-ons-splitter-side swipeable collapse width="250px"
+        :animation="$ons.platform.isAndroid() ? 'overlay' : 'reveal'"
+        :open.sync="menuIsOpen">
+        <menu-page></menu-page>
+      </v-ons-splitter-side>
+
+      <v-ons-splitter-content>
+        <home-page></home-page>
+      </v-ons-splitter-content>
+    </v-ons-splitter>
+  </v-ons-page>
 </template>
 
 <script>
+import HomePage from './pages/HomePage'
+import MenuPage from './pages/MenuPage'
+
 export default {
-  name: 'App'
+  name: 'app',
+  computed: {
+    menuIsOpen: {
+      get () {
+        return this.$store.state.splitter.open
+      },
+      set (newValue) {
+        this.$store.commit('splitter/toggle', newValue)
+      }
+    }
+  },
+  components: {
+    HomePage,
+    MenuPage
+  }
 }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+ons-splitter-side[side=left][animation=overlay] {
+  border-right: 1px solid #BBB;
 }
 </style>

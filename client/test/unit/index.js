@@ -1,6 +1,9 @@
 import Vue from 'vue'
+import VueOnsen from 'vue-onsenui'
 
 Vue.config.productionTip = false
+
+Vue.use(VueOnsen)
 
 // require all test files (files that ends with .spec.js)
 const testsContext = require.context('./specs', true, /\.spec$/)
