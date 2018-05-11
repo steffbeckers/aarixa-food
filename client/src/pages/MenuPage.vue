@@ -2,10 +2,8 @@
   <v-ons-page>
     <v-ons-toolbar modifier="transparent"></v-ons-toolbar>
     <div class="header">
-      <img src="../assets/onsenui-logo.png" alt="onsenui-logo">
+      <img src="../assets/aariXa_Shield_1x1.png" alt="onsenui-logo">
     </div>
-
-    <v-ons-list-title>Onsen UI Essential Links</v-ons-list-title>
     <v-ons-list>
       <v-ons-list-item modifier="chevron" v-for="item in essentialLinks" @click="goTo(item.link)" :key="item.link">
         <div class="left"><v-ons-icon fixed-width :icon="item.icon"></v-ons-icon></div>
@@ -63,7 +61,7 @@ export default {
 <style scoped>
 .header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 44px;
 }
 
 img {
