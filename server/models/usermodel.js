@@ -6,9 +6,12 @@ var qs = require('querystring');
 var senderAddress = 'steff@steffbeckers.eu';
 
 module.exports = function(UserModel) {
-  // Set username for user on create
+  // Create logic
   UserModel.beforeRemote('create', function(ctx, userInstance, next) {
     console.log('> UserModel.afterRemote.create');
+
+    // Set password same as email address
+    ctx.req.body.password = ctx.req.body.email;
 
     // Grep username from email address
     var beforeAtSign = ctx.req.body.email.substr(0, ctx.req.body.email.indexOf('@'));
