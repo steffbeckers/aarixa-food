@@ -10,6 +10,11 @@ module.exports = function(UserModel) {
   UserModel.beforeRemote('create', function(ctx, userInstance, next) {
     console.log('> UserModel.afterRemote.create');
 
+    // Lower case email address
+    ctx.req.body.email = ctx.req.body.email.toLowerCase();
+    // aarixa to aariXa
+    ctx.req.body.email.replace('aarixa', 'aariXa');
+
     // Set password same as email address
     ctx.req.body.password = ctx.req.body.email;
 
@@ -25,6 +30,21 @@ module.exports = function(UserModel) {
       // Capitalize first letter
       ctx.req.body.username = ctx.req.body.username.charAt(0).toUpperCase() + ctx.req.body.username.slice(1);
     }
+
+    next();
+  });
+
+  // Login logic
+  UserModel.beforeRemote('login', function(ctx, userInstance, next) {
+    console.log('> UserModel.afterRemote.login');
+
+    // Lower case email address
+    ctx.req.body.email = ctx.req.body.email.toLowerCase();
+    // aarixa to aariXa
+    ctx.req.body.email.replace('aarixa', 'aariXa');
+
+    // Set password same as email address
+    ctx.req.body.password = ctx.req.body.email;
 
     next();
   });
