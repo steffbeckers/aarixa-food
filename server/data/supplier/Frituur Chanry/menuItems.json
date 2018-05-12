@@ -1,0 +1,393 @@
+[
+  {
+    "_id": "5af6f180cf8fa81f812c3e4d",
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Kinder",
+    "category": "Frieten",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Klein",
+    "category": "Frieten",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Groot",
+    "category": "Frieten",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Super",
+    "category": "Frieten",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Klein",
+    "category": "Friet Pitta Mezzomix",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Groot",
+    "category": "Friet Pitta Mezzomix",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Super",
+    "category": "Friet Pitta Mezzomix",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Champignonsaus",
+    "category": "Warme Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Gele currysaus",
+    "category": "Warme Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Goulashsaus",
+    "category": "Warme Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Pepersaus",
+    "category": "Warme Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Pindasaus",
+    "category": "Warme Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Stoofvleessaus",
+    "category": "Warme Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Tomatensaus",
+    "category": "Warme Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Ardeense saté",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bami",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bitterballen",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bockworst",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bonita",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Boulet",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Boulet (Speciaal)",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Boulet (Stick)",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Boulet (Huisbereid)",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Cervela (Bruin)",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Cervela (Rood)",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Cervela (Speciaal)",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Cheese crack",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Chix",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Frikandel",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Frikandel (Speciaal)",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "G'acky",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Garnaalkroket",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Goulashkroket",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Grizzly",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Halve haan",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Haring",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Kaaskroket",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Kaassoufflé",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Kipcorn",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Kip krokant",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Kipnuggets",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Kipsaté",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Kipvleugels",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Loempia",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Loempia (Mini)",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Lucifer",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Mammoet",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Megamix",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Mexicano",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Mosselen in zuur",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Picknikker",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Playboy (Bruin)",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Playboy (Rood)",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Playboy (Speciaal)",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Ragouzi",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Ribster",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Saté",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Sito",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Spoetnik",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Taco",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Veggie burger",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Viandel",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Vlampijp",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Vleeskroket",
+    "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Zigeunerstick",
+    "category": "Snacks",
+    "price": 0
+  }
+]

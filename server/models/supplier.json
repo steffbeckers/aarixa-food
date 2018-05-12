@@ -31,6 +31,9 @@
     },
     "openingHours": {
       "type": "object"
+    },
+    "address": {
+      "type": "object"
     }
   },
   "validations": [],
@@ -42,15 +45,15 @@
   },
   "acls": [
     {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
       "accessType": "READ",
       "principalType": "ROLE",
       "principalId": "$everyone",
-      "permission": "ALLOW"
-    },
-    {
-      "accessType": "*",
-      "principalType": "ROLE",
-      "principalId": "$owner",
       "permission": "ALLOW"
     },
     {
