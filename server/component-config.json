@@ -2,10 +2,13 @@
   "loopback-component-explorer": {
     "mountPath": "/explorer",
     "generateOperationScopedModels": true,
-    "uiDirs": "server/explorer",
+    "uiDirs": [
+      "server/explorer"
+    ],
     "apiInfo": {
       "title": "aariXaFood's API ",
-      "description": "Powered by LoopBack!"
+      "description": "Powered by LoopBack!",
+      "contact": "steff.beckers@aariXa.be"      
     }
   }
 }
