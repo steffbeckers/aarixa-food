@@ -6,6 +6,9 @@ var qs = require('querystring');
 var senderAddress = 'steff@steffbeckers.eu';
 
 module.exports = function(UserModel) {
+  // Remove username uniqueness
+  delete UserModel.validations.username;
+
   // Create logic
   UserModel.beforeRemote('create', function(ctx, userInstance, next) {
     console.log('> UserModel.afterRemote.create');
