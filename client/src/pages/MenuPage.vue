@@ -9,6 +9,10 @@
         <div class="left"><v-ons-icon fixed-width :icon="'fa-list-ul'"></v-ons-icon></div>
         <div class="center">Bestellingen</div>
       </v-ons-list-item>
+      <v-ons-list-item modifier="chevron">
+        <div class="left"><v-ons-icon fixed-width :icon="'fa-sign-out'"></v-ons-icon></div>
+        <div class="center">Afmelden</div>
+      </v-ons-list-item>
     </v-ons-list>
   </v-ons-page>
 </template>

@@ -21,6 +21,9 @@ import LoginPage from './pages/LoginPage'
 
 export default {
   name: 'app',
+  mounted: function () {
+    this.loginWithCredentialsFromEmail()
+  },
   computed: {
     menuIsOpen: {
       get () {
@@ -36,6 +39,27 @@ export default {
       },
       set (newValue) {
         this.$store.commit('auth/set', newValue)
+      }
+    }
+  },
+  methods: {
+    loginWithCredentialsFromEmail () {
+      // Retrieve credentials from route
+      var credentials = this.$route.query.credentials
+      if (credentials) {
+        // Decode credentials
+        var credentialsDecoded = atob(credentials)
+        // Check if decoded credentials is an object (login response)
+        if (credentialsDecoded.charAt(0) === '{' &&
+          credentialsDecoded.charAt(credentialsDecoded.length - 1) === '}') {
+          var credentialsObject = JSON.parse(credentialsDecoded)
+          // Save credentials to cookies
+          this.$cookie.set('$aariXaFood$token', credentialsObject.id, {expires: credentialsObject.ttl + 's'})
+          this.$cookie.set('$aariXaFood$user', JSON.stringify(credentialsObject.user), {expires: credentialsObject.ttl + 's'})
+          this.$cookie.set('$aariXaFood$username', credentialsObject.user.username, {expires: credentialsObject.ttl + 's'})
+          // Remove query param
+          this.$router.replace('/')
+        }
       }
     }
   },

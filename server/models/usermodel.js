@@ -6,6 +6,26 @@ var qs = require('querystring');
 var senderAddress = 'steff@steffbeckers.eu';
 
 module.exports = function(UserModel) {
+  // Set username for user on create
+  UserModel.beforeRemote('create', function(ctx, userInstance, next) {
+    console.log('> UserModel.afterRemote.create');
+
+    // Grep username from email address
+    var beforeAtSign = ctx.req.body.email.substr(0, ctx.req.body.email.indexOf('@'));
+    var indexOfDot = beforeAtSign.indexOf('.');
+    if (indexOfDot === -1) {
+      // AD username
+      ctx.req.body.username = beforeAtSign;
+    } else {
+      // First name
+      ctx.req.body.username = beforeAtSign.substr(0, indexOfDot);
+      // Capitalize first letter
+      ctx.req.body.username = ctx.req.body.username.charAt(0).toUpperCase() + ctx.req.body.username.slice(1);
+    }
+
+    next();
+  });
+
   // Include roles, remove fields on login
   UserModel.afterRemote('login', function(ctx, userInstance, next) {
     console.log('> UserModel.afterRemote.login');
@@ -31,6 +51,9 @@ module.exports = function(UserModel) {
 
       // Replace user
       resultJSON.user = userJSON;
+
+      // Set username
+      resultJSON.username = userJSON.username;
 
       // Create base64 string of auth credentials
       var credentialsAsBase64 = Buffer.from(

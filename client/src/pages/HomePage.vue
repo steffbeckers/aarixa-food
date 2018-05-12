@@ -7,6 +7,9 @@
         </v-ons-toolbar-button>
       </div>
       <div class="center">aariXaFood</div>
+      <div class="right" style="padding-right: 15px;" :v-if="$cookie.get('$aariXaFood$token')">
+        {{ $cookie.get('$aariXaFood$username') }}
+      </div>
     </v-ons-toolbar>
 
     <v-ons-pull-hook
