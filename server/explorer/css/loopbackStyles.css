@@ -11,13 +11,13 @@
 .swagger-section .swagger-ui-wrap p#colophon,
 .swagger-section .swagger-ui-wrap .markdown ul,
 .model-signature {
-  font-family: 'helvetica neue', helvetica, arial, sans-serif !important;
+  font-family: 'Helvetica Neue', Helvetica, arial, sans-serif !important;
 }
 
 /* layout spacing and global colors */
 body {
   padding-top: 60px;
-  font-family: 'helvetica neue', helvetica, arial, sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, arial, sans-serif;
 }
 
 body #header {
