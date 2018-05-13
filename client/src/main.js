@@ -35,6 +35,18 @@ Vue.filter('formatTime', function (value) {
     return moment(String(value)).format('HH:mm')
   }
 })
+Vue.filter('formatWebsite', function (value) {
+  if (value) {
+    var websiteUrl = String(value).toLocaleLowerCase()
+      .replace('https', '')
+      .replace('http', '')
+      .replace('://', '')
+    if (websiteUrl.endsWith('/')) {
+      websiteUrl = websiteUrl.slice(0, -1)
+    }
+    return websiteUrl
+  }
+})
 
 /* eslint-disable no-new */
 new Vue({

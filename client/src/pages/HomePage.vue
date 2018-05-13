@@ -22,7 +22,12 @@
       <v-ons-list-title>Bestellingen</v-ons-list-title>
       <p style="padding-left: 16px;" v-show="Object.keys(suppliers).length === 0">Iedereen is gezonder bezig vandaag. <v-ons-icon icon="fa-thumbs-up"></v-ons-icon> Er zijn nog geen bestellingen.</p>
       <v-ons-list v-for="(supplier, supplierId) in suppliers" :key="supplierId">
-        <v-ons-list-header style="cursor: pointer">{{ supplier[0].supplier.name }}<span> - {{ supplier[0].createdOn | formatDate }}</span></v-ons-list-header>
+        <v-ons-list-header style="cursor: pointer">
+          {{ supplier[0].supplier.name }}
+          <span> - {{ supplier[0].createdOn | formatDate }}</span>
+          <span v-if="supplier[0].supplier.telephone"> - <a :href="'tel:' + supplier[0].supplier.telephone">{{ supplier[0].supplier.telephone }}</a></span>
+          <span v-if="supplier[0].supplier.website" style="text-transform: none;"> - <a :href="supplier[0].supplier.website">{{ supplier[0].supplier.website | formatWebsite }}</a></span>
+        </v-ons-list-header>
         <v-ons-list-item modifier="longdivider">
           <v-ons-list v-for="order in supplier" :key="order.id" modifier="inset">
             <v-ons-list-header>
@@ -38,16 +43,6 @@
               <span v-if="item.menuItem.category" class="list-item__subtitle"><v-ons-icon icon="fa-list-alt"></v-ons-icon> {{ item.menuItem.category }}</span>
             </v-ons-list-item>
           </v-ons-list>
-        </v-ons-list-item>
-        <v-ons-list-item>
-          <ul class="supplierInfo">
-            <li>
-              Telefoonnummer:&nbsp;<a :href="'tel:' + supplier[0].supplier.telephone">{{ supplier[0].supplier.telephone }}</a>
-            </li>
-            <li>
-              Website:&nbsp;<a :href="supplier[0].supplier.website">{{ supplier[0].supplier.website }}</a>
-            </li>
-          </ul>
         </v-ons-list-item>
       </v-ons-list>
       <!-- <v-ons-col>
@@ -148,21 +143,7 @@ img {
   font-size: 14px;
 }
 
-ul.supplierInfo {
-  list-style-type: none;
-  padding-left: 0px;
-  margin: 5px 0px 5px 0px;
-}
-
-ul.supplierInfo li {
-  display: inline-block;
-}
-
-ul.supplierInfo li {
-  display: inline-block;
-}
-
-ul.supplierInfo li a {
+a {
   color: #0f72b4;
 }
 
