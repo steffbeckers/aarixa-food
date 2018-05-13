@@ -22,15 +22,20 @@
       <v-ons-list-title>Bestellingen</v-ons-list-title>
       <p style="padding-left: 16px;" v-show="Object.keys(suppliers).length === 0">Iedereen is gezonder bezig vandaag. <v-ons-icon icon="fa-thumbs-up"></v-ons-icon> Er zijn nog geen bestellingen.</p>
       <v-ons-list v-for="(supplier, supplierId) in suppliers" :key="supplierId">
-        <v-ons-list-header style="cursor: pointer">{{ supplier[0].supplier.name }}</v-ons-list-header>
+        <v-ons-list-header style="cursor: pointer">{{ supplier[0].supplier.name }}<span> - {{ supplier[0].createdOn | formatDate }}</span></v-ons-list-header>
         <v-ons-list-item modifier="longdivider">
           <v-ons-list v-for="order in supplier" :key="order.id" modifier="inset">
             <v-ons-list-header>
               {{ order.userModel.username }} <span v-if="order.updatedOn"> - {{ order.updatedOn | formatTime }}</span>
             </v-ons-list-header>
             <v-ons-list-item v-for="item in order.orderItems" :key="item.id" modifier="longdivider">
-              <span class="list-item__title">{{ item.quantity }} {{ item.menuItem.name }} <span v-if="item.price"> - &euro; {{ item.price }}</span></span>
-              <span class="list-item__subtitle">{{ item.menuItem.category }}</span>
+              <span class="list-item__title">
+                <span v-if="item.quantity > 1">{{ item.quantity }} </span>
+                <span v-if="item.quantity > 1 && item.menuItem.namePlural">{{ item.menuItem.namePlural }}</span><span v-else-if="item.menuItem.name">{{ item.menuItem.name }}</span>
+                <span v-if="item.price"> - &euro; {{ item.price }}</span><br v-if="item.info" />
+                <span class="list-item__info" v-if="item.info">{{ item.info }}</span>
+              </span>
+              <span v-if="item.menuItem.category" class="list-item__subtitle"><v-ons-icon icon="fa-list-alt"></v-ons-icon> {{ item.menuItem.category }}</span>
             </v-ons-list-item>
           </v-ons-list>
         </v-ons-list-item>
@@ -135,6 +140,14 @@ img {
   max-width: 300px;
 }
 
+.list-item__subtitle {
+  margin-top: 5px;
+}
+
+.list-item__info {
+  font-size: 14px;
+}
+
 ul.supplierInfo {
   list-style-type: none;
   padding-left: 0px;
@@ -153,8 +166,8 @@ ul.supplierInfo li a {
   color: #0f72b4;
 }
 
-ul.supplierInfo li:not(:first-of-type) {
-  margin-left: 10px;
+ul.supplierInfo li:not(:last-of-type) {
+  margin-right: 10px;
 }
 
 ons-list-title {
@@ -179,5 +192,6 @@ ons-pull-hook {
 
 ons-list.list--inset {
   margin: 8px;
+  align-self: flex-start;
 }
 </style>
