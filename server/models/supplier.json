@@ -41,6 +41,10 @@
     "menuItems": {
       "type": "hasMany",
       "model": "MenuItem"
+    },
+    "orders": {
+      "type": "hasMany",
+      "model": "Order"
     }
   },
   "acls": [

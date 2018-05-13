@@ -19,19 +19,6 @@ export default new Vuex.Store({
           }
         }
       }
-    },
-    auth: {
-      namespaced: true,
-      state: {
-        authenticated: false
-      },
-      mutations: {
-        set (state) {
-          if (typeof state === 'boolean') {
-            state.authenticated = state
-          }
-        }
-      }
     }
   }
 })

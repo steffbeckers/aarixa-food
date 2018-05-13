@@ -1,11 +1,13 @@
 'use strict';
 
+var _ = require('lodash');
+
 module.exports = function(Order) {
   // Set owner before creating the order
   Order.observe('before save', function setAutoData(context, next) {
     if (context.instance) {
       if (context.isNewInstance) {
-        context.instance.ownerId = context.options.accessToken.userId;
+        context.instance.userModelId = context.options.accessToken.userId;
       }
     }
     next();
@@ -51,53 +53,101 @@ module.exports = function(Order) {
       cb(null, orders);
     });
   };
-  Order.remoteMethod('list',
-    {
-      http: {
-        path: '/list',
-        verb: 'get',
+  Order.remoteMethod('list', {
+    http: {
+      path: '/list',
+      verb: 'get',
+    },
+    accepts: [
+      {
+        arg: 'dateTime',
+        type: 'string',
+        http: {
+          source: 'query',
+        },
       },
-      accepts: [
+      {
+        arg: 'orderBy',
+        type: 'string',
+        http: {
+          source: 'query',
+        },
+      },
+      {
+        arg: 'orderDirection',
+        type: 'string',
+        http: {
+          source: 'query',
+        },
+      },
+      {
+        arg: 'skip',
+        type: 'number',
+        http: {
+          source: 'query',
+        },
+      },
+      {
+        arg: 'take',
+        type: 'number',
+        http: {
+          source: 'query',
+        },
+      },
+    ],
+    returns: {
+      type: 'array',
+      root: true,
+    },
+  });
+
+  // List orders, with filter functionality
+  Order.listPerSupplierOnHomepage = function(cb) {
+    var filter = {
+      include: [
         {
-          arg: 'dateTime',
-          type: 'string',
-          http: {
-            source: 'query',
+          relation: 'userModel',
+          scope: {
+            fields: {
+              id: false,
+              username: true,
+            },
           },
         },
         {
-          arg: 'orderBy',
-          type: 'string',
-          http: {
-            source: 'query',
+          relation: 'supplier',
+          scope: {
+            fields: {
+              id: true,
+              name: true,
+              telephone: true,
+              website: true,
+            },
           },
         },
         {
-          arg: 'orderDirection',
-          type: 'string',
-          http: {
-            source: 'query',
-          },
-        },
-        {
-          arg: 'skip',
-          type: 'number',
-          http: {
-            source: 'query',
-          },
-        },
-        {
-          arg: 'take',
-          type: 'number',
-          http: {
-            source: 'query',
+          relation: 'orderItems',
+          scope: {
+            include: 'menuItem',
           },
         },
       ],
-      returns: {
-        type: 'array',
-        root: true,
-      },
-    }
-  );
+      order: 'updatedOn DESC',
+    };
+    Order.find(filter, function(err, orders) {
+      // Group by supplier
+      var ordersGroupedBySupplier = _.groupBy(orders, 'supplierId');
+      cb(null, ordersGroupedBySupplier);
+    });
+  };
+  Order.remoteMethod('listPerSupplierOnHomepage', {
+    http: {
+      path: '/listPerSupplierOnHomepage',
+      verb: 'get',
+    },
+    returns: {
+      type: 'array',
+      root: true,
+    },
+  });
 };

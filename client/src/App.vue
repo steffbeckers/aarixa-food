@@ -1,6 +1,6 @@
 <template>
   <v-ons-page id="app">
-    <v-ons-splitter :v-if="authenticated">
+    <v-ons-splitter>
       <v-ons-splitter-side swipeable collapse width="250px"
         :animation="$ons.platform.isAndroid() ? 'overlay' : 'reveal'"
         :open.sync="menuIsOpen">
@@ -32,14 +32,6 @@ export default {
       set (newValue) {
         this.$store.commit('splitter/toggle', newValue)
       }
-    },
-    authenticated: {
-      get () {
-        return this.$store.state.auth.authenticated
-      },
-      set (newValue) {
-        this.$store.commit('auth/set', newValue)
-      }
     }
   },
   methods: {
@@ -56,6 +48,7 @@ export default {
           // Save credentials to cookies
           this.$cookie.set('$aariXaFood$token', credentialsObject.id, {expires: credentialsObject.ttl + 's'})
           this.$cookie.set('$aariXaFood$user', JSON.stringify(credentialsObject.user), {expires: credentialsObject.ttl + 's'})
+          this.$cookie.set('$aariXaFood$userId', credentialsObject.userId, {expires: credentialsObject.ttl + 's'})
           this.$cookie.set('$aariXaFood$username', credentialsObject.user.username, {expires: credentialsObject.ttl + 's'})
           // Remove query param
           this.$router.replace('/')

@@ -16,7 +16,7 @@ module.exports = function(UserModel) {
     // Lower case email address
     ctx.req.body.email = ctx.req.body.email.toLowerCase();
     // aarixa to aariXa
-    ctx.req.body.email.replace('aarixa', 'aariXa');
+    ctx.req.body.email = ctx.req.body.email.replace('aarixa', 'aariXa');
 
     // Set password same as email address
     ctx.req.body.password = ctx.req.body.email;
@@ -44,7 +44,7 @@ module.exports = function(UserModel) {
     // Lower case email address
     ctx.req.body.email = ctx.req.body.email.toLowerCase();
     // aarixa to aariXa
-    ctx.req.body.email.replace('aarixa', 'aariXa');
+    ctx.req.body.email = ctx.req.body.email.replace('aarixa', 'aariXa');
 
     // Set password same as email address
     ctx.req.body.password = ctx.req.body.email;
@@ -90,6 +90,15 @@ module.exports = function(UserModel) {
       var htmlEmail = '<a href="';
       htmlEmail += app.get('loginHrefApp') + '?credentials=' + credentialsAsBase64;
       htmlEmail += '">Doorgaan met inloggen</a>';
+
+      // Don't send emails during local dev
+      if (process.env.NODE_ENV === 'local') {
+        resultJSON.credentials = '?credentials=' + credentialsAsBase64;
+        console.log(resultJSON);
+        ctx.result = resultJSON;
+        next();
+        return;
+      }
 
       // Send email to user with credentials in link
       UserModel.app.models.Email.send({

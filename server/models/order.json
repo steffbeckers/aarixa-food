@@ -23,7 +23,16 @@
     "userModel": {
       "type": "belongsTo",
       "model": "UserModel",
-      "foreignKey": "ownerId"
+      "foreignKey": "userModelId"
+    },
+    "supplier": {
+      "type": "belongsTo",
+      "model": "Supplier",
+      "foreignKey": "supplierId"
+    },
+    "orderItems": {
+      "type": "hasMany",
+      "model": "OrderItem"
     },
     "menuItems": {
       "type": "hasMany",
