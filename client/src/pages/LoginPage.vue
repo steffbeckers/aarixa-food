@@ -13,13 +13,6 @@ export default {
     return {
       email: ''
     }
-  },
-  methods: {
-    login () {
-      setTimeout(() => {
-        this.orders = [...this.orders, this.orders.length + 1]
-      }, 200)
-    }
   }
 }
 </script>

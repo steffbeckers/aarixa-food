@@ -3,7 +3,7 @@
     "mountPath": "/explorer",
     "generateOperationScopedModels": true,
     "uiDirs": [
-      "/explorer"
+      "server/explorer"
     ],
     "apiInfo": {
       "title": "aariXaFood's API ",

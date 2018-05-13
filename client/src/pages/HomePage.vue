@@ -22,7 +22,7 @@
     </v-ons-pull-hook>
 
     <v-ons-list-title>Bestellingen</v-ons-list-title>
-    <v-ons-list>
+    <v-ons-list v-if="orders && orders.length">
       <v-ons-list-item v-for="order in orders" :key="order">
         {{ order }}
       </v-ons-list-item>
@@ -31,20 +31,29 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: 'home',
   data () {
     return {
       pullHookState: 'initial',
-      orders: [1]
+      orders: []
     }
+  },
+  mounted: function () {
+    this.loadOrders(() => {})
   },
   methods: {
     loadOrders (done) {
-      setTimeout(() => {
-        this.orders = [...this.orders, this.orders.length + 1]
-        done()
-      }, 500)
+      axios.get(process.env.API + '/orders')
+        .then(response => {
+          this.orders = response.data
+          done()
+        })
+        .catch(error => {
+          console.error(error)
+        })
     }
   }
 }

@@ -23,7 +23,7 @@
     "userModel": {
       "type": "belongsTo",
       "model": "UserModel",
-      "foreignKey": "userModelId"
+      "foreignKey": "ownerId"
     },
     "menuItems": {
       "type": "hasMany",
@@ -50,18 +50,6 @@
       "principalId": "$authenticated",
       "permission": "ALLOW",
       "property": "create"
-    },
-    {
-      "principalType": "ROLE",
-      "principalId": "$authenticated",
-      "permission": "ALLOW",
-      "property": "__create__orderItems"
-    },
-    {
-      "principalType": "ROLE",
-      "principalId": "$authenticated",
-      "permission": "ALLOW",
-      "property": "__create__frames"
     },
     {
       "accessType": "*",

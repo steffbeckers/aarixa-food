@@ -6,6 +6,9 @@ const config = require('../config')
 if (!process.env.NODE_ENV) {
   process.env.NODE_ENV = JSON.parse(config.dev.env.NODE_ENV)
 }
+if (!process.env.API) {
+  process.env.API = JSON.parse(config.dev.env.API)
+}
 
 const opn = require('opn')
 const path = require('path')
