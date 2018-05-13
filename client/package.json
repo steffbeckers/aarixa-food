@@ -17,6 +17,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "font-awesome": "^4.7.0",
+    "moment": "^2.22.1",
     "onsenui": "~2.8.2",
     "vue": "^2.5.2",
     "vue-cookie": "^1.1.4",

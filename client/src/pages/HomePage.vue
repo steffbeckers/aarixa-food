@@ -6,30 +6,27 @@
           <v-ons-icon icon="fa-bars"></v-ons-icon>
         </v-ons-toolbar-button>
       </div>
-      <div class="center">aariXaFood</div>
+      <div class="center">aariXaFood<span v-if="!onLine"> - Offline</span></div>
       <div class="right" style="padding-right: 15px;" :v-if="$cookie.get('$aariXaFood$token')">
         {{ $cookie.get('$aariXaFood$username') }}
       </div>
     </v-ons-toolbar>
 
-    <div class="content">
-      <v-ons-pull-hook
-        :action="listOrdersPerSupplierOnHomepage"
-        @changestate="pullHookState = $event.state"
-      >
-        <span v-show="pullHookState === 'initial'"> Sleep om te vernieuwen </span>
-        <span v-show="pullHookState === 'preaction'"> Loslaten </span>
-        <span v-show="pullHookState === 'action'"> Laden ... </span>
+    <div class="content">    
+      <v-ons-pull-hook :action="listOrdersPerSupplierOnHomepage" @changestate="pullHookState = $event.state">
+        <span v-show="pullHookState === 'initial'">Sleep om te vernieuwen</span>
+        <span v-show="pullHookState === 'preaction'">Loslaten</span>
+        <span v-show="pullHookState === 'action'"><v-ons-progress-circular indeterminate></v-ons-progress-circular></span>
       </v-ons-pull-hook>
 
       <v-ons-list-title>Bestellingen</v-ons-list-title>
-      <p style="padding-left: 16px;" v-if="Object.keys(suppliers).length === 0">Iedereen is gezonder bezig vandaag. Er zijn nog geen bestellingen ;)</p>
+      <p style="padding-left: 16px;" v-show="Object.keys(suppliers).length === 0">Iedereen is gezonder bezig vandaag. <v-ons-icon icon="fa-thumbs-up"></v-ons-icon> Er zijn nog geen bestellingen.</p>
       <v-ons-list v-for="(supplier, supplierId) in suppliers" :key="supplierId">
-        <v-ons-list-header>{{ supplier[0].supplier.name }}</v-ons-list-header>
-        <v-ons-list-item v-for="order in supplier" :key="order.id" modifier="longdivider">
-          <v-ons-list modifier="inset">
+        <v-ons-list-header style="cursor: pointer">{{ supplier[0].supplier.name }}</v-ons-list-header>
+        <v-ons-list-item modifier="longdivider">
+          <v-ons-list v-for="order in supplier" :key="order.id" modifier="inset">
             <v-ons-list-header>
-              {{ order.userModel.username }}
+              {{ order.userModel.username }} <span v-if="order.updatedOn"> - {{ order.updatedOn | formatTime }}</span>
             </v-ons-list-header>
             <v-ons-list-item v-for="item in order.orderItems" :key="item.id" modifier="longdivider">
               <span class="list-item__title">{{ item.quantity }} {{ item.menuItem.name }} <span v-if="item.price"> - &euro; {{ item.price }}</span></span>
@@ -78,12 +75,15 @@ export default {
       pullHookState: 'initial',
       spdVisible: true,
       spdOpen: true,
-      suppliers: {}
+      suppliers: {},
+      onLine: navigator.onLine
       // orders: [],
     }
   },
   mounted: function () {
     this.listOrdersPerSupplierOnHomepage(() => {})
+    window.addEventListener('online', this.updateConnectionStatus)
+    window.addEventListener('offline', this.updateConnectionStatus)
   },
   methods: {
     listOrdersPerSupplierOnHomepage (done) {
@@ -96,7 +96,11 @@ export default {
         })
         .catch(error => {
           console.error(error)
+          done()
         })
+    },
+    updateConnectionStatus () {
+      this.onLine = navigator.onLine
     }
     // listOrders (done) {
     //   var url = process.env.API + '/orders/list?'
@@ -158,5 +162,22 @@ ons-list-title {
   margin: 20px 0px 10px 0px;
   font-size: 18px;
   clear: both;
+}
+
+ons-list-title {
+  text-transform: none;
+  margin: 20px 0px 10px 0px;
+  font-size: 18px;
+  clear: both;
+}
+
+ons-pull-hook {
+  margin-top: 20px;
+  height: 40px!important;
+  line-height: 40px!important;
+}
+
+ons-list.list--inset {
+  margin: 8px;
 }
 </style>

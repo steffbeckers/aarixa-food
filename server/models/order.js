@@ -137,14 +137,14 @@ module.exports = function(Order) {
         },
       ],
       order: 'updatedOn DESC',
-      // where: {
-      //   updatedOn: {
-      //     between: [
-      //       today,
-      //       today.add(1, 'day'),
-      //     ],
-      //   },
-      // },
+      where: {
+        updatedOn: {
+          between: [
+            new Date(today.format('YYYY-MM-DD')),
+            new Date(today.add(1, 'day').format('YYYY-MM-DD')),
+          ],
+        },
+      },
     };
     Order.find(filter, function(err, orders) {
       // Group by supplier

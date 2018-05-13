@@ -1,7 +1,7 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 
-import 'font-awesome/css/font-awesome.css'
+import 'font-awesome/css/font-awesome.min.css'
 import 'onsenui/css/onsenui-core.css'
 import 'onsenui/css/onsen-css-components.css'
 
@@ -15,12 +15,21 @@ import store from './store'
 import router from './router'
 import App from './App'
 
+import moment from 'moment'
+
 Vue.config.productionTip = false
 
 Vue.use($ons)
 Object.values(VOns).forEach(comp => Vue.component(comp.name, comp))
 
 Vue.use(VueCookie)
+
+// Filters
+Vue.filter('formatTime', function (value) {
+  if (value) {
+    return moment(String(value)).format('HH:mm')
+  }
+})
 
 /* eslint-disable no-new */
 new Vue({
