@@ -22,11 +22,11 @@
     </v-ons-pull-hook>
 
     <v-ons-list-title>Bestellingen</v-ons-list-title>
-    <v-ons-list v-if="orders && orders.length">
-      <v-ons-list-item v-for="order in orders" :key="order">
-        {{ order }}
-      </v-ons-list-item>
-    </v-ons-list>
+    <v-ons-row>
+      <v-ons-col v-for="order in orders" v-bind:key="order.id">
+        <v-ons-card>{{ order.updatedOn }} <span v-if="order.userModel && order.userModel.username">by {{ order.userModel.username }}</span></v-ons-card>
+      </v-ons-col>
+    </v-ons-row>
   </v-ons-page>
 </template>
 
@@ -46,8 +46,17 @@ export default {
   },
   methods: {
     loadOrders (done) {
-      axios.get(process.env.API + '/orders')
+      var url = process.env.API + '/orders/list?'
+      url += 'dateTime=' + new Date().toISOString()
+      url += '&orderBy=updatedOn'
+      url += '&orderDirection=DESC'
+      if (this.$cookie.get('$aariXaFood$token')) {
+        url += '&access_token=' + this.$cookie.get('$aariXaFood$token')
+      }
+      axios.get(url)
         .then(response => {
+          console.log('loadOrders')
+          console.log(response.data)
           this.orders = response.data
           done()
         })

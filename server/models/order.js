@@ -41,6 +41,7 @@ module.exports = function(Order) {
     if (take === undefined) { take = 20; }
 
     var filter = {
+      include: ['userModel', 'menuItems'],
       order: orderBy + ' ' + orderDirection,
       skip: skip,
       limit: take,

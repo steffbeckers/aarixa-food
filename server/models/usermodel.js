@@ -87,15 +87,15 @@ module.exports = function(UserModel) {
       ).toString('base64');
       console.log(credentialsAsBase64);
 
-      var htmlEmail = '<h1>aariXaFood</h1><p><a href="';
+      var htmlEmail = '<a href="';
       htmlEmail += app.get('loginHrefApp') + '?credentials=' + credentialsAsBase64;
-      htmlEmail += '">Doorgaan met inloggen</a></p>';
+      htmlEmail += '">Doorgaan met inloggen</a>';
 
       // Send email to user with credentials in link
       UserModel.app.models.Email.send({
         to: userJSON.email,
         from: senderAddress,
-        subject: 'aariXaFood - Login',
+        subject: 'aariXaFood',
         html: htmlEmail,
       }, function(err) {
         if (err) {
