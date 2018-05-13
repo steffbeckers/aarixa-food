@@ -23,7 +23,7 @@
       </v-ons-pull-hook>
 
       <v-ons-list-title>Bestellingen</v-ons-list-title>
-      <p v-if="suppliers === {}">Iedereen is gezonder bezig vandaag</p>
+      <p style="padding-left: 16px;" v-if="Object.keys(suppliers).length === 0">Iedereen is gezonder bezig vandaag. Er zijn nog geen bestellingen ;)</p>
       <v-ons-list v-for="(supplier, supplierId) in suppliers" :key="supplierId">
         <v-ons-list-header>{{ supplier[0].supplier.name }}</v-ons-list-header>
         <v-ons-list-item v-for="order in supplier" :key="order.id" modifier="longdivider">

@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('lodash');
+var moment = require('moment');
 
 module.exports = function(Order) {
   // Set owner before creating the order
@@ -103,6 +104,9 @@ module.exports = function(Order) {
 
   // List orders, with filter functionality
   Order.listPerSupplierOnHomepage = function(cb) {
+    // Only show today's orders
+    var today = moment();
+
     var filter = {
       include: [
         {
@@ -133,6 +137,14 @@ module.exports = function(Order) {
         },
       ],
       order: 'updatedOn DESC',
+      // where: {
+      //   updatedOn: {
+      //     between: [
+      //       today,
+      //       today.add(1, 'day'),
+      //     ],
+      //   },
+      // },
     };
     Order.find(filter, function(err, orders) {
       // Group by supplier
