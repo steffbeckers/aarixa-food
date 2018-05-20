@@ -1,9 +1,7 @@
 <template>
   <v-container fluid>
-    <v-slide-y-transition mode="out-in">
-      <v-layout column>
-        <h1>Leveranciers</h1>
-      </v-layout>
-    </v-slide-y-transition>
+    <v-layout column>
+      <div class="title">Leveranciers</div>
+    </v-layout>
   </v-container>
 </template>
