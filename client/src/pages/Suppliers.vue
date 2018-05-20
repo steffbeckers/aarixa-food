@@ -1,7 +1,104 @@
 <template>
   <v-container fluid>
-    <v-layout column>
-      <div class="title">Leveranciers</div>
+    <v-layout
+      row
+      class="mb-3"
+    >
+      <v-layout column>
+        <div class="title">Leveranciers</div>
+      </v-layout>
+    </v-layout>
+    <v-layout v-show="loading" row class="mb-3">
+      <v-layout
+        column
+        align-center
+      >
+        <v-progress-circular indeterminate color="primary"></v-progress-circular>
+      </v-layout>
+    </v-layout>
+    <v-layout row>
+      <v-flex
+        xs12
+        sm6
+        v-for="supplier in suppliers" :key="supplier.id"
+      >
+        <v-card>
+          <v-card-media v-if="supplier.slug" :src="'/static/img/suppliers/' + supplier.slug + '/1_min.jpg'" height="200px">
+          </v-card-media>
+          <v-card-title primary-title>
+            <div>
+              <h3 class="headline mb-1">{{ supplier.name }}</h3>
+              <div>
+                <span v-if="supplier.telephone" class="telephone">{{ supplier.telephone }}</span>
+                <span v-if="supplier.telephone && supplier.website"> - </span>
+                <span v-if="supplier.website" class="website">{{ supplier.website | formatWebsite }}</span>
+              </div>
+              <div v-if="supplier.openingHours && supplier.openingHours[dayOfWeek]">
+                <span v-for="(timespan, i) in supplier.openingHours[dayOfWeek]" v-bind:key="i">
+                  {{ timespan.from }} - {{ timespan.until }}
+                </span>
+              </div>
+            </div>
+          </v-card-title>
+          <v-card-actions>
+            <v-btn
+              v-if="supplier.telephone"
+              flat
+            >
+              Bellen
+            </v-btn>
+            <v-btn 
+              v-if="supplier.website"
+              flat
+            >
+              Website
+            </v-btn>
+            <v-btn flat>Menukaart</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-flex>
     </v-layout>
   </v-container>
 </template>
+
+<style scoped>
+.card {
+  margin: 10px;
+}
+</style>
+
+<script>
+import axios from 'axios'
+
+export default {
+  data () {
+    return {
+      loading: false,
+      suppliers: [],
+      dayOfWeek: new Date().getDay()
+    }
+  },
+  mounted: function () {
+    this.listSuppliers()
+  },
+  methods: {
+    listSuppliers () {
+      this.loading = true
+      axios.get(process.env.API + '/suppliers')
+        .then(response => {
+          this.loading = false
+
+          this.suppliers = response.data
+          console.log(this.suppliers)
+        })
+        .catch(error => {
+          this.loading = false
+
+          console.error(error)
+        })
+    }
+  },
+  name: 'Suppliers'
+}
+</script>
+

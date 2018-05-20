@@ -11,17 +11,17 @@ export default new Router({
   routes: [
     {
       path: '/leveranciers/:slug',
-      name: 'Leverancier',
+      name: 'SupplierDetail',
       component: SupplierDetail
     },
     {
       path: '/leveranciers',
-      name: 'Leveranciers',
+      name: 'Suppliers',
       component: Suppliers
     },
     {
       path: '/',
-      name: 'Bestellingen',
+      name: 'Root',
       component: Orders
     }
   ]

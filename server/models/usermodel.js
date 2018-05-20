@@ -93,7 +93,7 @@ module.exports = function(UserModel) {
 
       // Don't send emails during local dev
       if (process.env.NODE_ENV === 'local') {
-        resultJSON.credentials = '?credentials=' + credentialsAsBase64;
+        resultJSON.credentials = credentialsAsBase64;
         console.log(resultJSON);
         ctx.result = resultJSON;
         next();
