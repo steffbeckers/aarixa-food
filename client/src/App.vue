@@ -1,87 +1,75 @@
 <template>
-  <v-ons-page id="app">
-    <v-ons-splitter>
-      <v-ons-splitter-side swipeable collapse width="250px"
-        :animation="$ons.platform.isAndroid() ? 'overlay' : 'reveal'"
-        :open.sync="menuIsOpen">
-        <menu-page></menu-page>
-      </v-ons-splitter-side>
-
-      <v-ons-splitter-content>
-        <home-page></home-page>
-      </v-ons-splitter-content>
-    </v-ons-splitter>
-  </v-ons-page>
+  <v-app>
+    <v-navigation-drawer
+      persistent
+      :mini-variant="miniVariant"
+      :clipped="clipped"
+      v-model="drawer"
+      enable-resize-watcher
+      fixed
+      app
+    >
+      <v-list>
+        <v-list-tile
+          value="true"
+          v-for="(item, i) in items"
+          :key="i"
+        >
+          <v-list-tile-action>
+            <v-icon v-html="item.icon"></v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title v-text="item.title"></v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+    </v-navigation-drawer>
+    <v-toolbar 
+      :clipped-left="clipped"
+      app
+    >
+      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <img src="assets/aariXa_Shield_1x1.png" />
+      <v-toolbar-title v-text="title"></v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-toolbar-items class="hidden-sm-and-down">
+        <v-btn flat>Chanry</v-btn>
+        <v-btn flat>Orient</v-btn>
+      </v-toolbar-items>
+    </v-toolbar>
+    <v-content>
+      <router-view/>
+    </v-content>
+    <v-footer 
+      :fixed="fixed" 
+      app
+    >
+      <span>&copy; Steff</span>
+    </v-footer>
+  </v-app>
 </template>
 
 <script>
-import HomePage from './pages/HomePage'
-import MenuPage from './pages/MenuPage'
-import LoginPage from './pages/LoginPage'
-
 export default {
-  name: 'app',
-  mounted: function () {
-    this.loginWithCredentialsFromEmail()
-  },
-  computed: {
-    menuIsOpen: {
-      get () {
-        return this.$store.state.splitter.open
-      },
-      set (newValue) {
-        this.$store.commit('splitter/toggle', newValue)
-      }
-    }
-  },
-  methods: {
-    loginWithCredentialsFromEmail () {
-      // Retrieve credentials from route
-      var credentials = this.$route.query.credentials
-      if (credentials) {
-        // Decode credentials
-        var credentialsDecoded = atob(credentials)
-        // Check if decoded credentials is an object (login response)
-        if (credentialsDecoded.charAt(0) === '{' &&
-          credentialsDecoded.charAt(credentialsDecoded.length - 1) === '}') {
-          var credentialsObject = JSON.parse(credentialsDecoded)
-          // Save credentials to cookies
-          this.$cookie.set('$aariXaFood$token', credentialsObject.id, {expires: credentialsObject.ttl + 's'})
-          this.$cookie.set('$aariXaFood$user', JSON.stringify(credentialsObject.user), {expires: credentialsObject.ttl + 's'})
-          this.$cookie.set('$aariXaFood$userId', credentialsObject.userId, {expires: credentialsObject.ttl + 's'})
-          this.$cookie.set('$aariXaFood$username', credentialsObject.user.username, {expires: credentialsObject.ttl + 's'})
-          // Remove query param
-          this.$router.replace('/')
+  data () {
+    return {
+      clipped: false,
+      drawer: false,
+      miniVariant: false,
+      fixed: true,
+      items: [
+        {
+          icon: 'list',
+          title: 'Bestellingen'
+        },
+        {
+          icon: 'list',
+          title: 'Leveranciers'
         }
-      }
+      ],
+      title: 'aariXaFood'
     }
   },
-  components: {
-    HomePage,
-    MenuPage,
-    LoginPage
-  }
+  name: 'App'
 }
 </script>
-
-<style>
-body {
-  font-family: "Calibri Light", sans-serif;
-}
-
-ons-splitter-side[side=left][animation=overlay] {
-  border-right: 1px solid #BBB;
-}
-
-ons-page > div.page__background {
-  background-color: #f6f6f6;
-}
-
-ons-toolbar.home-toolbar {
-  background-color: #ffffff;
-}
-
-ons-toolbar.login-toolbar {
-  background-color: #ffffff;
-}
-</style>
