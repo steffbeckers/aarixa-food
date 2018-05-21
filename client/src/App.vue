@@ -82,6 +82,7 @@
           v-for="(item, i) in sideMenuItems"
           :key="i"
           :to="item.page"
+          exact
         >
           <v-list-tile-action>
             <v-icon v-html="item.icon"></v-icon>

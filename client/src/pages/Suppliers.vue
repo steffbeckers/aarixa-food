@@ -45,17 +45,25 @@
           <v-card-actions>
             <v-btn
               v-if="supplier.telephone"
+              :href="'tel:' + supplier.telephone"
               flat
             >
               Bellen
             </v-btn>
             <v-btn 
               v-if="supplier.website"
+              :href="supplier.website"
+              target="_blank"
               flat
             >
               Website
             </v-btn>
-            <v-btn flat>Menukaart</v-btn>
+            <v-btn
+              @click="navigateToSupplier(supplier.slug)"
+              flat
+            >
+              Menu
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -66,6 +74,9 @@
 <style scoped>
 .card {
   margin: 10px;
+}
+.card__media, .card__title {
+  cursor: pointer;
 }
 </style>
 
