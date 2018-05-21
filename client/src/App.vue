@@ -19,12 +19,16 @@
             <p>Bestel eten bij aariXa!</p>
           </v-layout>
         </v-layout>
-        <v-layout row class="mb-3">
+        <v-layout
+          v-if="!this.$store.state.authenticated"
+          row
+          class="mb-3">
           <v-layout column>
             <h2>Aanmelden</h2>
           </v-layout>
         </v-layout>
         <v-layout
+          v-if="!this.$store.state.authenticated"
           row
           class="mb-4"
         >
@@ -53,26 +57,40 @@
             </v-form>
           </v-layout>
         </v-layout>
-        <v-layout row>
-          <v-layout column>
-            <v-list>
-              <v-list-tile
-                value="true"
-                v-for="(item, i) in sideMenuItems"
-                :key="i"
-                :to="item.page"
-              >
-                <v-list-tile-action>
-                  <v-icon v-html="item.icon"></v-icon>
-                </v-list-tile-action>
-                <v-list-tile-content>
-                  <v-list-tile-title v-text="item.title"></v-list-tile-title>
-                </v-list-tile-content>
-              </v-list-tile>
-            </v-list>
-          </v-layout>
-        </v-layout>
       </v-container>
+      <v-toolbar v-if="this.$store.state.authenticated" flat class="transparent mb-2">
+        <v-list class="pa-0">
+          <v-list-tile avatar>
+            <v-list-tile-avatar v-if="!this.$store.state.user.avatar" color="primary">
+              <span class="white--text headline">{{ firstLetterOfUser }}</span>
+            </v-list-tile-avatar>
+            <v-list-tile-avatar v-if="this.$store.state.user.avatar">
+              <img :src="this.$store.state.user.avatar" :alt="this.$store.state.user.username">
+            </v-list-tile-avatar>
+            <v-list-tile-content v-if="this.$store.state.user.username">
+              <v-list-tile-title>{{ this.$store.state.user.username }}</v-list-tile-title>
+            </v-list-tile-content>
+            <v-list-tile-action @click="signOut">
+              <v-icon>fa-sign-out</v-icon>
+            </v-list-tile-action>
+          </v-list-tile>
+        </v-list>
+      </v-toolbar>
+      <v-list>
+        <v-list-tile
+          value="true"
+          v-for="(item, i) in sideMenuItems"
+          :key="i"
+          :to="item.page"
+        >
+          <v-list-tile-action>
+            <v-icon v-html="item.icon"></v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title v-text="item.title"></v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
     </v-navigation-drawer>
     <v-toolbar 
       :clipped-left="clipped"
@@ -82,7 +100,7 @@
       <img src="@/assets/aariXa_Shield_32x32.png" alt="aariXa Schild" />
       <v-toolbar-title v-text="title"></v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-toolbar-items class="hidden-sm-and-down">
+      <v-toolbar-items>
         <v-btn :to="{ name: 'SupplierDetail', params: { slug: 'chanry' }}" flat>Chanry</v-btn>
         <v-btn :to="{ name: 'SupplierDetail', params: { slug: 'orient' }}" flat>Orient</v-btn>
       </v-toolbar-items>
@@ -156,7 +174,7 @@ export default {
       ],
       buildDateTime: process.env.BUILD_DATETIME,
       clipped: false,
-      drawer: true,
+      drawer: !this.$store.state.authenticated,
       miniVariant: false,
       fixed: true,
       title: 'aariXaFood'
@@ -203,15 +221,23 @@ export default {
         if (credentialsDecoded.charAt(0) === '{' &&
           credentialsDecoded.charAt(credentialsDecoded.length - 1) === '}') {
           var credentialsObject = JSON.parse(credentialsDecoded)
-          // Save credentials to cookies
-          this.$cookie.set('$aariXaFood$token', credentialsObject.id, {expires: credentialsObject.ttl + 's'})
-          this.$cookie.set('$aariXaFood$user', JSON.stringify(credentialsObject.user), {expires: credentialsObject.ttl + 's'})
-          this.$cookie.set('$aariXaFood$userId', credentialsObject.userId, {expires: credentialsObject.ttl + 's'})
-          this.$cookie.set('$aariXaFood$username', credentialsObject.user.username, {expires: credentialsObject.ttl + 's'})
+          // Authenticate
+          this.$store.commit('authenticate', credentialsObject)
           // Remove query param
           this.$router.push({path: '/'})
         }
       }
+    },
+    signOut () {
+      this.$store.commit('signOut')
+    }
+  },
+  computed: {
+    firstLetterOfUser () {
+      if (this.$store.state.user.username) {
+        return this.$store.state.user.username.substr(0, 1)
+      }
+      return ''
     }
   },
   name: 'App'

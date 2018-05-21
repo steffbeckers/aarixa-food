@@ -16,16 +16,18 @@
         <v-progress-circular indeterminate color="primary"></v-progress-circular>
       </v-layout>
     </v-layout>
-    <v-layout row>
+    <v-layout row wrap>
       <v-flex
-        xs12
-        sm6
+        xl3
+        lg4
+        md6
+        sm12
         v-for="supplier in suppliers" :key="supplier.id"
       >
         <v-card>
-          <v-card-media v-if="supplier.slug" :src="'/static/img/suppliers/' + supplier.slug + '/1_min.jpg'" height="200px">
+          <v-card-media @click="navigateToSupplier(supplier.slug)" v-if="supplier.slug" :src="'/static/img/suppliers/' + supplier.slug + '/1_min.jpg'" height="150px">
           </v-card-media>
-          <v-card-title primary-title>
+          <v-card-title @click="navigateToSupplier(supplier.slug)" primary-title>
             <div>
               <h3 class="headline mb-1">{{ supplier.name }}</h3>
               <div>
@@ -96,6 +98,9 @@ export default {
 
           console.error(error)
         })
+    },
+    navigateToSupplier (slug) {
+      this.$router.push({name: 'SupplierDetail', params: {slug: slug}})
     }
   },
   name: 'Suppliers'

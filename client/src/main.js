@@ -7,17 +7,14 @@ import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 
 // Steff
+import 'font-awesome/css/font-awesome.min.css'
+import store from './store'
 import moment from 'moment'
 import VueCookie from 'vue-cookie'
 
-// Vuetify
-Vue.use(Vuetify)
-Vue.config.productionTip = false
-
-// Steff
 Vue.use(VueCookie)
 
-// Steff - Global filters
+// Global filters
 Vue.filter('formatDate', function (value) {
   if (value) {
     return moment(String(value)).format('DD/MM/YYYY')
@@ -26,6 +23,11 @@ Vue.filter('formatDate', function (value) {
 Vue.filter('formatTime', function (value) {
   if (value) {
     return moment(String(value)).format('HH:mm')
+  }
+})
+Vue.filter('formatDateTime', function (value) {
+  if (value) {
+    return moment(String(value)).format('DD/MM/YYYY HH:mm')
   }
 })
 Vue.filter('formatWebsite', function (value) {
@@ -41,10 +43,15 @@ Vue.filter('formatWebsite', function (value) {
   }
 })
 
+// Vuetify
+Vue.use(Vuetify)
+Vue.config.productionTip = false
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })
