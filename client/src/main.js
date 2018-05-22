@@ -8,11 +8,19 @@ import 'vuetify/dist/vuetify.min.css'
 
 // Steff
 import 'font-awesome/css/font-awesome.min.css'
+import axios from 'axios'
 import store from './store'
 import moment from 'moment'
 import VueCookie from 'vue-cookie'
 
 Vue.use(VueCookie)
+Vue.prototype.$axios = axios
+
+// Set Authorization header, if token exists
+var token = Vue.cookie.get('$aariXaFood$token')
+if (token) {
+  Vue.prototype.$axios.defaults.headers.common['Authorization'] = token
+}
 
 // Global filters
 Vue.filter('formatDate', function (value) {
@@ -41,6 +49,13 @@ Vue.filter('formatWebsite', function (value) {
     }
     return websiteUrl
   }
+})
+Vue.filter('formatMoney', function (value) {
+  if (value && typeof value === 'number') {
+    if (value === 0) { return '' }
+    return '&euro; ' + value.toFixed(2)
+  }
+  return ''
 })
 
 // Vuetify

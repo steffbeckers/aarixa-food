@@ -120,4 +120,59 @@ module.exports = function(UserModel) {
       });
     });
   });
+
+  // Create or get current order for Supplier
+  UserModel.getOrCreateOrderForSupplier = function(id, slug, cb) {
+    var Supplier = UserModel.app.models.Supplier;
+    var Order = UserModel.app.models.Order;
+
+    Supplier.bySlug(slug, function(err, supplier) {
+      if (err) { return cb(err); }
+
+      var filter = {
+        where: {
+          userModelId: id,
+          supplierId: supplier.id,
+          state: 'draft',
+        },
+        include: {
+          relation: 'orderItems',
+          scope: {
+            include: 'menuItem',
+          },
+        },
+      };
+      Order.findOne(filter, function(err, order) {
+        if (err) { return cb(err); }
+        if (order) {
+          // Return draft order
+          cb(null, order);
+        } else {
+          var newOrder = {
+            userModelId: id,
+            supplierId: supplier.id,
+            state: 'draft',
+          };
+          Order.create(newOrder, function(err, order) {
+            if (err) { return cb(err); }
+            // Set empty orderItems array
+            order.orderItems = [];
+            // Return new order
+            cb(null, order);
+          });
+        }
+      });
+    });
+  };
+  UserModel.remoteMethod(
+    'getOrCreateOrderForSupplier',
+    {
+      http: {path: '/:id/getOrCreateOrderForSupplier/:slug', verb: 'get'},
+      accepts: [
+        {arg: 'id', type: 'string'},
+        {arg: 'slug', type: 'string'},
+      ],
+      returns: {type: 'object', root: true},
+    }
+  );
 };

@@ -72,12 +72,12 @@
 </template>
 
 <style scoped>
-.card {
-  margin: 10px;
-}
-.card__media, .card__title {
-  cursor: pointer;
-}
+  .card {
+    margin: 10px;
+  }
+  .card__media, .card__title {
+    cursor: pointer;
+  }
 </style>
 
 <script>
@@ -100,13 +100,10 @@ export default {
       axios.get(process.env.API + '/suppliers')
         .then(response => {
           this.loading = false
-
           this.suppliers = response.data
-          console.log(this.suppliers)
         })
         .catch(error => {
           this.loading = false
-
           console.error(error)
         })
     },

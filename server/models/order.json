@@ -17,7 +17,12 @@
       "deletedAt": "deletedOn"
     }
   },
-  "properties": {},
+  "properties": {
+    "state": {
+      "type": "string",
+      "required": true
+    }
+  },
   "validations": [],
   "relations": {
     "userModel": {
