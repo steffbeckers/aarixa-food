@@ -46,13 +46,13 @@
           <template slot="headers" slot-scope="props">
             <tr>
               <th>
-                <v-checkbox
+                <!-- <v-checkbox
                   :input-value="props.all"
                   :indeterminate="props.indeterminate"
                   primary
                   hide-details
                   @click.native="toggleAll"
-                ></v-checkbox>
+                ></v-checkbox> -->
               </th>
               <th
                 v-for="header in props.headers"
@@ -81,22 +81,24 @@
           </template>
         </v-data-table>
         <v-btn
+          v-if="this.$store.state.authenticated"
           block
           color="primary"
-          :disabled="this.selected.length === 0"
+          :disabled="selected.length === 0"
           @click="addSelectionToOrder"
         >
           Selectie toevoegen aan bestelling
         </v-btn>
       </v-flex>
       <v-flex
+        v-if="this.$store.state.authenticated"
         xl4
         lg6
         md6
         sm12
         class="mb-5"
       >
-        <v-card class="ml-5 mr-5">
+        <v-card>
           <v-toolbar color="primary" dark>
             <v-toolbar-title>
               Mijn bestelling
@@ -116,12 +118,40 @@
               <v-list-tile
                 :key="item.id"
               >
+                <v-list-tile-action id="quantitySelector">
+                  <v-btn @click="menuItemQuantity(item, 1)" icon ripple>
+                    <v-icon color="grey lighten-1">add</v-icon>
+                  </v-btn>
+                  <v-btn v-if="item.quantity > 1" @click="menuItemQuantity(item, -1)" icon ripple>
+                    <v-icon color="grey lighten-1">remove</v-icon>
+                  </v-btn>
+                </v-list-tile-action>
                 <v-list-tile-content>
-                  <v-list-tile-title>{{ item.menuItem.name }}</v-list-tile-title>
+                  <v-list-tile-title>
+                    <span v-show="item.quantity > 1">{{ item.quantity }} </span>
+                    <span v-if="item.quantity > 1 && item.menuItem.namePlural">{{ item.menuItem.namePlural }}</span>
+                    <span v-else>{{ item.menuItem.name }}</span>
+                    </v-list-tile-title>
                   <v-list-tile-sub-title class="text--primary">{{ item.menuItem.category }}</v-list-tile-sub-title>
-                  <v-list-tile-sub-title>{{ item.info }}</v-list-tile-sub-title>
+                  <v-list-tile-sub-title v-show="item.info">{{ item.info }}</v-list-tile-sub-title>
                 </v-list-tile-content>
-                <v-list-tile-action>
+                <v-list-tile-content v-show="item.editInfo">
+                  <v-text-field
+                    :rules="[(v) => v.length <= 100 || 'Max 100 characters']"
+                    :counter="100"
+                    v-model="item.info"
+                    label="Extra info"
+                  ></v-text-field>
+                </v-list-tile-content>
+                <v-list-tile-content>
+                  <v-list-tile-sub-title class="text--primary">{{ item.menuItem.price | formatMoney }}</v-list-tile-sub-title>
+                </v-list-tile-content>
+                <v-list-tile-action @click="toggleEditItemInfoOnOrder(item)">
+                  <v-btn icon ripple>
+                    <v-icon color="grey lighten-1">edit</v-icon>
+                  </v-btn>
+                </v-list-tile-action>
+                <v-list-tile-action @click="removeItemFromOrder(item)">
                   <v-btn icon ripple>
                     <v-icon color="grey lighten-1">delete</v-icon>
                   </v-btn>
@@ -133,7 +163,7 @@
           <v-btn
             block
             color="primary"
-            class="mt-2"
+            class="mt-0"
             :disabled="order.orderItems.length === 0"
           >
             Bestelling plaatsen
@@ -147,6 +177,9 @@
 <style scoped>
   th.column {
     text-align: left;
+  }
+  #quantitySelector {
+    align-items: flex-start;
   }
 </style>
 
@@ -216,6 +249,9 @@ export default {
       }
     },
     getOrder () {
+      // Only if authenticated
+      if (!this.$store.state.autenticated) { return }
+
       this.loadingOrder = true
       this.$axios.get(
         process.env.API +
@@ -234,8 +270,6 @@ export default {
         })
     },
     addSelectionToOrder () {
-      // Set updatedOn
-      this.order.updatedOn = new Date().toISOString()
       // Add selected items to order as order items
       this.selected.forEach(selectedItem => {
         this.order.orderItems.push({
@@ -247,6 +281,24 @@ export default {
       })
       // Reset selection
       this.selected = []
+      // Set updatedOn
+      this.order.updatedOn = new Date().toISOString()
+    },
+    menuItemQuantity (item, quantity) {
+      item.quantity += quantity
+    },
+    toggleEditItemInfoOnOrder (item) {
+      if (item.editInfo) {
+        item.editInfo = false
+      } else {
+        item.editInfo = true
+      }
+    },
+    removeItemFromOrder (item) {
+      var index = this.order.orderItems.indexOf(item)
+      if (index !== -1) this.order.orderItems.splice(index, 1)
+      // Set updatedOn
+      this.order.updatedOn = new Date().toISOString()
     }
   },
   watch: {

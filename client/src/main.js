@@ -53,7 +53,7 @@ Vue.filter('formatWebsite', function (value) {
 Vue.filter('formatMoney', function (value) {
   if (value && typeof value === 'number') {
     if (value === 0) { return '' }
-    return '&euro; ' + value.toFixed(2)
+    return '€ ' + value.toFixed(2)
   }
   return ''
 })

@@ -44,6 +44,7 @@
                 label="E-mail"
                 required
                 :loading="loginFormLoading"
+                @keyup.enter="sendLoginCredentialsEmail"
               >
               </v-text-field>
               <v-btn
