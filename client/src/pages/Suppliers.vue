@@ -1,12 +1,9 @@
 <template>
-  <v-container fluid>
-    <v-layout
-      row
-      class="mb-3"
-    >
-      <v-layout column>
+  <v-container grid-list-md fluid>
+    <v-layout row>
+      <v-flex class="ml-2">
         <div class="title">Leveranciers</div>
-      </v-layout>
+      </v-flex>
     </v-layout>
     <v-layout v-show="loading" row class="mb-3">
       <v-layout
@@ -59,10 +56,10 @@
               Website
             </v-btn>
             <v-btn
-              @click="navigateToSupplier(supplier.slug)"
+              @click="showAddressOfSupplier(supplier)"
               flat
             >
-              Menu
+              Maps
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -109,6 +106,9 @@ export default {
     },
     navigateToSupplier (slug) {
       this.$router.push({name: 'SupplierDetail', params: {slug: slug}})
+    },
+    showAddressOfSupplier (supplier) {
+      //
     }
   },
   name: 'Suppliers'

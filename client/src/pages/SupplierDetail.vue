@@ -1,14 +1,11 @@
 <template>
-  <v-container fluid>
-    <v-layout
-      row
-      class="mb-3"
-    >
-      <v-layout column>
+  <v-container grid-list-lg fluid>
+    <v-layout row>
+      <v-flex>
         <div class="title">{{ supplier.name }}</div>
-      </v-layout>
+      </v-flex>
     </v-layout>
-    <v-layout v-show="loading || loadingOrder" row class="mb-3">
+    <v-layout v-show="loading || loadingOrder" row>
       <v-layout
         column
         align-center
@@ -16,13 +13,12 @@
         <v-progress-circular indeterminate color="primary"></v-progress-circular>
       </v-layout>
     </v-layout>
-    <v-layout row wrap class="mb-3">
+    <v-layout row wrap class="mb-5">
       <v-flex
         xl4
         lg6
         md6
         sm12
-        class="mb-5"
       >
         <div class="subtitle">Menukaart</div>
         <v-text-field
@@ -96,7 +92,6 @@
         lg6
         md6
         sm12
-        class="mb-5"
       >
         <v-card>
           <v-toolbar color="primary" dark>
@@ -109,11 +104,12 @@
           <v-list v-show="order.orderItems.length === 0">
             <v-list-tile>
               <v-list-tile-content>
-                <v-list-tile-title>Waar heb je zin in? &#x1F60B; Voeg items van de menukaart toe.</v-list-tile-title>
+                <v-list-tile-title>Waar heb je zin in? &#x1F60B;</v-list-tile-title>
+                <v-list-tile-sub-title>Voeg items van de menukaart toe.</v-list-tile-sub-title>
               </v-list-tile-content>
             </v-list-tile>
           </v-list>
-          <v-list v-show="order.orderItems.length > 0" two-line>
+          <v-list v-show="order.orderItems.length > 0" two-line cl>
             <template v-for="(item, index) in order.orderItems">
               <v-list-tile
                 :key="item.id"
@@ -128,14 +124,14 @@
                 </v-list-tile-action>
                 <v-list-tile-content>
                   <v-list-tile-title>
-                    <span v-show="item.quantity > 1">{{ item.quantity }} </span>
+                    <span v-if="item.quantity > 1">{{ item.quantity }} </span>
                     <span v-if="item.quantity > 1 && item.menuItem.namePlural">{{ item.menuItem.namePlural }}</span>
                     <span v-else>{{ item.menuItem.name }}</span>
                     </v-list-tile-title>
                   <v-list-tile-sub-title class="text--primary">{{ item.menuItem.category }}</v-list-tile-sub-title>
                   <v-list-tile-sub-title v-show="item.info">{{ item.info }}</v-list-tile-sub-title>
                 </v-list-tile-content>
-                <v-list-tile-content v-show="item.editInfo">
+                <v-list-tile-content v-if="item.editInfo">
                   <v-text-field
                     :rules="[(v) => v.length <= 100 || 'Max 100 characters']"
                     :counter="100"
