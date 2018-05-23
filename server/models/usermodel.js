@@ -155,6 +155,8 @@ module.exports = function(UserModel) {
           };
           Order.create(newOrder, function(err, order) {
             if (err) { return cb(err); }
+            // Convert to JSON
+            order = order.toJSON();
             // Set empty orderItems array
             order.orderItems = [];
             // Return new order

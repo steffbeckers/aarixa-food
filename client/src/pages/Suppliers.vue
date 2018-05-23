@@ -78,8 +78,6 @@
 </style>
 
 <script>
-import axios from 'axios'
-
 export default {
   data () {
     return {
@@ -94,7 +92,7 @@ export default {
   methods: {
     listSuppliers () {
       this.loading = true
-      axios.get(process.env.API + '/suppliers')
+      this.$axios.get(process.env.API + '/suppliers')
         .then(response => {
           this.loading = false
           this.suppliers = response.data
@@ -114,4 +112,3 @@ export default {
   name: 'Suppliers'
 }
 </script>
-

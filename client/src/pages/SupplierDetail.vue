@@ -24,7 +24,7 @@
         <v-text-field
           v-model="search"
           append-icon="search"
-          label="Search"
+          label="Zoeken"
           single-line
           hide-details
           class="mb-2"
@@ -37,7 +37,11 @@
           :pagination.sync="pagination"
           select-all
           item-key="name"
-          class="elevation-1 mb-3"
+          class="mb-3"
+          :loading="loading"
+          rows-per-page-text="Items per pagina:"
+          no-results-text="Geen items gevonden in menukaart."
+          no-data-text="Er zijn nog geen items toegevoegd aan de menukaart."
         >
           <template slot="headers" slot-scope="props">
             <tr>
@@ -109,7 +113,7 @@
               </v-list-tile-content>
             </v-list-tile>
           </v-list>
-          <v-list v-show="order.orderItems.length > 0" two-line cl>
+          <v-list v-show="order.orderItems.length > 0" three-line cl>
             <template v-for="(item, index) in order.orderItems">
               <v-list-tile
                 :key="item.id"
@@ -127,20 +131,24 @@
                     <span v-if="item.quantity > 1">{{ item.quantity }} </span>
                     <span v-if="item.quantity > 1 && item.menuItem.namePlural">{{ item.menuItem.namePlural }}</span>
                     <span v-else>{{ item.menuItem.name }}</span>
-                    </v-list-tile-title>
-                  <v-list-tile-sub-title class="text--primary">{{ item.menuItem.category }}</v-list-tile-sub-title>
-                  <v-list-tile-sub-title v-show="item.info">{{ item.info }}</v-list-tile-sub-title>
-                </v-list-tile-content>
-                <v-list-tile-content v-if="item.editInfo">
-                  <v-text-field
-                    :rules="[(v) => v.length <= 100 || 'Max 100 characters']"
-                    :counter="100"
-                    v-model="item.info"
-                    label="Extra info"
-                  ></v-text-field>
+                  </v-list-tile-title>
+                  <v-list-tile-sub-title class="text--primary" v-if="item.info && !item.editInfo">{{ item.info }}</v-list-tile-sub-title>
+                  <v-list-tile-sub-title class="text--primary" v-if="item.editInfo">
+                    <v-text-field
+                      :rules="[(v) => v.length <= 50 || 'Max 50 characters']"
+                      :counter="50"
+                      v-model="item.info"
+                      label="Extra info"
+                    ></v-text-field>
+                  </v-list-tile-sub-title>
+                  <v-list-tile-sub-title v-if="!item.editInfo">{{ item.menuItem.category }}</v-list-tile-sub-title>                  
                 </v-list-tile-content>
                 <v-list-tile-content>
-                  <v-list-tile-sub-title class="text--primary">{{ item.menuItem.price | formatMoney }}</v-list-tile-sub-title>
+                  <v-list-tile-title v-if="item.quantity === 1">{{ item.menuItem.price | formatMoney }}</v-list-tile-title>                  
+                  <v-list-tile-title v-if="item.quantity > 1">{{ item.menuItem.price * item.quantity | formatMoney }}</v-list-tile-title>
+                  <v-list-tile-sub-title v-if="item.quantity > 1">
+                    {{ item.menuItem.price | formatMoney }}
+                  </v-list-tile-sub-title>
                 </v-list-tile-content>
                 <v-list-tile-action @click="toggleEditItemInfoOnOrder(item)">
                   <v-btn icon ripple>
@@ -153,14 +161,15 @@
                   </v-btn>
                 </v-list-tile-action>
               </v-list-tile>
-              <v-divider v-if="index + 1 < order.orderItems.length" :key="index"></v-divider>
+              <v-divider class="mt-2 mb-2" v-if="index + 1 < order.orderItems.length" :key="index"></v-divider>
             </template>
           </v-list>
           <v-btn
             block
             color="primary"
             class="mt-0"
-            :disabled="order.orderItems.length === 0"
+            :disabled="order.orderItems.length === 0 || editing"
+            @click="placeOrder()"
           >
             Bestelling plaatsen
           </v-btn>
@@ -184,6 +193,7 @@ export default {
   data () {
     return {
       loading: false,
+      editing: false,
       supplier: {},
       loadingOrder: false,
       order: { orderItems: [] },
@@ -208,14 +218,16 @@ export default {
           align: 'left',
           value: 'price'
         }
-      ],
-      now: new Date().toISOString()
+      ]
     }
   },
-  created: function () {
-    setInterval(function () { this.now = new Date().toISOString() }, 1000 * 60)
-  },
   mounted: function () {
+    // If no slug provided, navigate to supplier overview
+    if (!this.$route.params.slug) {
+      this.$router.push({name: 'Suppliers'})
+      return
+    }
+
     this.getSupplier()
     this.getOrder()
   },
@@ -246,7 +258,7 @@ export default {
     },
     getOrder () {
       // Only if authenticated
-      if (!this.$store.state.autenticated) { return }
+      if (!this.$store.state.authenticated) { return }
 
       this.loadingOrder = true
       this.$axios.get(
@@ -268,33 +280,113 @@ export default {
     addSelectionToOrder () {
       // Add selected items to order as order items
       this.selected.forEach(selectedItem => {
-        this.order.orderItems.push({
-          menuItemId: selectedItem.id,
-          menuItem: selectedItem,
-          quantity: 1,
-          info: ''
-        })
+        // API
+        this.$axios.post(
+          process.env.API +
+          '/Orders/' +
+          this.order.id +
+          '/orderItems',
+          {
+            menuItemId: selectedItem.id,
+            quantity: 1,
+            info: ''
+          }
+        )
+          .then(response => {
+            // Add to order items
+            this.order.orderItems.push({
+              menuItem: selectedItem,
+              ...response.data
+            })
+            // Reset selection
+            this.selected = []
+            // Set updatedOn
+            this.order.updatedOn = new Date().toISOString()
+          })
+          .catch(error => {
+            console.error(error)
+          })
       })
-      // Reset selection
-      this.selected = []
-      // Set updatedOn
-      this.order.updatedOn = new Date().toISOString()
     },
     menuItemQuantity (item, quantity) {
+      // Local
       item.quantity += quantity
+      // Set updatedOn
+      this.order.updatedOn = new Date().toISOString()
+
+      // API
+      this.$axios.patch(
+        process.env.API +
+        '/OrderItems/' +
+        item.id,
+        {
+          quantity: item.quantity
+        }
+      )
+        .catch(error => {
+          console.error(error)
+        })
     },
     toggleEditItemInfoOnOrder (item) {
-      if (item.editInfo) {
-        item.editInfo = false
-      } else {
+      if (item.editInfo === undefined) {
         item.editInfo = true
+      } else {
+        item.editInfo = !item.editInfo
       }
+      // Editing
+      this.editing = item.editInfo
+
+      // Set updatedOn
+      this.order.updatedOn = new Date().toISOString()
+
+      // API
+      this.$axios.patch(
+        process.env.API +
+        '/OrderItems/' +
+        item.id,
+        {
+          info: item.info
+        }
+      )
+        .catch(error => {
+          console.error(error)
+        })
     },
     removeItemFromOrder (item) {
+      // Local
       var index = this.order.orderItems.indexOf(item)
       if (index !== -1) this.order.orderItems.splice(index, 1)
       // Set updatedOn
       this.order.updatedOn = new Date().toISOString()
+
+      // API
+      this.$axios.delete(
+        process.env.API +
+        '/OrderItems/' +
+        item.id
+      )
+        .catch(error => {
+          console.error(error)
+        })
+    },
+    placeOrder () {
+      // API
+      this.$axios.patch(
+        process.env.API +
+        '/Orders/' +
+        this.order.id,
+        {
+          state: 'ready',
+          updatedOn: new Date().toISOString()
+        }
+      )
+        .then(response => {
+          // Navigate to order overview
+          this.$router.push({name: 'Root'})
+        })
+        .catch(error => {
+          console.error(error)
+        })
     }
   },
   watch: {
