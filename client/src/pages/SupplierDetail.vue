@@ -73,7 +73,7 @@
                   hide-details
                 ></v-checkbox>
               </td>
-              <td>{{ props.item.name }}</td>
+              <td>{{ props.item.name }}<span v-if="props.item.name === 'Mezzomix'"> &#10084;</span></td>
               <td>{{ props.item.category }}</td>
               <td>{{ props.item.price | formatMoney }}</td>
             </tr>
