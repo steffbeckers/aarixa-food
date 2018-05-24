@@ -1,17 +1,17 @@
 <template>
   <v-container grid-list-lg fluid>
-    <v-layout row>
-      <v-flex>
-        <div class="title">{{ supplier.name }}</div>
-      </v-flex>
-    </v-layout>
-    <v-layout v-show="loading || loadingOrder" row>
+    <v-layout v-show="loading || loadingOrder" row class="mb-3">
       <v-layout
         column
         align-center
       >
         <v-progress-circular indeterminate color="primary"></v-progress-circular>
       </v-layout>
+    </v-layout>
+    <v-layout row>
+      <v-flex>
+        <div class="title">{{ supplier.name }}</div>
+      </v-flex>
     </v-layout>
     <v-layout row wrap class="mb-5">
       <v-flex
@@ -35,7 +35,6 @@
           :items="supplier.menuItems"
           :search="search"
           :pagination.sync="pagination"
-          select-all
           item-key="name"
           class="mb-3"
           :loading="loading"
@@ -81,7 +80,7 @@
           </template>
         </v-data-table>
         <v-btn
-          v-if="this.$store.state.authenticated"
+          v-if="this.$store.state.authenticated && this.order.id"
           block
           color="primary"
           :disabled="selected.length === 0"
@@ -91,7 +90,7 @@
         </v-btn>
       </v-flex>
       <v-flex
-        v-if="this.$store.state.authenticated"
+        v-if="this.$store.state.authenticated && this.order.id"
         xl4
         lg6
         md6
@@ -392,6 +391,7 @@ export default {
   watch: {
     '$route' (to, from) {
       this.getSupplier()
+      this.getOrder()
     }
   },
   name: 'SupplierDetail'

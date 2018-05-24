@@ -35,6 +35,9 @@
     },
     "number": {
       "type": "number"
+    },
+    "timesOrdered": {
+      "type": "number"
     }
   },
   "validations": [],

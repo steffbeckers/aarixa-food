@@ -113,7 +113,7 @@
         <v-btn :to="{ name: 'SupplierDetail', params: { slug: 'orient' }}" flat>Orient</v-btn>
       </v-toolbar-items>
     </v-toolbar>
-    <v-content class="mt-2">
+    <v-content>
       <router-view/>
     </v-content>
     <v-footer 

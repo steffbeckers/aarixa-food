@@ -1,6 +1,5 @@
 [
   {
-    "_id": "5af6f180cf8fa81f812c3e4d",
     "supplierId": "5af4280e94e069765259ec3b",
     "name": "Kinder",
     "category": "Frieten",
@@ -388,6 +387,804 @@
     "supplierId": "5af4280e94e069765259ec3b",
     "name": "Zigeunerstick",
     "category": "Snacks",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Balletjes in stroganoffsaus",
+    "namePlural": "porties balletjes in stroganoffsaus",
+    "category": "Warme Huisbereide Gerechten",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Balletjes in tomatensaus",
+    "namePlural": "Balletjes in tomatensaus",
+    "category": "Warme Huisbereide Gerechten",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Goulash",
+    "namePlural": "Goulash",
+    "category": "Warme Huisbereide Gerechten",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Stoofvlees",
+    "namePlural": "Stoofvlees",
+    "category": "Warme Huisbereide Gerechten",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Videe",
+    "namePlural": "Videe",
+    "category": "Warme Huisbereide Gerechten",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Lasagne",
+    "namePlural": "Lasagne",
+    "category": "Pasta Uit Eigen Keuken",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Macaroni",
+    "namePlural": "Macaroni",
+    "category": "Pasta Uit Eigen Keuken",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Spaghetti",
+    "namePlural": "Spaghetti",
+    "category": "Pasta Uit Eigen Keuken",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Supplement kaas",
+    "namePlural": "Supplement kaas",
+    "category": "Pasta Uit Eigen Keuken",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Amerikaanse (Donker)",
+    "namePlural": "Amerikaanse (Donker)",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Amerikaanse (Licht)",
+    "namePlural": "Amerikaanse (Licht)",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Andalouse",
+    "namePlural": "Andalouse",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bicky (Bruin)",
+    "namePlural": "Bicky (Bruin)",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bicky (Geel)",
+    "namePlural": "Bicky (Geel)",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bicky (Rood)",
+    "namePlural": "Bicky (Rood)",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Cocktailsaus",
+    "namePlural": "Cocktailsaus",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Curry ketchup",
+    "namePlural": "Curry ketchup",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Gele curry",
+    "namePlural": "Gele curry",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Hawaï saus",
+    "namePlural": "Hawaï saus",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Tartaar (Huisbereid)",
+    "namePlural": "Tartaar (Huisbereid)",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Joppiesaus",
+    "namePlural": "Joppiesaus",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Loempiasaus",
+    "namePlural": "Loempiasaus",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Mammoet (Hot)",
+    "namePlural": "Mammoet (Hot)",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Mayonaise",
+    "namePlural": "Mayonaise",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Mezzomix &#10084;",
+    "namePlural": "Mezzomix &#10084;",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Mosterd",
+    "namePlural": "Mosterd",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Pepersaus",
+    "namePlural": "Pepersaus",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Pickles",
+    "namePlural": "Pickles",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Pili-pili",
+    "namePlural": "Pili-pili",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Riche",
+    "namePlural": "Riche",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Samurai",
+    "namePlural": "Samurai",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Speciaal",
+    "namePlural": "Speciaal",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Tomaten ketchup",
+    "namePlural": "Tomaten ketchup",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Toscaanse saus",
+    "namePlural": "Toscaanse saus",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Zoete mayonaise",
+    "namePlural": "Zoete mayonaise",
+    "category": "Sauzen",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Boerensmos (Spek)",
+    "namePlural": "Boerensmos (Spek)",
+    "category": "Koude Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Effi",
+    "namePlural": "Effi",
+    "category": "Koude Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Effi zalm",
+    "namePlural": "Effi zalm",
+    "category": "Koude Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Gerookte zalm",
+    "namePlural": "Gerookte zalm",
+    "category": "Koude Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Harmony",
+    "namePlural": "Harmony",
+    "category": "Koude Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Italiaanse lust",
+    "namePlural": "Italiaanse lust",
+    "category": "Koude Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Kip curry",
+    "namePlural": "Kip curry",
+    "category": "Koude Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Kip hawaï",
+    "namePlural": "Kip hawaï",
+    "category": "Koude Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Kippewit",
+    "namePlural": "Kippewit",
+    "category": "Koude Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Krabsla",
+    "namePlural": "Krabsla",
+    "category": "Koude Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Martino",
+    "namePlural": "Martino",
+    "category": "Koude Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Mozzarella",
+    "namePlural": "Mozzarella",
+    "category": "Koude Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "New Dehli",
+    "namePlural": "New Dehli",
+    "category": "Koude Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Smos",
+    "namePlural": "Smos",
+    "category": "Koude Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Smos kaas",
+    "namePlural": "Smos kaas",
+    "category": "Koude Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Smos hesp",
+    "namePlural": "Smos hesp",
+    "category": "Koude Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Smos royal (Aardappelsla)",
+    "namePlural": "Smos royal (Aardappelsla)",
+    "category": "Koude Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Tonijnsla",
+    "namePlural": "Tonijnsla",
+    "category": "Koude Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Zalmcocktail",
+    "namePlural": "Zalmcocktail",
+    "category": "Koude Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bitterballen",
+    "namePlural": "Bitterballen",
+    "category": "Warme Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Boulet",
+    "namePlural": "Boulet",
+    "category": "Warme Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Braadworst & gebakken ajuin",
+    "namePlural": "Braadworst & gebakken ajuin",
+    "category": "Warme Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Frietboot",
+    "namePlural": "Frietboot",
+    "category": "Warme Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Grizzly",
+    "namePlural": "Grizzly",
+    "category": "Warme Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Hotdog & zuurkool",
+    "namePlural": "Hotdog & zuurkool",
+    "category": "Warme Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Jager (Ardeense saté)",
+    "namePlural": "Jager (Ardeense saté)",
+    "category": "Warme Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Kipcorn",
+    "namePlural": "Kipcorn",
+    "category": "Warme Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Kraker",
+    "namePlural": "Kraker",
+    "category": "Warme Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Mexicano",
+    "namePlural": "Mexicano",
+    "category": "Warme Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Pitta",
+    "namePlural": "Pitta",
+    "category": "Warme Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Saté",
+    "namePlural": "Saté",
+    "category": "Warme Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Sito",
+    "namePlural": "Sito",
+    "category": "Warme Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Spek",
+    "namePlural": "Spek",
+    "category": "Warme Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Stoomboot",
+    "namePlural": "Stoomboot",
+    "category": "Warme Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Viandel",
+    "namePlural": "Viandel",
+    "category": "Warme Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Vis de luxe",
+    "namePlural": "Vis de luxe",
+    "category": "Warme Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Broodje Herk",
+    "namePlural": "Broodje Herk",
+    "category": "Streekburgers",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Wipe Out",
+    "namePlural": "Wipe Out",
+    "category": "Streekburgers",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Normaal (2 platte burgers)",
+    "namePlural": "Normaal (2 platte burgers)",
+    "category": "Mega Burgers",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Cheese",
+    "namePlural": "Cheese",
+    "category": "Mega Burgers",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Corrado (2 Mexicano's)",
+    "namePlural": "Corrado (2 Mexicano's)",
+    "category": "Mega Burgers",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Hawaï",
+    "namePlural": "Hawaï",
+    "category": "Mega Burgers",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bacon burger",
+    "namePlural": "Bacon burger",
+    "category": "Ronde Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Cheeseburger",
+    "namePlural": "Cheeseburger",
+    "category": "Ronde Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Dubbeldekker",
+    "namePlural": "Dubbeldekker",
+    "category": "Ronde Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Dubbele kaaskroketburger",
+    "namePlural": "Dubbele kaaskroketburger",
+    "category": "Ronde Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Fishburger",
+    "namePlural": "Fishburger",
+    "category": "Ronde Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Hawaïaan",
+    "namePlural": "Hawaïaan",
+    "category": "Ronde Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Kip krokant burger",
+    "namePlural": "Kip krokant burger",
+    "category": "Ronde Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Vegetarische burger",
+    "namePlural": "Vegetarische burger",
+    "category": "Ronde Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Zwitser",
+    "namePlural": "Zwitser",
+    "category": "Ronde Broodjes",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bicky burger",
+    "namePlural": "Bicky burger",
+    "category": "Bicky Burgers",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bicky cheese",
+    "namePlural": "Bicky cheese",
+    "category": "Bicky Burgers",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bicky chicken cheese",
+    "namePlural": "Bicky chicken cheese",
+    "category": "Bicky Burgers",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bicky chicken hawaï",
+    "namePlural": "Bicky chicken hawaï",
+    "category": "Bicky Burgers",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bicky chicken hawaï cheese",
+    "namePlural": "Bicky chicken hawaï cheese",
+    "category": "Bicky Burgers",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bicky friet",
+    "namePlural": "Bicky friet",
+    "category": "Bicky Burgers",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bicky hawaï",
+    "namePlural": "Bicky hawaï",
+    "category": "Bicky Burgers",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bicky hawaï cheese",
+    "namePlural": "Bicky hawaï cheese",
+    "category": "Bicky Burgers",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bicky royal",
+    "namePlural": "Bicky royal",
+    "category": "Bicky Burgers",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bicky veggie",
+    "namePlural": "Bicky veggie",
+    "category": "Bicky Burgers",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bicky wrap",
+    "namePlural": "Bicky wrap",
+    "category": "Bicky Burgers",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Aardappelsla",
+    "namePlural": "Aardappelsla",
+    "category": "Koude Schotels",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Préparé",
+    "namePlural": "Préparé",
+    "category": "Koude Schotels",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Krabsla",
+    "namePlural": "Krabsla",
+    "category": "Koude Schotels",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Grijze garnalen",
+    "namePlural": "Grijze garnalen",
+    "category": "Koude Schotels",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Gerookte zalm",
+    "namePlural": "Gerookte zalm",
+    "category": "Koude Schotels",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Gekookte zalm",
+    "namePlural": "Gekookte zalm",
+    "category": "Koude Schotels",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Russisch ei",
+    "namePlural": "Russisch ei",
+    "category": "Koude Schotels",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Haring",
+    "namePlural": "Haring",
+    "category": "Koude Schotels",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Hesp",
+    "namePlural": "Hesp",
+    "category": "Koude Schotels",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Kaas",
+    "namePlural": "Kaas",
+    "category": "Koude Schotels",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Kip hawaï",
+    "namePlural": "Kip hawaï",
+    "category": "Koude Schotels",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Kip filet",
+    "namePlural": "Kip filet",
+    "category": "Koude Schotels",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Snack, kinderfriet, mayo & ketchup, drankje en verrassing",
+    "namePlural": "Snack, kinderfriet, mayo & ketchup, drankje en verrassing",
+    "category": "Kinderbox",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Frisdranken",
+    "namePlural": "Frisdranken",
+    "category": "Dranken",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Bier",
+    "namePlural": "Bier",
+    "category": "Dranken",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Koffie",
+    "namePlural": "Koffie",
+    "category": "Dranken",
+    "price": 0
+  },
+  {
+    "supplierId": "5af4280e94e069765259ec3b",
+    "name": "Wijn",
+    "namePlural": "Wijn",
+    "category": "Dranken",
     "price": 0
   }
 ]

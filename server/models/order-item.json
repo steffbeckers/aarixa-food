@@ -29,6 +29,11 @@
   },
   "validations": [],
   "relations": {
+    "userModel": {
+      "type": "belongsTo",
+      "model": "UserModel",
+      "foreignKey": "userModelId"
+    },
     "order": {
       "type": "belongsTo",
       "model": "Order",
