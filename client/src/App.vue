@@ -33,6 +33,12 @@
           class="mb-4"
         >
           <v-layout column>
+            <v-alert :value="emailSent" type="success">
+              E-mail verzonden naar {{ email }}. Klik op de link in de e-mail om in te loggen.
+            </v-alert>
+            <v-alert :value="emailError" type="error">
+              Er ging even iets mis, probeer het later opnieuw. Of stuur een <a style="color: #fff;" href="mailto:steff@steffbeckers.eu?subject=aariXaFood - Error bij aanmelden&body=Dag Steff, Ik kan me niet aanmelden op aariXaFood. ...">e-mail naar Steff</a>.
+            </v-alert>
             <v-form 
               ref="loginForm"
               v-model="loginFormValid"
@@ -158,6 +164,8 @@ export default {
         v => !!v || 'E-mail is vereist',
         v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail moet correct zijn'
       ],
+      emailSent: false,
+      emailError: false,
       sideMenuItems: [
         {
           icon: 'dashboard',
@@ -187,29 +195,28 @@ export default {
   },
   methods: {
     sendLoginCredentialsEmail () {
+      // Reset messages
+      this.emailSent = false
+      this.emailError = false
+
       if (this.$refs.loginForm.validate()) {
         this.loginFormLoading = true
         axios.post(process.env.API + '/usermodels/login', {email: this.email})
           .then(response => {
             this.loginFormLoading = false
 
-            if (process.env.NODE_ENV === 'development') {
-              this.$router.push({path: '/', query: {credentials: response.data.credentials}})
-              return
+            if (response.data.AUTH_EMAIL_SENT) {
+              this.emailSent = true
             }
 
-            if (response.data.AUTH_EMAIL_SENT) {
-              // Test
-              console.log('E-mail sent')
+            if (process.env.NODE_ENV === 'development') {
+              this.$router.push({path: '/', query: {credentials: response.data.credentials}})
             }
           })
           .catch(error => {
             this.loginFormLoading = false
-
-            if (error.code === 'LOGIN_FAILED') {
-              // Test
-              console.log('Login failed')
-            }
+            this.emailError = true
+            console.error(error)
           })
       }
     },

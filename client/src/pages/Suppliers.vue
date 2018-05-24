@@ -56,7 +56,9 @@
               Website
             </v-btn>
             <v-btn
-              @click="showAddressOfSupplier(supplier)"
+              v-if="supplier.address && supplier.address.googleMapsLink"
+              :href="supplier.address.googleMapsLink"
+              target="_blank"
               flat
             >
               Maps
@@ -104,9 +106,6 @@ export default {
     },
     navigateToSupplier (slug) {
       this.$router.push({name: 'SupplierDetail', params: {slug: slug}})
-    },
-    showAddressOfSupplier (supplier) {
-      //
     }
   },
   name: 'Suppliers'
