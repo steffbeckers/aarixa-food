@@ -8,7 +8,7 @@
         <v-progress-circular indeterminate color="primary"></v-progress-circular>
       </v-layout>
     </v-layout>
-    <v-layout row wrap class="mb-5" v-touch="{bottom: () => { getSupplier(); getOrder() }}">
+    <v-layout row wrap class="mb-5">
       <v-flex xs12>
         <div class="title">{{ supplier.name }}</div>
       </v-flex>
