@@ -1,6 +1,6 @@
 <template>
   <v-container grid-list-lg fluid>
-    <v-layout v-show="loading || loadingOrder" row class="mb-3">
+    <v-layout v-show="loading || loadingOrder" row class="mt-3 mb-3">
       <v-layout
         column
         align-center
@@ -8,16 +8,15 @@
         <v-progress-circular indeterminate color="primary"></v-progress-circular>
       </v-layout>
     </v-layout>
-    <v-layout row>
-      <v-flex>
+    <v-layout row wrap class="mb-5" v-touch="{bottom: () => { getSupplier(); getOrder() }}">
+      <v-flex xs12>
         <div class="title">{{ supplier.name }}</div>
       </v-flex>
-    </v-layout>
-    <v-layout row wrap class="mb-5">
       <v-flex
-        xl4
-        lg6
-        md6
+        xl6
+        lg8
+        v-bind:md6="this.$store.state.authenticated"
+        v-bind:md12="!this.$store.state.authenticated"
         sm12
       >
         <div class="subtitle">Menukaart</div>

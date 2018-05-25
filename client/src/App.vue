@@ -205,6 +205,9 @@ export default {
           .then(response => {
             this.loginFormLoading = false
 
+            console.log(response.data)
+            console.log(response.data.axiosAUTH_EMAIL_SENT)
+
             if (response.data.AUTH_EMAIL_SENT) {
               this.emailSent = true
             }

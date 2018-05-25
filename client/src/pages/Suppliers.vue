@@ -1,6 +1,6 @@
 <template>
   <v-container grid-list-md fluid>
-    <v-layout v-show="loading" row class="mb-3">
+    <v-layout v-show="loading" row class="mt-3 mb-3">
       <v-layout
         column
         align-center
@@ -8,12 +8,10 @@
         <v-progress-circular indeterminate color="primary"></v-progress-circular>
       </v-layout>
     </v-layout>
-    <v-layout row class="mt-2">
-      <v-flex class="ml-2">
+    <v-layout row wrap>
+      <v-flex class="mt-2 ml-2" xs12>
         <div class="title">Leveranciers</div>
       </v-flex>
-    </v-layout>
-    <v-layout row wrap>
       <v-flex
         xl3
         lg4

@@ -1,6 +1,6 @@
 <template>
   <v-container grid-list-lg fluid>
-    <v-layout v-show="loading" row class="mb-3">
+    <v-layout v-show="loading" row class="mt-3 mb-3">
       <v-layout
         column
         align-center
