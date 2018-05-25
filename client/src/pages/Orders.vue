@@ -16,9 +16,8 @@
     <v-layout row wrap>
       <v-flex
         xl3
-        lg4
-        md6
-        sm12
+        lg6
+        md12
         v-for="supplier in suppliersWithOrders" :key="supplier.id"
       >
         <v-card>
