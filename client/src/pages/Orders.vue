@@ -88,19 +88,20 @@
 // import moment from 'moment'
 
 export default {
-  data () {
+  data() {
     return {
       loading: false,
       suppliersWithOrders: []
     }
   },
-  mounted: function () {
+  mounted: function() {
     this.listSuppliersWithOrders()
   },
   methods: {
-    listSuppliersWithOrders () {
+    listSuppliersWithOrders() {
       this.loading = true
-      this.$axios.get(process.env.API + '/suppliers/todaysOrders')
+      this.$axios
+        .get(process.env.API + '/suppliers/todaysOrders')
         .then(response => {
           this.loading = false
           this.suppliersWithOrders = response.data

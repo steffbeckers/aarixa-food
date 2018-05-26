@@ -178,17 +178,17 @@
 </template>
 
 <style scoped>
-  th.column {
-    text-align: left;
-  }
-  #quantitySelector {
-    align-items: flex-start;
-  }
+th.column {
+  text-align: left;
+}
+#quantitySelector {
+  align-items: flex-start;
+}
 </style>
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       loading: false,
       editing: false,
@@ -219,10 +219,10 @@ export default {
       ]
     }
   },
-  mounted: function () {
+  mounted: function() {
     // If no slug provided, navigate to supplier overview
     if (!this.$route.params.slug) {
-      this.$router.push({name: 'Suppliers'})
+      this.$router.push({ name: 'Suppliers' })
       return
     }
 
@@ -230,9 +230,10 @@ export default {
     this.getOrder()
   },
   methods: {
-    getSupplier () {
+    getSupplier() {
       this.loading = true
-      this.$axios.get(process.env.API + '/suppliers/slug/' + this.$route.params.slug)
+      this.$axios
+        .get(process.env.API + '/suppliers/slug/' + this.$route.params.slug)
         .then(response => {
           this.loading = false
           this.supplier = response.data
@@ -242,11 +243,11 @@ export default {
           console.error(error)
         })
     },
-    toggleAll () {
+    toggleAll() {
       if (this.selected.length) this.selected = []
       else this.selected = this.supplier.menuItems.slice()
     },
-    changeSort (column) {
+    changeSort(column) {
       if (this.pagination.sortBy === column) {
         this.pagination.descending = !this.pagination.descending
       } else {
@@ -254,18 +255,22 @@ export default {
         this.pagination.descending = false
       }
     },
-    getOrder () {
+    getOrder() {
       // Only if authenticated
-      if (!this.$store.state.authenticated) { return }
+      if (!this.$store.state.authenticated) {
+        console.log('Test')
+        return
+      }
 
       this.loadingOrder = true
-      this.$axios.get(
-        process.env.API +
-        '/UserModels/' +
-        this.$store.state.user.id +
-        '/getOrCreateOrderForSupplier/' +
-        this.$route.params.slug
-      )
+      this.$axios
+        .get(
+          process.env.API +
+            '/UserModels/' +
+            this.$store.state.user.id +
+            '/getOrCreateOrderForSupplier/' +
+            this.$route.params.slug
+        )
         .then(response => {
           this.loadingOrder = false
           this.order = response.data
@@ -275,21 +280,16 @@ export default {
           console.error(error)
         })
     },
-    addSelectionToOrder () {
+    addSelectionToOrder() {
       // Add selected items to order as order items
       this.selected.forEach(selectedItem => {
         // API
-        this.$axios.post(
-          process.env.API +
-          '/Orders/' +
-          this.order.id +
-          '/orderItems',
-          {
+        this.$axios
+          .post(process.env.API + '/Orders/' + this.order.id + '/orderItems', {
             menuItemId: selectedItem.id,
             quantity: 1,
             info: ''
-          }
-        )
+          })
           .then(response => {
             // Add to order items
             this.order.orderItems.push({
@@ -306,26 +306,22 @@ export default {
           })
       })
     },
-    menuItemQuantity (item, quantity) {
+    menuItemQuantity(item, quantity) {
       // Local
       item.quantity += quantity
       // Set updatedOn
       this.order.updatedOn = new Date().toISOString()
 
       // API
-      this.$axios.patch(
-        process.env.API +
-        '/OrderItems/' +
-        item.id,
-        {
+      this.$axios
+        .patch(process.env.API + '/OrderItems/' + item.id, {
           quantity: item.quantity
-        }
-      )
+        })
         .catch(error => {
           console.error(error)
         })
     },
-    toggleEditItemInfoOnOrder (item) {
+    toggleEditItemInfoOnOrder(item) {
       if (item.editInfo === undefined) {
         item.editInfo = true
       } else {
@@ -338,19 +334,15 @@ export default {
       this.order.updatedOn = new Date().toISOString()
 
       // API
-      this.$axios.patch(
-        process.env.API +
-        '/OrderItems/' +
-        item.id,
-        {
+      this.$axios
+        .patch(process.env.API + '/OrderItems/' + item.id, {
           info: item.info
-        }
-      )
+        })
         .catch(error => {
           console.error(error)
         })
     },
-    removeItemFromOrder (item) {
+    removeItemFromOrder(item) {
       // Local
       var index = this.order.orderItems.indexOf(item)
       if (index !== -1) this.order.orderItems.splice(index, 1)
@@ -358,29 +350,22 @@ export default {
       this.order.updatedOn = new Date().toISOString()
 
       // API
-      this.$axios.delete(
-        process.env.API +
-        '/OrderItems/' +
-        item.id
-      )
+      this.$axios
+        .delete(process.env.API + '/OrderItems/' + item.id)
         .catch(error => {
           console.error(error)
         })
     },
-    placeOrder () {
+    placeOrder() {
       // API
-      this.$axios.patch(
-        process.env.API +
-        '/Orders/' +
-        this.order.id,
-        {
+      this.$axios
+        .patch(process.env.API + '/Orders/' + this.order.id, {
           state: 'ready',
           updatedOn: new Date().toISOString()
-        }
-      )
+        })
         .then(response => {
           // Navigate to order overview
-          this.$router.push({name: 'Root'})
+          this.$router.push({ name: 'Root' })
         })
         .catch(error => {
           console.error(error)
@@ -388,7 +373,7 @@ export default {
     }
   },
   watch: {
-    '$route' (to, from) {
+    $route(to, from) {
       this.getSupplier()
       this.getOrder()
     }

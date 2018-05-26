@@ -127,42 +127,44 @@
 </template>
 
 <style scoped>
-  aside.navigation-drawer img {
-    max-width: 200px;
-  }
+aside.navigation-drawer img {
+  max-width: 200px;
+}
 
-  #buildInfo {
-    color: #ffffff;
-    font-size: 11px;
-    line-height: 11px;
-  }
+#buildInfo {
+  color: #ffffff;
+  font-size: 11px;
+  line-height: 11px;
+}
 
-  #copyright {
-    color: #868e96;
-    margin-left: auto;    
-  }
+#copyright {
+  color: #868e96;
+  margin-left: auto;
+}
 
-  #copyright a {
-    text-decoration: none;
-  }
+#copyright a {
+  text-decoration: none;
+}
 
-  #copyright a:hover {
-    text-decoration: underline;
-  }
+#copyright a:hover {
+  text-decoration: underline;
+}
 </style>
 
 <script>
 import axios from 'axios'
 
 export default {
-  data () {
+  data() {
     return {
       loginFormLoading: false,
       loginFormValid: false,
       email: '@aariXa.be',
       emailRules: [
         v => !!v || 'E-mail is vereist',
-        v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail moet correct zijn'
+        v =>
+          /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
+          'E-mail moet correct zijn'
       ],
       emailSent: false,
       emailError: false,
@@ -190,18 +192,19 @@ export default {
       title: 'aariXaFood'
     }
   },
-  mounted: function () {
+  mounted: function() {
     this.loginWithCredentialsFromEmail()
   },
   methods: {
-    sendLoginCredentialsEmail () {
+    sendLoginCredentialsEmail() {
       // Reset messages
       this.emailSent = false
       this.emailError = false
 
       if (this.$refs.loginForm.validate()) {
         this.loginFormLoading = true
-        axios.post(process.env.API + '/usermodels/login', {email: this.email})
+        axios
+          .post(process.env.API + '/usermodels/login', { email: this.email })
           .then(response => {
             this.loginFormLoading = false
 
@@ -210,7 +213,10 @@ export default {
             }
 
             if (process.env.NODE_ENV === 'development') {
-              this.$router.push({path: '/', query: {credentials: response.data.credentials}})
+              this.$router.push({
+                path: '/',
+                query: { credentials: response.data.credentials }
+              })
             }
           })
           .catch(error => {
@@ -220,29 +226,31 @@ export default {
           })
       }
     },
-    loginWithCredentialsFromEmail () {
+    loginWithCredentialsFromEmail() {
       // Retrieve credentials from route
       var credentials = this.$route.query.credentials
       if (credentials) {
         // Decode credentials
         var credentialsDecoded = atob(credentials)
         // Check if decoded credentials is an object (login response)
-        if (credentialsDecoded.charAt(0) === '{' &&
-          credentialsDecoded.charAt(credentialsDecoded.length - 1) === '}') {
+        if (
+          credentialsDecoded.charAt(0) === '{' &&
+          credentialsDecoded.charAt(credentialsDecoded.length - 1) === '}'
+        ) {
           var credentialsObject = JSON.parse(credentialsDecoded)
           // Authenticate
           this.$store.commit('authenticate', credentialsObject)
           // Remove query param
-          this.$router.push({path: '/'})
+          this.$router.push({ path: '/' })
         }
       }
     },
-    signOut () {
+    signOut() {
       this.$store.commit('signOut')
     }
   },
   computed: {
-    firstLetterOfUser () {
+    firstLetterOfUser() {
       if (this.$store.state.user.username) {
         return this.$store.state.user.username.substr(0, 1)
       }

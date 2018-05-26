@@ -69,30 +69,32 @@
 </template>
 
 <style scoped>
-  .card {
-    margin: 10px;
-  }
-  .card__media, .card__title {
-    cursor: pointer;
-  }
+.card {
+  margin: 10px;
+}
+.card__media,
+.card__title {
+  cursor: pointer;
+}
 </style>
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       loading: false,
       suppliers: [],
       dayOfWeek: new Date().getDay()
     }
   },
-  mounted: function () {
+  mounted: function() {
     this.listSuppliers()
   },
   methods: {
-    listSuppliers () {
+    listSuppliers() {
       this.loading = true
-      this.$axios.get(process.env.API + '/suppliers')
+      this.$axios
+        .get(process.env.API + '/suppliers')
         .then(response => {
           this.loading = false
           this.suppliers = response.data
@@ -102,8 +104,8 @@ export default {
           console.error(error)
         })
     },
-    navigateToSupplier (slug) {
-      this.$router.push({name: 'SupplierDetail', params: {slug: slug}})
+    navigateToSupplier(slug) {
+      this.$router.push({ name: 'SupplierDetail', params: { slug: slug } })
     }
   },
   name: 'Suppliers'

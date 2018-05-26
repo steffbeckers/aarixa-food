@@ -23,24 +23,25 @@ if (token) {
 }
 
 // Global filters
-Vue.filter('formatDate', function (value) {
+Vue.filter('formatDate', function(value) {
   if (value) {
     return moment(String(value)).format('DD/MM/YYYY')
   }
 })
-Vue.filter('formatTime', function (value) {
+Vue.filter('formatTime', function(value) {
   if (value) {
     return moment(String(value)).format('HH:mm')
   }
 })
-Vue.filter('formatDateTime', function (value) {
+Vue.filter('formatDateTime', function(value) {
   if (value) {
     return moment(String(value)).format('DD/MM/YYYY HH:mm')
   }
 })
-Vue.filter('formatWebsite', function (value) {
+Vue.filter('formatWebsite', function(value) {
   if (value) {
-    var websiteUrl = String(value).toLocaleLowerCase()
+    var websiteUrl = String(value)
+      .toLocaleLowerCase()
       .replace('https', '')
       .replace('http', '')
       .replace('://', '')
@@ -50,9 +51,11 @@ Vue.filter('formatWebsite', function (value) {
     return websiteUrl
   }
 })
-Vue.filter('formatMoney', function (value) {
+Vue.filter('formatMoney', function(value) {
   if (value && typeof value === 'number') {
-    if (value === 0) { return '' }
+    if (value === 0) {
+      return ''
+    }
     return '€ ' + value.toFixed(2)
   }
   return ''
