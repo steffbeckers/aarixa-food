@@ -13,8 +13,7 @@
         <div class="title">{{ supplier.name }}</div>
       </v-flex>
       <v-flex
-        xl6
-        lg8
+        v-bind:lg8="this.$store.state.authenticated"
         v-bind:md6="this.$store.state.authenticated"
         v-bind:md12="!this.$store.state.authenticated"
         sm12
@@ -90,8 +89,7 @@
       </v-flex>
       <v-flex
         v-if="this.$store.state.authenticated && this.order.id"
-        xl4
-        lg6
+        lg4
         md6
         sm12
       >
@@ -141,7 +139,7 @@
                   </v-list-tile-sub-title>
                   <v-list-tile-sub-title v-if="!item.editInfo">{{ item.menuItem.category }}</v-list-tile-sub-title>                  
                 </v-list-tile-content>
-                <v-list-tile-content>
+                <v-list-tile-content v-if="!item.editInfo">
                   <v-list-tile-title v-if="item.quantity === 1">{{ item.menuItem.price | formatMoney }}</v-list-tile-title>                  
                   <v-list-tile-title v-if="item.quantity > 1">{{ item.menuItem.price * item.quantity | formatMoney }}</v-list-tile-title>
                   <v-list-tile-sub-title v-if="item.quantity > 1">
