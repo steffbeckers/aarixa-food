@@ -12,7 +12,23 @@ module.exports = function(Supplier) {
   Supplier.bySlug = function(slug, cb) {
     Supplier.findOne({where: {slug: slug}, include: 'menuItems'}, function(err, supplier) {
       if (err) { return cb(err); }
-      cb(null, supplier);
+      var supplierJSON = supplier.toJSON();
+
+      // Add menu categories
+      var menuCategories = [];
+      // Loop over each menu item
+      supplierJSON.menuItems.forEach(item => {
+        // If the item's category in not in te list yet, add it
+        if (menuCategories.indexOf(item.category) === -1) {
+          menuCategories.push(item.category);
+        }
+      });
+      // Order categories ASC
+      menuCategories = _.orderBy(menuCategories);
+      // Add to response
+      supplierJSON.menuCategories = menuCategories;
+
+      cb(null, supplierJSON);
     });
   };
   Supplier.remoteMethod(

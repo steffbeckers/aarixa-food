@@ -13,12 +13,32 @@
         <div class="title">{{ supplier.name }}</div>
       </v-flex>
       <v-flex
-        v-bind:lg8="this.$store.state.authenticated"
-        v-bind:md6="this.$store.state.authenticated"
+        v-bind:md6="$store.state.authenticated"
         v-bind:md12="!this.$store.state.authenticated"
         sm12
       >
         <div class="subtitle">Menukaart</div>
+        <v-layout row wrap>
+          <v-flex>
+            <v-expansion-panel>
+              <v-expansion-panel-content>
+                <div slot="header">Categorieën</div>
+                <v-chip 
+                  v-for="(category, categoryIndex) in supplier.menuCategories"
+                  v-bind:key="categoryIndex"
+                  @click="
+                    selectedCategory != category ? 
+                      selectedCategory = category : 
+                      selectedCategory = ''"
+                  v-bind:outline="selectedCategory != category"
+                  label
+                >
+                  {{ category }}
+                </v-chip>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-flex>
+        </v-layout>
         <v-text-field
           v-model="search"
           append-icon="search"
@@ -31,7 +51,7 @@
           v-model="selected"
           :headers="headers"
           :items="supplier.menuItems"
-          :search="search"
+          :search="search || selectedCategory"
           :pagination.sync="pagination"
           item-key="name"
           class="mb-3"
@@ -89,7 +109,6 @@
       </v-flex>
       <v-flex
         v-if="this.$store.state.authenticated && this.order.id"
-        lg4
         md6
         sm12
       >
@@ -140,9 +159,9 @@
                   <v-list-tile-sub-title v-if="!item.editInfo">{{ item.menuItem.category }}</v-list-tile-sub-title>                  
                 </v-list-tile-content>
                 <v-list-tile-content v-if="!item.editInfo">
-                  <v-list-tile-title v-if="item.quantity === 1">{{ item.menuItem.price | formatMoney }}</v-list-tile-title>                  
-                  <v-list-tile-title v-if="item.quantity > 1">{{ item.menuItem.price * item.quantity | formatMoney }}</v-list-tile-title>
-                  <v-list-tile-sub-title v-if="item.quantity > 1">
+                  <v-list-tile-title class="text-xs-right" v-if="item.quantity === 1">{{ item.menuItem.price | formatMoney }}</v-list-tile-title>                  
+                  <v-list-tile-title class="text-xs-right" v-if="item.quantity > 1">{{ item.menuItem.price * item.quantity | formatMoney }}</v-list-tile-title>
+                  <v-list-tile-sub-title class="text-xs-right" v-if="item.quantity > 1">
                     {{ item.menuItem.price | formatMoney }}
                   </v-list-tile-sub-title>
                 </v-list-tile-content>
@@ -159,6 +178,13 @@
               </v-list-tile>
               <v-divider class="mt-2 mb-2" v-if="index + 1 < order.orderItems.length" :key="index"></v-divider>
             </template>
+          </v-list>
+          <v-list class="pa-0" cl>
+            <v-list-tile v-if="order.price != 0">
+              <v-list-tile-content>
+                <v-list-tile-title class="text-xs-center">Totaal: {{ order.price | formatMoney }}</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
           </v-list>
           <v-btn
             block
@@ -198,6 +224,7 @@ export default {
       },
       selected: [],
       search: '',
+      selectedCategory: '',
       headers: [
         {
           text: 'Naam',
@@ -272,6 +299,8 @@ export default {
         .then(response => {
           this.loadingOrder = false
           this.order = response.data
+          // Recalculate price
+          this.calculateOrderPrice()
         })
         .catch(error => {
           this.loadingOrder = false
@@ -296,6 +325,8 @@ export default {
             })
             // Reset selection
             this.selected = []
+            // Recalculate price
+            this.calculateOrderPrice()
             // Set updatedOn
             this.order.updatedOn = new Date().toISOString()
           })
@@ -309,6 +340,8 @@ export default {
       item.quantity += quantity
       // Set updatedOn
       this.order.updatedOn = new Date().toISOString()
+      // Recalculate price
+      this.calculateOrderPrice()
 
       // API
       this.$axios
@@ -346,6 +379,8 @@ export default {
       if (index !== -1) this.order.orderItems.splice(index, 1)
       // Set updatedOn
       this.order.updatedOn = new Date().toISOString()
+      // Recalculate price
+      this.calculateOrderPrice()
 
       // API
       this.$axios
@@ -354,10 +389,20 @@ export default {
           console.error(error)
         })
     },
+    calculateOrderPrice() {
+      this.order.price = 0
+      this.order.orderItems.forEach((item) => {
+        this.order.price += item.menuItem.price * item.quantity
+      })
+    },
     placeOrder() {
+      // Recalculate price
+      this.calculateOrderPrice()
+
       // API
       this.$axios
         .patch(process.env.API + '/Orders/' + this.order.id, {
+          price: this.order.price,
           state: 'ready',
           updatedOn: new Date().toISOString()
         })

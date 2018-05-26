@@ -5,6 +5,8 @@ var path = require('path');
 var qs = require('querystring');
 var senderAddress = 'steff@steffbeckers.eu';
 
+var moment = require('moment');
+
 module.exports = function(UserModel) {
   // Remove username uniqueness
   delete UserModel.validations.username;
@@ -145,6 +147,8 @@ module.exports = function(UserModel) {
       Order.findOne(filter, function(err, order) {
         if (err) { return cb(err); }
         if (order) {
+          // Update time on order
+          order.updatedOn = moment().toISOString()
           // Return draft order
           cb(null, order);
         } else {

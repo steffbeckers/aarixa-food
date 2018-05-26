@@ -21,6 +21,9 @@
     "state": {
       "type": "string",
       "required": true
+    },
+    "price": {
+      "type": "number"
     }
   },
   "validations": [],
