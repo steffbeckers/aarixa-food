@@ -47,6 +47,15 @@
           hide-details
           class="mb-2"
         ></v-text-field>
+        <v-btn
+          v-if="this.$store.state.authenticated && this.order.id"
+          block
+          color="primary"
+          :disabled="selected.length === 0"
+          @click="addSelectionToOrder"
+        >
+          Selectie toevoegen aan bestelling
+        </v-btn>
         <v-data-table
           v-model="selected"
           :headers="headers"
@@ -54,8 +63,9 @@
           :search="search || selectedCategory"
           :pagination.sync="pagination"
           item-key="name"
-          class="mb-3"
+          class="mb-2"
           :loading="loading"
+          :rows-per-page-items="rowsPerPageItems"
           rows-per-page-text="Items per pagina:"
           no-results-text="Geen items gevonden in menukaart."
           no-data-text="Er zijn nog geen items toegevoegd aan de menukaart."
@@ -128,7 +138,7 @@
               </v-list-tile-content>
             </v-list-tile>
           </v-list>
-          <v-list v-show="order.orderItems.length > 0" three-line cl>
+          <v-list v-show="order.orderItems.length > 0" three-line>
             <template v-for="(item, index) in order.orderItems">
               <v-list-tile
                 :key="item.id"
@@ -219,6 +229,7 @@ export default {
       supplier: {},
       loadingOrder: false,
       order: { orderItems: [] },
+      rowsPerPageItems: [10, 25, 50, { text: 'Alles', value: -1 }],
       pagination: {
         sortBy: 'name'
       },
@@ -391,7 +402,7 @@ export default {
     },
     calculateOrderPrice() {
       this.order.price = 0
-      this.order.orderItems.forEach((item) => {
+      this.order.orderItems.forEach(item => {
         this.order.price += item.menuItem.price * item.quantity
       })
     },

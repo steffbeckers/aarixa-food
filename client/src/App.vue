@@ -228,16 +228,16 @@ export default {
     },
     loginWithCredentialsFromEmail() {
       // Retrieve credentials from route
-      var credentials = this.$route.query.credentials
+      let credentials = this.$route.query.credentials
       if (credentials) {
         // Decode credentials
-        var credentialsDecoded = atob(credentials)
+        let credentialsDecoded = atob(credentials)
         // Check if decoded credentials is an object (login response)
         if (
           credentialsDecoded.charAt(0) === '{' &&
           credentialsDecoded.charAt(credentialsDecoded.length - 1) === '}'
         ) {
-          var credentialsObject = JSON.parse(credentialsDecoded)
+          let credentialsObject = JSON.parse(credentialsDecoded)
           // Authenticate
           this.$store.commit('authenticate', credentialsObject)
           // Remove query param

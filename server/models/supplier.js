@@ -1,6 +1,5 @@
 'use strict';
 
-var moment = require('moment');
 var _ = require('lodash');
 
 module.exports = function(Supplier) {
@@ -43,9 +42,6 @@ module.exports = function(Supplier) {
   // Today's orders per supplier
   // List orders, with filter functionality
   Supplier.todaysOrders = function(cb) {
-    // Only show today's orders
-    var today = moment();
-
     var filter = {
       include: {
         relation: 'orders',
@@ -72,8 +68,8 @@ module.exports = function(Supplier) {
             state: 'ready',
             updatedOn: {
               between: [
-                new Date(today.format('YYYY-MM-DD')),
-                new Date(today.add(1, 'day').format('YYYY-MM-DD')),
+                new Date().setHours(0, 0, 0, 0), // Today
+                new Date().setHours(23, 59, 59, 999), // Just before tomorrow
               ],
             },
           },
