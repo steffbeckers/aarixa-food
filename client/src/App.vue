@@ -104,15 +104,23 @@
       :clipped-left="clipped"
       app
     >
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <img src="@/assets/aariXa_Shield_32x32.png" alt="aariXa Schild" />
-      <v-toolbar-title v-text="title"></v-toolbar-title>
-      <v-spacer></v-spacer>
+      <v-toolbar-side-icon class="mr-1" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-progress-circular v-if="$store.state.loading" :size="50" :indeterminate="true" color="primary">
+        <img class="mt-2" src="@/assets/aariXa_Shield_32x32.png" alt="aariXa Schild" width="32" height="32" />
+      </v-progress-circular>
+      <div v-if="!$store.state.loading" style="position: relative; width: 50px; height: 50px;">
+        <div style="position: absolute; width: 32px; height: 32px; left: 9px; top: 10px;">
+          <img src="@/assets/aariXa_Shield_32x32.png" alt="aariXa Schild" width="32" height="32" />
+        </div>
+      </div>
+      <v-toolbar-title class="ml-1" v-text="title"></v-toolbar-title>
+      <v-spacer></v-spacer>      
       <v-toolbar-items>
         <v-btn :to="{ name: 'SupplierDetail', params: { slug: 'chanry' }}" flat>Chanry</v-btn>
         <v-btn :to="{ name: 'SupplierDetail', params: { slug: 'orient' }}" flat>Orient</v-btn>
       </v-toolbar-items>
     </v-toolbar>
+          
     <v-content>
       <router-view/>
     </v-content>

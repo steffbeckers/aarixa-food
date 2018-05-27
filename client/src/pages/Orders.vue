@@ -1,13 +1,5 @@
 <template>
   <v-container grid-list-lg fluid>
-    <v-layout v-show="loading" row class="mt-3 mb-3">
-      <v-layout
-        column
-        align-center
-      >
-        <v-progress-circular indeterminate color="primary"></v-progress-circular>
-      </v-layout>
-    </v-layout>
     <v-layout row>
       <v-flex>
         <div class="title">Bestellingen</div>
@@ -18,9 +10,10 @@
         xl6
         xs12
         v-for="supplier in suppliersWithOrders" :key="supplier.id"
+        v-if="supplier.orders.length > 0"
       >
         <v-card>
-          <v-card-title primary-title class="pb-0">
+          <v-card-title primary-title class="pb-0" @click="navigateToSupplier(supplier.slug)">
             <div>
               <h3 class="headline mb-1">{{ supplier.name }}</h3>
               <div>
@@ -39,7 +32,7 @@
             </div>
           </v-card-title>
           <v-card-text class="pb-0">
-            <v-list three-line>
+            <v-list three-line class="pt-1 pb-1">
               <template v-for="(order, orderIndex) in supplier.orders">
                 <v-divider v-if="orderIndex === 0" :key="order.id"></v-divider>     
                 <v-list-tile :key="orderIndex">
@@ -64,7 +57,10 @@
                       <v-icon color="grey lighten-1">edit</v-icon>
                     </v-btn>
                   </v-list-tile-action> -->
-                  <v-list-tile-action v-if="$store.state.authenticated && order.userModelId === $store.state.user.id">
+                  <v-list-tile-action 
+                    v-if="$store.state.authenticated && order.userModelId === $store.state.user.id"
+                    @click="deleteOrder = order; deleteOrderDialog = true"
+                  >
                     <v-btn icon ripple>
                       <v-icon color="grey lighten-1">delete</v-icon>
                     </v-btn>
@@ -102,17 +98,34 @@
           </v-card-actions>
         </v-card>
       </v-flex>
+      <v-dialog v-if="deleteOrder.id" v-model="deleteOrderDialog" max-width="250px" persistent>
+        <v-card>
+          <v-card-title>Bestelling verwijderen?</v-card-title>
+          <v-card-actions>
+            <v-btn color="primary" flat @click.stop="deleteOrder = {}; deleteOrderDialog = false">Sluiten</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn color="red" flat @click.stop="deleteOrderOnAPI()">Verwijderen</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-layout>
   </v-container>
 </template>
+
+<style scoped>
+.card__title > div {
+  cursor: pointer;
+}
+</style>
 
 <script>
 export default {
   data() {
     return {
-      loading: false,
       suppliersWithOrders: [],
-      dayOfWeek: new Date().getDay()
+      dayOfWeek: new Date().getDay(),
+      deleteOrder: {},
+      deleteOrderDialog: false
     }
   },
   mounted: function() {
@@ -120,18 +133,21 @@ export default {
   },
   methods: {
     listSuppliersWithOrders() {
-      this.loading = true
+      this.$store.commit('loader', true)
       this.$axios
         .get(process.env.API + '/suppliers/todaysOrders')
         .then(response => {
-          this.loading = false
+          this.$store.commit('loader', false)
           this.suppliersWithOrders = response.data
           console.log(this.suppliersWithOrders)
         })
         .catch(error => {
-          this.loading = false
+          this.$store.commit('loader', false)
           console.error(error)
         })
+    },
+    navigateToSupplier(slug) {
+      this.$router.push({ name: 'SupplierDetail', params: { slug: slug } })
     },
     totalOfAllOrdersPerSupplier(supplier) {
       let total = 0
@@ -139,6 +155,30 @@ export default {
         total += order.price
       })
       return total
+    },
+    deleteOrderOnAPI() {
+      // API
+      this.$axios
+        .delete(process.env.API + '/Orders/' + this.deleteOrder.id)
+        .then(response => {
+          console.log(response.data)
+
+          // Remove from listing
+          let supplierIndex = this.suppliersWithOrders.findIndex(supplier => {
+            return supplier.id === this.deleteOrder.supplierId
+          })
+          let orderIndex = this.suppliersWithOrders[supplierIndex].orders.findIndex(order => {
+            return order.id === this.deleteOrder.id
+          })
+          this.suppliersWithOrders[supplierIndex].orders.splice(orderIndex, 1)
+
+          // Disable dialog
+          this.deleteOrder = {}
+          this.deleteOrderDialog = false
+        })
+        .catch(error => {
+          console.error(error)
+        })
     }
   },
   name: 'Suppliers'

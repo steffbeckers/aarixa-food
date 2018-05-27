@@ -7,6 +7,8 @@ Vue.use(VueCookie)
 
 export default new Vuex.Store({
   state: {
+    loading: false,
+    loadingCounter: 0,
     authenticated: Vue.cookie.get('$aariXaFood$token') !== null,
     token: Vue.cookie.get('$aariXaFood$token'),
     user: JSON.parse(Vue.cookie.get('$aariXaFood$user')),
@@ -19,6 +21,14 @@ export default new Vuex.Store({
         : false
   },
   mutations: {
+    loader(state, bool) {
+      if (bool) {
+        state.loadingCounter++
+      } else {
+        state.loadingCounter--
+      }
+      state.loadingCounter > 0 ? state.loading = true : state.loading = false
+    },
     authenticate(state, credentials) {
       // Set state
       state.authenticated = true

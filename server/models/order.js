@@ -14,22 +14,22 @@ module.exports = function(Order) {
     next();
   });
 
-  // // After save
-  // Order.observe('after save', function afterSave(ctx, next) {
-  //   // Cascade unlink on soft delete
-  //   // If deletedOn is set, unlink MenuItems
-  //   if (ctx.data && ctx.data.deletedOn !== null) {
-  //     var OrderItem = Order.app.models.OrderItem;
-  //     // OrderItem.destroyAll(
-  //     //   {
-  //     //     matchId: ctx.where.and[0].id,
-  //     //   },
-  //     //   function(err, result) {}
-  //     // );
-  //   }
+  // After save
+  Order.observe('after save', function afterSave(ctx, next) {
+    // Cascade unlink on soft delete
+    // If deletedOn is set, unlink MenuItems
+    if (ctx.data && ctx.data.deletedOn !== null) {
+      var OrderItem = Order.app.models.OrderItem;
+      OrderItem.destroyAll(
+        {
+          orderId: ctx.where.and[0].id,
+        },
+        function(err, result) {}
+      );
+    }
 
-  //   next();
-  // });
+    next();
+  });
 
   // List orders, with filter functionality
   Order.list = function(dateTime, orderBy, orderDirection, skip, take, cb) {

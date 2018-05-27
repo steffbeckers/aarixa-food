@@ -1,14 +1,6 @@
 <template>
   <v-container grid-list-lg fluid>
-    <v-layout v-show="loading || loadingOrder" row class="mt-3 mb-3">
-      <v-layout
-        column
-        align-center
-      >
-        <v-progress-circular indeterminate color="primary"></v-progress-circular>
-      </v-layout>
-    </v-layout>
-    <v-layout row wrap class="mb-5">
+    <v-layout row wrap>
       <v-flex xs12>
         <div class="title">{{ supplier.name }}</div>
       </v-flex>
@@ -218,6 +210,9 @@ th.column {
 #quantitySelector {
   align-items: flex-start;
 }
+table.datatable > tbody > tr {
+  cursor: pointer;
+}
 </style>
 
 <script>
@@ -267,15 +262,15 @@ export default {
   },
   methods: {
     getSupplier() {
-      this.loading = true
+      this.$store.commit('loader', true)
       this.$axios
         .get(process.env.API + '/suppliers/slug/' + this.$route.params.slug)
         .then(response => {
-          this.loading = false
+          this.$store.commit('loader', false)
           this.supplier = response.data
         })
         .catch(error => {
-          this.loading = false
+          this.$store.commit('loader', false)
           console.error(error)
         })
     },
@@ -293,12 +288,10 @@ export default {
     },
     getOrder() {
       // Only if authenticated
-      if (!this.$store.state.authenticated) {
-        console.log('Test')
-        return
-      }
+      if (!this.$store.state.authenticated) { return }
 
-      this.loadingOrder = true
+      // API
+      this.$store.commit('loader', true)
       this.$axios
         .get(
           process.env.API +
@@ -308,13 +301,13 @@ export default {
             this.$route.params.slug
         )
         .then(response => {
-          this.loadingOrder = false
+          this.$store.commit('loader', false)
           this.order = response.data
           // Recalculate price
           this.calculateOrderPrice()
         })
         .catch(error => {
-          this.loadingOrder = false
+          this.$store.commit('loader', false)
           console.error(error)
         })
     },
@@ -322,6 +315,7 @@ export default {
       // Add selected items to order as order items
       this.selected.forEach(selectedItem => {
         // API
+        this.$store.commit('loader', true)
         this.$axios
           .post(process.env.API + '/Orders/' + this.order.id + '/orderItems', {
             menuItemId: selectedItem.id,
@@ -329,6 +323,8 @@ export default {
             info: ''
           })
           .then(response => {
+            this.$store.commit('loader', false)
+
             // Add to order items
             this.order.orderItems.push({
               menuItem: selectedItem,
@@ -342,6 +338,7 @@ export default {
             this.order.updatedOn = new Date().toISOString()
           })
           .catch(error => {
+            this.$store.commit('loader', false)
             console.error(error)
           })
       })
@@ -355,11 +352,16 @@ export default {
       this.calculateOrderPrice()
 
       // API
+      this.$store.commit('loader', true)
       this.$axios
         .patch(process.env.API + '/OrderItems/' + item.id, {
           quantity: item.quantity
         })
+        .then(response => {
+          this.$store.commit('loader', false)
+        })
         .catch(error => {
+          this.$store.commit('loader', false)
           console.error(error)
         })
     },
@@ -376,11 +378,16 @@ export default {
       this.order.updatedOn = new Date().toISOString()
 
       // API
+      this.$store.commit('loader', true)
       this.$axios
         .patch(process.env.API + '/OrderItems/' + item.id, {
           info: item.info
         })
+        .then(response => {
+          this.$store.commit('loader', false)
+        })
         .catch(error => {
+          this.$store.commit('loader', false)
           console.error(error)
         })
     },
@@ -394,9 +401,14 @@ export default {
       this.calculateOrderPrice()
 
       // API
+      this.$store.commit('loader', true)
       this.$axios
         .delete(process.env.API + '/OrderItems/' + item.id)
+        .then(response => {
+          this.$store.commit('loader', false)
+        })
         .catch(error => {
+          this.$store.commit('loader', false)
           console.error(error)
         })
     },
