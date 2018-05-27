@@ -1,9 +1,11 @@
 <template>
   <v-container grid-list-lg fluid>
-    <v-layout row wrap>
-      <v-flex xs12>
+    <v-layout row>
+      <v-flex>
         <div class="title">{{ supplier.name }}</div>
       </v-flex>
+    </v-layout>
+    <v-layout row wrap>
       <v-flex
         v-bind:md6="$store.state.authenticated"
         v-bind:md12="!this.$store.state.authenticated"
