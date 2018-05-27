@@ -7,6 +7,13 @@
     </v-layout>
     <v-layout row wrap>
       <v-flex
+        xs12
+        v-if="suppliersWithOrders.length === 0"
+      >
+        <p>Iedereen is gezonder bezig vandaag, er is nog niets besteld.</p>
+        <v-btn class="ml-0" color="primary" flat @click="$router.push('leveranciers')">Leveranciers</v-btn>
+      </v-flex>
+      <v-flex
         xl6
         xs12
         v-for="supplier in suppliersWithOrders" :key="supplier.id"
@@ -139,7 +146,6 @@ export default {
         .then(response => {
           this.$store.commit('loader', false)
           this.suppliersWithOrders = response.data
-          console.log(this.suppliersWithOrders)
         })
         .catch(error => {
           this.$store.commit('loader', false)
@@ -161,8 +167,6 @@ export default {
       this.$axios
         .delete(process.env.API + '/Orders/' + this.deleteOrder.id)
         .then(response => {
-          console.log(response.data)
-
           // Remove from listing
           let supplierIndex = this.suppliersWithOrders.findIndex(supplier => {
             return supplier.id === this.deleteOrder.supplierId
