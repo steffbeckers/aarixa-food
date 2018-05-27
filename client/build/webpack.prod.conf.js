@@ -115,6 +115,14 @@ const webpackConfig = merge(baseWebpackConfig, {
           }
         },
         {
+          // Suppliers images
+          urlPattern: new RegExp('https://aarixafood.steffbeckers.eu/static/img/suppliers/'),
+          handler: 'cacheFirst',
+          options: {
+            cacheName: 'supplierImages'
+          }
+        },
+        {
           // API
           urlPattern: new RegExp('https://aarixafood.steffbeckers.eu/api'),
           handler: 'fastest',
