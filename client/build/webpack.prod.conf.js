@@ -113,6 +113,14 @@ const webpackConfig = merge(baseWebpackConfig, {
           options: {
             cacheName: 'fonts'
           }
+        },
+        {
+          // API
+          urlPattern: new RegExp('https://aarixafood.steffbeckers.eu/api'),
+          handler: 'fastest',
+          options: {
+            cacheName: 'api'
+          }
         }
       ]
     })
