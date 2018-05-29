@@ -157,7 +157,7 @@ main.content {
 }
 
 div.bottom-nav--fixed {
-  margin-bottom: 36px;
+  margin-bottom: 35px;
 }
 
 #buildInfo {

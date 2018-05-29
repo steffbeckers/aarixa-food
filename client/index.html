@@ -29,6 +29,14 @@
     <link rel="<%= chunk.initial?'preload':'prefetch' %>" href="<%= htmlWebpackPlugin.files.publicPath + file %>" as="<%= file.match(/\.css$/)?'style':'script' %>"><% }}} %>
     <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Datatable selection fix -->
+    <style type="text/css">
+      .application .theme--light.table tbody tr[active], 
+      .theme--light .table tbody tr[active] {
+        background: #1976d2!important;
+        color: #ffffff;
+      }
+    </style>
   </head>
   <body>
     <noscript>

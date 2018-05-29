@@ -66,15 +66,6 @@
         >
           <template slot="headers" slot-scope="props">
             <tr>
-              <th>
-                <!-- <v-checkbox
-                  :input-value="props.all"
-                  :indeterminate="props.indeterminate"
-                  primary
-                  hide-details
-                  @click.native="toggleAll"
-                ></v-checkbox> -->
-              </th>
               <th
                 v-for="header in props.headers"
                 :key="header.text"
@@ -88,13 +79,6 @@
           </template>
           <template slot="items" slot-scope="props">
             <tr :active="props.selected" @click="props.selected = !props.selected">
-              <td>
-                <v-checkbox
-                  :input-value="props.selected"
-                  primary
-                  hide-details
-                ></v-checkbox>
-              </td>
               <td>{{ props.item.name }}<span v-if="props.item.name === 'Mezzomix'"> &#10084;</span></td>
               <td>{{ props.item.category }}</td>
               <td>{{ props.item.price | formatMoney }}</td>
@@ -209,11 +193,20 @@
 th.column {
   text-align: left;
 }
+
 #quantitySelector {
   align-items: flex-start;
 }
+
 table.datatable > tbody > tr {
   cursor: pointer;
+}
+
+/* Overridden on index.html to fix datatable selection fix */
+.application .theme--light.table tbody tr[active], 
+.theme--light .table tbody tr[active] {
+  background: #1976d2!important;
+  color: #ffffff;
 }
 </style>
 
