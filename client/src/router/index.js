@@ -8,7 +8,6 @@ import SupplierDetail from '@/pages/SupplierDetail'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
   routes: [
     {
       path: '/leveranciers/:slug',
