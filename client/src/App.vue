@@ -120,10 +120,23 @@
         <v-btn :to="{ name: 'SupplierDetail', params: { slug: 'orient' }}" flat>Orient</v-btn>
       </v-toolbar-items>
     </v-toolbar>
-          
     <v-content>
       <router-view/>
     </v-content>
+    <v-bottom-nav
+      :fixed="fixed" 
+      :value="showBottomNav"
+      :active.sync="showBottomNavActive"
+    >
+      <v-btn :to="{ name: 'Root' }" exact flat color="primary">
+        <span>Bestellingen</span>
+        <v-icon>dashboard</v-icon>
+      </v-btn>
+      <v-btn :to="{ name: 'Suppliers' }" flat color="primary">
+        <span>Leveranciers</span>
+        <v-icon>place</v-icon>
+      </v-btn>
+    </v-bottom-nav>
     <v-footer 
       :fixed="fixed" 
       app
@@ -137,6 +150,14 @@
 <style scoped>
 aside.navigation-drawer img {
   max-width: 200px;
+}
+
+main.content {
+  margin-bottom: 60px;
+}
+
+div.bottom-nav--fixed {
+  margin-bottom: 36px;
 }
 
 #buildInfo {
@@ -185,7 +206,7 @@ export default {
           }
         },
         {
-          icon: 'list',
+          icon: 'place',
           title: 'Leveranciers',
           page: {
             name: 'Suppliers'
@@ -195,6 +216,8 @@ export default {
       buildDateTime: process.env.BUILD_DATETIME,
       clipped: false,
       drawer: !this.$store.state.authenticated,
+      showBottomNav: true,
+      showBottomNavActive: this.$route.name === 'Root' ? 0 : 1,
       miniVariant: false,
       fixed: true,
       title: 'aariXaFood'
@@ -263,6 +286,11 @@ export default {
         return this.$store.state.user.username.substr(0, 1)
       }
       return ''
+    }
+  },
+  watch: {
+    $route(to, from) {
+      this.showBottomNavActive = this.$route.name === 'Root' ? 0 : 1
     }
   },
   name: 'App'
