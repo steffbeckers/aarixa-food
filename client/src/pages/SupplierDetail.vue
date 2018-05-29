@@ -7,95 +7,6 @@
     </v-layout>
     <v-layout row wrap>
       <v-flex
-        v-bind:md6="$store.state.authenticated"
-        v-bind:md12="!this.$store.state.authenticated"
-        sm12
-      >
-        <div class="subtitle">Menukaart</div>
-        <v-layout row wrap>
-          <v-flex>
-            <v-expansion-panel>
-              <v-expansion-panel-content>
-                <div slot="header">Categorieën</div>
-                <v-chip 
-                  v-for="(category, categoryIndex) in supplier.menuCategories"
-                  v-bind:key="categoryIndex"
-                  @click="
-                    selectedCategory != category ? 
-                      selectedCategory = category : 
-                      selectedCategory = ''"
-                  v-bind:outline="selectedCategory != category"
-                  label
-                >
-                  {{ category }}
-                </v-chip>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-          </v-flex>
-        </v-layout>
-        <v-text-field
-          v-model="search"
-          append-icon="search"
-          label="Zoeken"
-          single-line
-          hide-details
-          class="mb-2"
-        ></v-text-field>
-        <v-btn
-          v-if="this.$store.state.authenticated && this.order.id"
-          block
-          color="primary"
-          :disabled="selected.length === 0"
-          @click="addSelectionToOrder"
-        >
-          Selectie toevoegen aan bestelling
-        </v-btn>
-        <v-data-table
-          v-model="selected"
-          :headers="headers"
-          :items="supplier.menuItems"
-          :search="search || selectedCategory"
-          :pagination.sync="pagination"
-          item-key="name"
-          class="mb-2"
-          :loading="loading"
-          :rows-per-page-items="rowsPerPageItems"
-          rows-per-page-text="Items per pagina:"
-          no-results-text="Geen items gevonden in menukaart."
-          no-data-text="Er zijn nog geen items toegevoegd aan de menukaart."
-        >
-          <template slot="headers" slot-scope="props">
-            <tr>
-              <th
-                v-for="header in props.headers"
-                :key="header.text"
-                :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
-                @click="changeSort(header.value)"
-              >
-                {{ header.text }}
-                <v-icon small>arrow_upward</v-icon>                
-              </th>
-            </tr>
-          </template>
-          <template slot="items" slot-scope="props">
-            <tr :active="props.selected" @click="props.selected = !props.selected">
-              <td>{{ props.item.name }}<span v-if="props.item.name === 'Mezzomix'"> &#10084;</span></td>
-              <td>{{ props.item.category }}</td>
-              <td>{{ props.item.price | formatMoney }}</td>
-            </tr>
-          </template>
-        </v-data-table>
-        <v-btn
-          v-if="this.$store.state.authenticated && this.order.id"
-          block
-          color="primary"
-          :disabled="selected.length === 0"
-          @click="addSelectionToOrder"
-        >
-          Selectie toevoegen aan bestelling
-        </v-btn>
-      </v-flex>
-      <v-flex
         v-if="this.$store.state.authenticated && this.order.id"
         md6
         sm12
@@ -184,6 +95,95 @@
             Bestelling plaatsen
           </v-btn>
         </v-card>
+      </v-flex>
+      <v-flex
+        v-bind:md6="$store.state.authenticated"
+        v-bind:md12="!this.$store.state.authenticated"
+        sm12
+      >
+        <div class="subtitle">Menukaart</div>
+        <v-layout row wrap>
+          <v-flex>
+            <v-expansion-panel>
+              <v-expansion-panel-content>
+                <div slot="header">Categorieën</div>
+                <v-chip 
+                  v-for="(category, categoryIndex) in supplier.menuCategories"
+                  v-bind:key="categoryIndex"
+                  @click="
+                    selectedCategory != category ? 
+                      selectedCategory = category : 
+                      selectedCategory = ''"
+                  v-bind:outline="selectedCategory != category"
+                  label
+                >
+                  {{ category }}
+                </v-chip>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-flex>
+        </v-layout>
+        <v-text-field
+          v-model="search"
+          append-icon="search"
+          label="Zoeken"
+          single-line
+          hide-details
+          class="mb-2"
+        ></v-text-field>
+        <v-btn
+          v-if="this.$store.state.authenticated && this.order.id"
+          block
+          color="primary"
+          :disabled="selected.length === 0"
+          @click="addSelectionToOrder"
+        >
+          Selectie toevoegen aan bestelling
+        </v-btn>
+        <v-data-table
+          v-model="selected"
+          :headers="headers"
+          :items="supplier.menuItems"
+          :search="search || selectedCategory"
+          :pagination.sync="pagination"
+          item-key="name"
+          class="mb-2"
+          :loading="loading"
+          :rows-per-page-items="rowsPerPageItems"
+          rows-per-page-text="Items per pagina:"
+          no-results-text="Geen items gevonden in menukaart."
+          no-data-text="Er zijn nog geen items toegevoegd aan de menukaart."
+        >
+          <template slot="headers" slot-scope="props">
+            <tr>
+              <th
+                v-for="header in props.headers"
+                :key="header.text"
+                :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                @click="changeSort(header.value)"
+              >
+                {{ header.text }}
+                <v-icon small>arrow_upward</v-icon>                
+              </th>
+            </tr>
+          </template>
+          <template slot="items" slot-scope="props">
+            <tr :active="props.selected" @click="props.selected = !props.selected">
+              <td>{{ props.item.name }}<span v-if="props.item.name === 'Mezzomix'"> &#10084;</span></td>
+              <td>{{ props.item.category }}</td>
+              <td>{{ props.item.price | formatMoney }}</td>
+            </tr>
+          </template>
+        </v-data-table>
+        <v-btn
+          v-if="this.$store.state.authenticated && this.order.id"
+          block
+          color="primary"
+          :disabled="selected.length === 0"
+          @click="addSelectionToOrder"
+        >
+          Selectie toevoegen aan bestelling
+        </v-btn>
       </v-flex>
     </v-layout>
   </v-container>
