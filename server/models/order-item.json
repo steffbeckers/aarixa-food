@@ -28,6 +28,10 @@
     },
     "priceOverride": {
       "type": "number"
+    },
+    "subItems": {
+      "type": "array",
+      "default": []
     }
   },
   "validations": [],

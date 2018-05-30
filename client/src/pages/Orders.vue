@@ -9,7 +9,7 @@
       <v-layout row wrap>
         <v-flex
           xs12
-          v-if="suppliersWithOrders.length === 0"
+          v-if="suppliersWithOrders.length === 0 || suppliersWithOrders[0].orders.length === 0"
         >
           <p>Iedereen is gezonder bezig vandaag, er is nog niets besteld.</p>
           <v-btn class="ml-0" color="primary" flat @click="$router.push('leveranciers')">Leveranciers</v-btn>
@@ -18,7 +18,7 @@
           xl6
           xs12
           v-for="supplier in suppliersWithOrders" :key="supplier.id"
-          v-if="supplier.orders.length > 0"
+          v-if="supplier.orders.length > 0 && suppliersWithOrders[0].orders.length > 0"
         >
           <v-card>
             <v-card-title primary-title class="pb-0" @click="navigateToSupplier(supplier.slug)">

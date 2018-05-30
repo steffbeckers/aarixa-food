@@ -30,10 +30,8 @@
           </v-list>
           <v-list v-show="order.orderItems.length > 0" three-line>
             <template v-for="(item, index) in order.orderItems">
-              <v-list-tile
-                :key="item.id"
-                :class="item.editInfo ? 'expandedListTile' : ''"
-              >
+              <div :key="index">
+                <v-list-tile :class="item.editInfo ? 'expandedListTile' : ''">
                 <v-list-tile-action v-if="item.quantity < 2" id="quantitySelector">
                   <v-btn @click="menuItemQuantity(item, 1)" icon ripple>
                     <v-icon color="grey lighten-1">add</v-icon>
@@ -55,50 +53,83 @@
                   </v-list-tile-title>
                   <v-list-tile-sub-title class="text--primary" v-if="item.info && !item.editInfo">{{ item.info }}</v-list-tile-sub-title>
                   <v-list-tile-sub-title>{{ item.menuItem.category }}</v-list-tile-sub-title>
-                  <v-list-tile-sub-title class="text--primary" v-if="item.editInfo" @keyup.enter.native="item.editInfo = false">
+                  <v-list-tile-sub-title class="text--primary" v-if="item.editInfo">
                     <v-text-field
                       :rules="[(v) => v.length <= 50 || 'Max 50 characters']"
                       :counter="50"
                       v-model="item.info"
+                      clearable
                       label="Extra info"
                     ></v-text-field>
-                  </v-list-tile-sub-title>
-                  <v-list-tile-sub-title @keyup.enter.native="item.editInfo = false">
                     <v-text-field
                       v-if="item.editInfo"
                       v-model.number="item.priceOverride"
-                      label="Prijs (€)"
+                      label="Prijs"
                       type="number"
                       step="0.1"
                       min="0"
+                      clearable
                       @change="calculateOrderPrice()"
                     ></v-text-field>
                   </v-list-tile-sub-title>
                 </v-list-tile-content>
-                <v-list-tile-content>
+                <v-list-tile-content style="min-width: 65px">
                   <v-list-tile-title class="text-xs-right" v-if="item.quantity === 1">{{ (item.priceOverride || item.menuItem.price) | formatMoney }}</v-list-tile-title>                  
                   <v-list-tile-title class="text-xs-right" v-if="item.quantity > 1">{{ (item.priceOverride || item.menuItem.price) * item.quantity | formatMoney }}</v-list-tile-title>
                   <v-list-tile-sub-title class="text-xs-right" v-if="item.quantity > 1">
                     {{ (item.priceOverride || item.menuItem.price) | formatMoney }}
                   </v-list-tile-sub-title>
                 </v-list-tile-content>
-                <v-list-tile-action v-if="!item.editInfo" @click="toggleEditItemInfoOnOrder(item)">
+                <v-list-tile-action v-if="!item.editInfo" @click="toggleEditItemInfoOnOrder(item); search = ''; selectedCategory = 'Sauzen'">
                   <v-btn icon ripple>
                     <v-icon color="grey lighten-1">edit</v-icon>
                   </v-btn>
                 </v-list-tile-action>
-                <v-list-tile-action v-else @click="toggleEditItemInfoOnOrder(item)">
+                <v-list-tile-action v-else @click="toggleEditItemInfoOnOrder(item); selectedCategory = ''">
                   <v-btn icon ripple>
                     <v-icon color="grey lighten-1">done</v-icon>
                   </v-btn>
                 </v-list-tile-action>
-                <v-list-tile-action @click="removeItemFromOrder(item)">
+                <v-list-tile-action @click="removeItemFromOrder(item); selectedCategory = ''">
                   <v-btn icon ripple>
                     <v-icon color="grey lighten-1">delete</v-icon>
                   </v-btn>
                 </v-list-tile-action>
               </v-list-tile>
-              <v-divider class="mt-2 mb-2" v-if="index + 1 < order.orderItems.length" :key="index"></v-divider>
+              <v-select
+                v-model="item.subItems"
+                v-if="item.editInfo"
+                :label="'Toevoegen aan ' + (item.quantity > 1 ? item.menuItem.namePlural : item.menuItem.name)"
+                chips
+                tags
+                flat
+                solo
+                append-icon=""
+                clearable
+              >
+                <template slot="selection" slot-scope="data">
+                  <v-chip
+                    :selected="data.selected"
+                    close
+                    @input="removeSubItem(item, data.item)"
+                  >
+                    <strong>{{ data.item.name || data.item }}<span v-if="data.item.price > 0"> - {{ data.item.price | formatMoney }}</span></strong>
+                  </v-chip>
+                </template>
+              </v-select>
+              <v-flex class="text-xs-center mx-2">
+                <v-btn
+                  v-if="item.editInfo && selected"
+                  color="primary"
+                  :disabled="selected.length === 0"
+                  @click="addSelectedSubItems(item)"
+                  block
+                >
+                  Selectie toevoegen
+                </v-btn>
+              </v-flex>
+              <v-divider class="mt-2 mb-2" v-if="index + 1 < order.orderItems.length"></v-divider>
+              </div>
             </template>
           </v-list>
           <v-list class="pa-0" cl>
@@ -153,6 +184,7 @@
           label="Zoeken"
           single-line
           hide-details
+          clearable
           class="mb-2"
         ></v-text-field>
         <v-btn
@@ -359,6 +391,7 @@ export default {
             // Add to order items
             this.order.orderItems.push({
               menuItem: selectedItem,
+              subItems: [],
               ...response.data
             })
             // Reset selection
@@ -422,6 +455,25 @@ export default {
           this.$store.commit('loader', false)
           console.error(error)
         })
+    },
+    addSelectedSubItems(item) {
+      // If subItems not exists on item, create empty array
+      if (item.subItems === undefined) { item.subItems = [] }
+      // Merge subItems with selected items
+      item.subItems = [...this.selected, ...item.subItems]
+      // Reset selection
+      this.selected = []
+
+      // Set updatedOn
+      this.order.updatedOn = new Date().toISOString()
+      // Recalculate price
+      this.calculateOrderPrice()
+    },
+    removeSubItem(item, subItem) {
+      // Remove from sub items
+      item.subItems.splice(item.subItems.indexOf(subItem), 1)
+      // Trigger changes
+      item.subItems = [...item.subItems]
     },
     removeItemFromOrder(item) {
       // Local

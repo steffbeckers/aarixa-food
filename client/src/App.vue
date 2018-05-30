@@ -51,6 +51,7 @@
                 required
                 :loading="loginFormLoading"
                 @keyup.enter="sendLoginCredentialsEmail"
+                clearable
               >
               </v-text-field>
               <v-btn
