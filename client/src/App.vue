@@ -223,7 +223,7 @@ export default {
       title: 'aariXaFood'
     }
   },
-  mounted: function() {
+  created: function() {
     this.loginWithCredentialsFromEmail()
   },
   methods: {

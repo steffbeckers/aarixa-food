@@ -25,6 +25,9 @@
     },
     "info": {
       "type": "string"
+    },
+    "priceOverride": {
+      "type": "number"
     }
   },
   "validations": [],

@@ -1,4 +1,5 @@
 <template>
+  <transition name="fade">
   <v-container grid-list-lg fluid>
     <v-layout row>
       <v-flex>
@@ -31,12 +32,18 @@
             <template v-for="(item, index) in order.orderItems">
               <v-list-tile
                 :key="item.id"
+                :class="item.editInfo ? 'expandedListTile' : ''"
               >
-                <v-list-tile-action id="quantitySelector">
+                <v-list-tile-action v-if="item.quantity < 2" id="quantitySelector">
                   <v-btn @click="menuItemQuantity(item, 1)" icon ripple>
                     <v-icon color="grey lighten-1">add</v-icon>
                   </v-btn>
-                  <v-btn v-if="item.quantity > 1" @click="menuItemQuantity(item, -1)" icon ripple>
+                </v-list-tile-action>
+                <v-list-tile-action v-else id="quantitySelector">
+                  <v-btn @click="menuItemQuantity(item, 1)" icon ripple>
+                    <v-icon color="grey lighten-1">add</v-icon>
+                  </v-btn>
+                  <v-btn @click="menuItemQuantity(item, -1)" icon ripple>
                     <v-icon color="grey lighten-1">remove</v-icon>
                   </v-btn>
                 </v-list-tile-action>
@@ -47,7 +54,8 @@
                     <span v-else>{{ item.menuItem.name }}</span>
                   </v-list-tile-title>
                   <v-list-tile-sub-title class="text--primary" v-if="item.info && !item.editInfo">{{ item.info }}</v-list-tile-sub-title>
-                  <v-list-tile-sub-title class="text--primary" v-if="item.editInfo">
+                  <v-list-tile-sub-title>{{ item.menuItem.category }}</v-list-tile-sub-title>
+                  <v-list-tile-sub-title class="text--primary" v-if="item.editInfo" @keyup.enter.native="item.editInfo = false">
                     <v-text-field
                       :rules="[(v) => v.length <= 50 || 'Max 50 characters']"
                       :counter="50"
@@ -55,18 +63,33 @@
                       label="Extra info"
                     ></v-text-field>
                   </v-list-tile-sub-title>
-                  <v-list-tile-sub-title v-if="!item.editInfo">{{ item.menuItem.category }}</v-list-tile-sub-title>                  
-                </v-list-tile-content>
-                <v-list-tile-content v-if="!item.editInfo">
-                  <v-list-tile-title class="text-xs-right" v-if="item.quantity === 1">{{ item.menuItem.price | formatMoney }}</v-list-tile-title>                  
-                  <v-list-tile-title class="text-xs-right" v-if="item.quantity > 1">{{ item.menuItem.price * item.quantity | formatMoney }}</v-list-tile-title>
-                  <v-list-tile-sub-title class="text-xs-right" v-if="item.quantity > 1">
-                    {{ item.menuItem.price | formatMoney }}
+                  <v-list-tile-sub-title @keyup.enter.native="item.editInfo = false">
+                    <v-text-field
+                      v-if="item.editInfo"
+                      v-model.number="item.priceOverride"
+                      label="Prijs (€)"
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      @change="calculateOrderPrice()"
+                    ></v-text-field>
                   </v-list-tile-sub-title>
                 </v-list-tile-content>
-                <v-list-tile-action @click="toggleEditItemInfoOnOrder(item)">
+                <v-list-tile-content>
+                  <v-list-tile-title class="text-xs-right" v-if="item.quantity === 1">{{ (item.priceOverride || item.menuItem.price) | formatMoney }}</v-list-tile-title>                  
+                  <v-list-tile-title class="text-xs-right" v-if="item.quantity > 1">{{ (item.priceOverride || item.menuItem.price) * item.quantity | formatMoney }}</v-list-tile-title>
+                  <v-list-tile-sub-title class="text-xs-right" v-if="item.quantity > 1">
+                    {{ (item.priceOverride || item.menuItem.price) | formatMoney }}
+                  </v-list-tile-sub-title>
+                </v-list-tile-content>
+                <v-list-tile-action v-if="!item.editInfo" @click="toggleEditItemInfoOnOrder(item)">
                   <v-btn icon ripple>
                     <v-icon color="grey lighten-1">edit</v-icon>
+                  </v-btn>
+                </v-list-tile-action>
+                <v-list-tile-action v-else @click="toggleEditItemInfoOnOrder(item)">
+                  <v-btn icon ripple>
+                    <v-icon color="grey lighten-1">done</v-icon>
                   </v-btn>
                 </v-list-tile-action>
                 <v-list-tile-action @click="removeItemFromOrder(item)">
@@ -110,8 +133,8 @@
                 <v-chip 
                   v-for="(category, categoryIndex) in supplier.menuCategories"
                   v-bind:key="categoryIndex"
-                  @click="
-                    selectedCategory != category ? 
+                  @click="search = '';
+                      selectedCategory != category ? 
                       selectedCategory = category : 
                       selectedCategory = ''"
                   v-bind:outline="selectedCategory != category"
@@ -124,6 +147,7 @@
           </v-flex>
         </v-layout>
         <v-text-field
+          @click="selectedCategory = ''"
           v-model="search"
           append-icon="search"
           label="Zoeken"
@@ -187,14 +211,22 @@
       </v-flex>
     </v-layout>
   </v-container>
+  </transition>
 </template>
 
 <style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .3s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
 th.column {
   text-align: left;
 }
 
-#quantitySelector {
+#quantitySelector.list__tile__action--stack {
   align-items: flex-start;
 }
 
@@ -207,6 +239,10 @@ table.datatable > tbody > tr {
 .theme--light .table tbody tr[active] {
   background: #1976d2!important;
   color: #ffffff;
+}
+
+#expandedListTile {
+  height: 176px;
 }
 </style>
 
@@ -245,7 +281,7 @@ export default {
       ]
     }
   },
-  mounted: function() {
+  created: function() {
     // If no slug provided, navigate to supplier overview
     if (!this.$route.params.slug) {
       this.$router.push({ name: 'Suppliers' })
@@ -376,7 +412,8 @@ export default {
       this.$store.commit('loader', true)
       this.$axios
         .patch(process.env.API + '/OrderItems/' + item.id, {
-          info: item.info
+          info: item.info,
+          priceOverride: item.priceOverride
         })
         .then(response => {
           this.$store.commit('loader', false)
@@ -410,7 +447,7 @@ export default {
     calculateOrderPrice() {
       this.order.price = 0
       this.order.orderItems.forEach(item => {
-        this.order.price += item.menuItem.price * item.quantity
+        this.order.price += (item.priceOverride || item.menuItem.price) * item.quantity
       })
     },
     placeOrder() {
