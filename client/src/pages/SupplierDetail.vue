@@ -53,7 +53,7 @@
                   </v-list-tile-title>
                   <v-list-tile-sub-title class="text--primary" v-if="item.info && !item.editInfo">{{ item.info }}</v-list-tile-sub-title>
                   <v-list-tile-sub-title>{{ item.menuItem.category }}</v-list-tile-sub-title>
-                  <v-list-tile-sub-title class="text--primary" v-if="item.editInfo">
+                  <div v-if="item.editInfo">
                     <v-text-field
                       :rules="[(v) => v.length <= 50 || 'Max 50 characters']"
                       :counter="50"
@@ -71,14 +71,14 @@
                       clearable
                       @change="calculateOrderPrice()"
                     ></v-text-field>
-                  </v-list-tile-sub-title>
+                  </div>
                 </v-list-tile-content>
                 <v-list-tile-content style="min-width: 65px">
                   <v-list-tile-title class="text-xs-right" v-if="item.quantity === 1">{{ (item.priceOverride || item.menuItem.price) | formatMoney }}</v-list-tile-title>                  
                   <v-list-tile-title class="text-xs-right" v-if="item.quantity > 1">{{ (item.priceOverride || item.menuItem.price) * item.quantity | formatMoney }}</v-list-tile-title>
-                  <v-list-tile-sub-title class="text-xs-right" v-if="item.quantity > 1">
+                  <v-list-tile-title class="text-xs-right" style="color: rgba(0, 0, 0, 0.5); font-size: 14px" v-if="item.quantity > 1">
                     {{ (item.priceOverride || item.menuItem.price) | formatMoney }}
-                  </v-list-tile-sub-title>
+                  </v-list-tile-title>
                 </v-list-tile-content>
                 <v-list-tile-action v-if="!item.editInfo" @click="toggleEditItemInfoOnOrder(item); search = ''; selectedCategory = 'Sauzen'">
                   <v-btn icon ripple>
@@ -272,15 +272,17 @@ table.datatable > tbody > tr {
 </style>
 
 <script>
+import store from '../store'
+import axios from 'axios'
+
 export default {
   data() {
     return {
-      loading: false,
+      errors: [],
       editing: false,
       supplier: {},
-      loadingOrder: false,
       order: { orderItems: [] },
-      rowsPerPageItems: [10, 25, 50, { text: 'Alles', value: -1 }],
+      rowsPerPageItems: [5, 10, 25, 50, { text: 'Alles', value: -1 }],
       pagination: {
         sortBy: 'name'
       },
@@ -306,29 +308,49 @@ export default {
       ]
     }
   },
+  beforeRouteEnter(to, from, next) {
+    store.commit('loader', true)
+    axios.get(process.env.API + '/suppliers/slug/' + to.params.slug)
+      .then(response => {
+        store.commit('loader', false)
+        next(vm => {
+          vm.setSupplier(null, response.data)
+        })
+      })
+      .catch(error => {
+        store.commit('loader', false)
+        console.error(error)
+        next(vm => vm.setSuppliers(error))
+      })
+  },
+  beforeRouteUpdate(to, from, next) {
+    axios.get(process.env.API + '/suppliers/slug/' + to.params.slug)
+      .then(response => {
+        store.commit('loader', false)
+        this.setSupplier(null, response.data)
+        next()
+      })
+      .catch(error => {
+        store.commit('loader', false)
+        console.error(error)
+        this.setSuppliers(error)
+        next()
+      })
+  },
   created: function() {
     // If no slug provided, navigate to supplier overview
     if (!this.$route.params.slug) {
       this.$router.push({ name: 'Suppliers' })
-      return
     }
-
-    this.getSupplier()
     this.getOrder()
   },
   methods: {
-    getSupplier() {
-      this.$store.commit('loader', true)
-      this.$axios
-        .get(process.env.API + '/suppliers/slug/' + this.$route.params.slug)
-        .then(response => {
-          this.$store.commit('loader', false)
-          this.supplier = response.data
-        })
-        .catch(error => {
-          this.$store.commit('loader', false)
-          console.error(error)
-        })
+    setSupplier(err, supplier = {}) {
+      if (err) {
+        this.errors.unshift(err)
+      } else {
+        this.supplier = supplier
+      }
     },
     toggleAll() {
       if (this.selected.length) this.selected = []
@@ -365,6 +387,7 @@ export default {
         .catch(error => {
           this.$store.commit('loader', false)
           console.error(error)
+          this.errors.unshift(error)
         })
     },
     addSelectionToOrder() {
@@ -517,7 +540,6 @@ export default {
   },
   watch: {
     $route(to, from) {
-      this.getSupplier()
       this.getOrder()
     }
   },

@@ -1,5 +1,5 @@
 <template>
-  <transition name="fade">
+  <transition name="bounce">
   <v-container grid-list-lg fluid>
     <v-layout row>
       <v-flex>
