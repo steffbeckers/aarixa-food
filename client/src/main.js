@@ -22,6 +22,31 @@ if (token) {
   Vue.prototype.$axios.defaults.headers.common['Authorization'] = token
 }
 
+// Route guards
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAdmin)) {
+    if (!store.state.isAdmin) {
+      next({
+        name: 'Root',
+        query: { redirect: to.fullPath }
+      })
+    } else {
+      next()
+    }
+  } else if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!store.state.authenticated) {
+      next({
+        name: 'Root',
+        query: { redirect: to.fullPath }
+      })
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
+})
+
 // Global filters
 Vue.filter('formatDate', function(value) {
   if (value) {

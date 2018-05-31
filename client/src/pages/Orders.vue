@@ -1,5 +1,5 @@
 <template>
-  <transition name="fade">
+  <transition name="bounce">
     <v-container grid-list-lg fluid>
       <v-layout row>
         <v-flex>
@@ -12,7 +12,7 @@
           v-if="suppliersWithOrders.length === 0 || suppliersWithOrders[0].orders.length === 0"
         >
           <p>Iedereen is gezonder bezig vandaag, er is nog niets besteld.</p>
-          <v-btn class="ml-0" color="primary" flat @click="$router.push('leveranciers')">Leveranciers</v-btn>
+          <v-btn class="ml-0" color="primary" flat @click="$router.push('leveranciers')">Maak je keuze</v-btn>
         </v-flex>
         <v-flex
           xl6
@@ -122,44 +122,47 @@
 </template>
 
 <style scoped>
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .3s;
-}
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-}
-
 .card__title > div {
   cursor: pointer;
 }
 </style>
 
 <script>
+import store from '../store'
+import axios from 'axios'
+
 export default {
   data() {
     return {
+      errors: [],
       suppliersWithOrders: [],
       dayOfWeek: new Date().getDay(),
       deleteOrder: {},
       deleteOrderDialog: false
     }
   },
-  created: function() {
-    this.listSuppliersWithOrders()
+  beforeRouteEnter(to, from, next) {
+    store.commit('loader', true)
+    axios.get(process.env.API + '/suppliers/todaysOrders')
+      .then(response => {
+        store.commit('loader', false)
+        next(vm => {
+          vm.setSuppliers(null, response.data)
+        })
+      })
+      .catch(error => {
+        store.commit('loader', false)
+        console.error(error)
+        next(vm => vm.setSuppliers(error))
+      })
   },
   methods: {
-    listSuppliersWithOrders() {
-      this.$store.commit('loader', true)
-      this.$axios
-        .get(process.env.API + '/suppliers/todaysOrders')
-        .then(response => {
-          this.$store.commit('loader', false)
-          this.suppliersWithOrders = response.data
-        })
-        .catch(error => {
-          this.$store.commit('loader', false)
-          console.error(error)
-        })
+    setSuppliers(err, suppliers = []) {
+      if (err) {
+        this.errors.unshift(err)
+      } else {
+        this.suppliersWithOrders = suppliers
+      }
     },
     navigateToSupplier(slug) {
       this.$router.push({ name: 'SupplierDetail', params: { slug: slug } })

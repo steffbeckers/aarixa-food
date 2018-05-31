@@ -1,5 +1,5 @@
 <template>
-  <transition name="fade">
+  <transition name="bounce">
     <v-container grid-list-lg fluid>
       <v-layout row>
         <v-flex>
@@ -65,12 +65,6 @@
 </template>
 
 <style scoped>
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .3s;
-}
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-}
 .card__media,
 .card__title {
   cursor: pointer;
@@ -78,29 +72,39 @@
 </style>
 
 <script>
+import store from '../store'
+import axios from 'axios'
+
 export default {
   data() {
     return {
+      errors: [],
       suppliers: [],
       dayOfWeek: new Date().getDay()
     }
   },
-  created: function() {
-    this.listSuppliers()
+  beforeRouteEnter(to, from, next) {
+    store.commit('loader', true)
+    axios.get(process.env.API + '/suppliers')
+      .then(response => {
+        store.commit('loader', false)
+        next(vm => {
+          vm.setSuppliers(null, response.data)
+        })
+      })
+      .catch(error => {
+        store.commit('loader', false)
+        console.error(error)
+        next(vm => vm.setSuppliers(error))
+      })
   },
   methods: {
-    listSuppliers() {
-      this.$store.commit('loader', true)
-      this.$axios
-        .get(process.env.API + '/suppliers')
-        .then(response => {
-          this.$store.commit('loader', false)
-          this.suppliers = response.data
-        })
-        .catch(error => {
-          this.$store.commit('loader', false)
-          console.error(error)
-        })
+    setSuppliers(err, suppliers = []) {
+      if (err) {
+        this.errors.unshift(err)
+      } else {
+        this.suppliers = suppliers
+      }
     },
     navigateToSupplier(slug) {
       this.$router.push({ name: 'SupplierDetail', params: { slug: slug } })

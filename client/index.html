@@ -29,15 +29,42 @@
     <link rel="<%= chunk.initial?'preload':'prefetch' %>" href="<%= htmlWebpackPlugin.files.publicPath + file %>" as="<%= file.match(/\.css$/)?'style':'script' %>"><% }}} %>
     <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Datatable selection fix -->
+
+    <!-- General styles -->
     <style type="text/css">
+      /* Datatables override */
       .application .theme--light.table tbody tr[active], 
       .theme--light .table tbody tr[active] {
         background: #1976d2!important;
         color: #ffffff;
       }
       .expandedListTile > div.list__tile {
-        min-height: 200px;
+        min-height: 250px;
+      }
+
+      /* Animations */
+      /* Fade */
+      .fade-enter-active, .fade-leave-active {
+        transition: opacity .3s;
+      }
+      .fade-enter, .fade-leave-to {
+        opacity: 0;
+      }
+
+      /* Bounce */
+      .bounce-enter-active {
+        animation: bounce-in .2s;
+      }
+      .bounce-leave-active {
+        animation: bounce-in .2s reverse;
+      }
+      @keyframes bounce-in {
+        0% {
+          transform: scale(0);
+        }
+        100% {
+          transform: scale(1);
+        }
       }
     </style>
   </head>

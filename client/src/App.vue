@@ -95,10 +95,23 @@
           <v-list-tile-action>
             <v-icon v-html="item.icon"></v-icon>
           </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title v-text="item.title"></v-list-tile-title>
-          </v-list-tile-content>
+          <v-list-tile-title v-text="item.title"></v-list-tile-title>
         </v-list-tile>
+      </v-list>
+      <v-list v-if="this.$store.state.isAdmin">
+        <v-list-group
+          prepend-icon="account_circle"
+        >
+          <v-list-tile slot="activator">
+            <v-list-tile-title>Administratie</v-list-tile-title>
+          </v-list-tile>
+          <v-list-tile :to="{ name: 'AdminUserModels' }">
+            <v-list-tile-action>
+              <v-icon>people</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-title>aariXianen</v-list-tile-title>
+          </v-list-tile>
+        </v-list-group>
       </v-list>
     </v-navigation-drawer>
     <v-toolbar 

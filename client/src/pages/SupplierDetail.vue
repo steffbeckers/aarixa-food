@@ -1,5 +1,5 @@
 <template>
-  <transition name="fade">
+  <transition name="bounce">
   <v-container grid-list-lg fluid>
     <v-layout row>
       <v-flex>
@@ -85,12 +85,12 @@
                     <v-icon color="grey lighten-1">edit</v-icon>
                   </v-btn>
                 </v-list-tile-action>
-                <v-list-tile-action v-else @click="toggleEditItemInfoOnOrder(item); selectedCategory = ''">
+                <v-list-tile-action v-else @click="toggleEditItemInfoOnOrder(item); selectedCategory = ''" class="mr-2">
                   <v-btn icon ripple>
                     <v-icon color="grey lighten-1">done</v-icon>
                   </v-btn>
                 </v-list-tile-action>
-                <v-list-tile-action @click="removeItemFromOrder(item); selectedCategory = ''">
+                <v-list-tile-action @click="removeItemFromOrder(item); selectedCategory = ''" v-if="!item.editInfo">
                   <v-btn icon ripple>
                     <v-icon color="grey lighten-1">delete</v-icon>
                   </v-btn>
@@ -247,13 +247,6 @@
 </template>
 
 <style scoped>
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .3s;
-}
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-}
-
 th.column {
   text-align: left;
 }
