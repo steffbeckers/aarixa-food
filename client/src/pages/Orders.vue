@@ -1,6 +1,13 @@
 <template>
   <transition name="bounce">
     <v-container grid-list-lg fluid>
+      <v-layout v-if="errors.length > 0" row>
+        <v-flex>
+          <v-alert :value="true" v-for="(error, index) in errors" :key="index" type="error">
+            {{ error.message }}
+          </v-alert>
+        </v-flex>
+      </v-layout>
       <v-layout row>
         <v-flex>
           <div class="title">Bestellingen</div>
@@ -106,7 +113,7 @@
             </v-card-actions>
           </v-card>
         </v-flex>
-        <v-dialog v-if="deleteOrder.id" v-model="deleteOrderDialog" max-width="250px" persistent>
+        <v-dialog v-if="deleteOrder.id" v-model="deleteOrderDialog" max-width="250px">
           <v-card>
             <v-card-title>Bestelling verwijderen?</v-card-title>
             <v-card-actions>
@@ -143,16 +150,12 @@ export default {
   },
   methods: {
     listSuppliersWithOrders() {
-      this.$store.commit('loader', true)
       this.$axios
         .get(process.env.API + '/suppliers/todaysOrders')
         .then(response => {
-          this.$store.commit('loader', false)
           this.suppliersWithOrders = response.data
         })
         .catch(error => {
-          this.$store.commit('loader', false)
-          console.error(error)
           this.errors.unshift(error)
         })
     },
@@ -167,7 +170,6 @@ export default {
       return total
     },
     deleteOrderOnAPI() {
-      // API
       this.$axios
         .delete(process.env.API + '/orders/' + this.deleteOrder.id)
         .then(response => {
@@ -185,7 +187,6 @@ export default {
           this.deleteOrderDialog = false
         })
         .catch(error => {
-          console.error(error)
           this.errors.unshift(error)
         })
     }

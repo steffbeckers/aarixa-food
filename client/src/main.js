@@ -22,6 +22,54 @@ if (token) {
   Vue.prototype.$axios.defaults.headers.common['Authorization'] = token
 }
 
+// Global request interceptor
+Vue.prototype.$axios.interceptors.request.use(
+  function(config) {
+    // Loader
+    store.commit('loader', true)
+
+    return config
+  },
+  function(error) {
+    // Loader
+    store.commit('loader', false)
+
+    return Promise.reject(error)
+  }
+)
+
+// Global response interceptor
+Vue.prototype.$axios.interceptors.response.use(
+  function(response) {
+    // Loader
+    store.commit('loader', false)
+
+    // Logging
+    if (process.env.NODE_ENV === 'development') {
+      console.log(response.request.responseURL)
+      console.log(response.status, JSON.parse(JSON.stringify(response.data)))
+    }
+
+    return response
+  },
+  function(error) {
+    // Loader
+    store.commit('loader', false)
+
+    // Logging
+    console.log(error.request.responseURL)
+    console.log(error.response.status, JSON.parse(JSON.stringify(error.response.data)))
+
+    // Log out on unauthorized
+    if (error.response.status === 401) {
+      store.commit('signOut')
+      store.commit('drawer', true)
+    }
+
+    return Promise.reject(error.response.data.error)
+  }
+)
+
 // Route guards
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAdmin)) {

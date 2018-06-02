@@ -9,6 +9,7 @@ export default new Vuex.Store({
   state: {
     loading: false,
     loadingCounter: 0,
+    drawer: false,
     authenticated: Vue.cookie.get('$aariXaFood$token') !== null,
     token: Vue.cookie.get('$aariXaFood$token'),
     user: JSON.parse(Vue.cookie.get('$aariXaFood$user')),
@@ -28,6 +29,9 @@ export default new Vuex.Store({
         state.loadingCounter--
       }
       state.loadingCounter > 0 ? state.loading = true : state.loading = false
+    },
+    drawer(state, bool) {
+      state.drawer = bool
     },
     authenticate(state, credentials) {
       // Set state

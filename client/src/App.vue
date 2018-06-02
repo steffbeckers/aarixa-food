@@ -4,7 +4,7 @@
       persistent
       :mini-variant="miniVariant"
       :clipped="clipped"
-      v-model="drawer"
+      v-model="$store.state.drawer"
       enable-resize-watcher
       fixed
       app
@@ -49,7 +49,7 @@
                 :rules="emailRules"
                 label="E-mail"
                 required
-                :loading="loginFormLoading"
+                :loading="this.$store.state.loading"
                 @keyup.enter="sendLoginCredentialsEmail"
                 clearable
               >
@@ -119,7 +119,7 @@
       app
       color="primary white--text"
     >
-      <v-toolbar-side-icon class="white--text mr-1" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-toolbar-side-icon class="white--text mr-1" @click.stop="$store.commit('drawer', !$store.state.drawer)"></v-toolbar-side-icon>
       <v-progress-circular v-if="$store.state.loading" :size="50" :indeterminate="true" color="white">
         <img class="mt-2" src="@/assets/aariXa_Shield_32x32.png" alt="aariXa Schild" width="32" height="32" />
       </v-progress-circular>
@@ -143,6 +143,7 @@
       :value="showBottomNav"
       :active.sync="showBottomNavActive"
       class="elevation-0"
+      style="background-color: rgba(255, 255, 255, 0.75)"
     >
       <v-btn :to="{ name: 'Root' }" exact flat color="primary">
         <span>Bestellingen</span>
@@ -173,7 +174,7 @@ main.content {
 }
 
 div.bottom-nav--fixed {
-  margin-bottom: 35px;
+  margin-bottom: 36px;
 }
 
 #buildInfo {
@@ -200,9 +201,9 @@ div.bottom-nav--fixed {
 export default {
   data() {
     return {
-      loginFormLoading: false,
       loginFormValid: false,
       email: '@aariXa.be',
+      emailDefault: '@aariXa.be',
       emailRules: [
         v => !!v || 'E-mail is vereist',
         v =>
@@ -228,8 +229,7 @@ export default {
         }
       ],
       buildDateTime: process.env.BUILD_DATETIME,
-      clipped: true,
-      drawer: !this.$store.state.authenticated,
+      clipped: false,
       showBottomNav: true,
       showBottomNavActive: this.$route.name === 'Root' ? 0 : 1,
       miniVariant: false,
@@ -239,6 +239,8 @@ export default {
   },
   mounted: function() {
     this.loginWithCredentialsFromEmail()
+    // Close drawer if already authenticated, open if not
+    this.$store.commit('drawer', !this.$store.state.authenticated)
   },
   methods: {
     sendLoginCredentialsEmail() {
@@ -247,27 +249,27 @@ export default {
       this.emailError = false
 
       if (this.$refs.loginForm.validate()) {
-        this.loginFormLoading = true
         this.$axios
           .post(process.env.API + '/usermodels/login', { email: this.email })
           .then(response => {
-            this.loginFormLoading = false
-
+            // Show message
             if (response.data.code === 'AUTH_EMAIL_SENT') {
               this.emailSent = true
             }
 
+            // Login automatically in development
             if (process.env.NODE_ENV === 'development') {
               this.$router.push({
                 path: '/',
-                query: { credentials: response.data.credentials }
+                query: {
+                  credentials: response.data.credentials,
+                  redirect: this.$route.fullPath
+                }
               })
             }
           })
-          .catch(error => {
-            this.loginFormLoading = false
+          .catch(() => {
             this.emailError = true
-            console.error(error)
           })
       }
     },
@@ -285,13 +287,19 @@ export default {
           let credentialsObject = JSON.parse(credentialsDecoded)
           // Authenticate
           this.$store.commit('authenticate', credentialsObject)
-          // Remove query param
-          this.$router.push({ path: '/' })
+          // Redirect
+          this.$router.push({ path: this.$route.query.redirect })
         }
       }
     },
     signOut() {
-      this.$store.commit('signOut')
+      this.$axios
+        .post(process.env.API + '/usermodels/logout')
+        .then(response => {
+          this.$store.commit('signOut')
+          // Reset login email
+          this.email = this.emailDefault
+        })
     }
   },
   computed: {
@@ -304,7 +312,10 @@ export default {
   },
   watch: {
     $route(to, from) {
+      // Check which bottom nav to highlight
       this.showBottomNavActive = this.$route.name === 'Root' ? 0 : 1
+      // Try to login on change
+      this.loginWithCredentialsFromEmail()
     }
   },
   name: 'App'

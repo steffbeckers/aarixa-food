@@ -1,6 +1,13 @@
 <template>
   <transition name="bounce">
   <v-container grid-list-lg fluid>
+    <v-layout v-if="errors.length > 0" row>
+      <v-flex>
+        <v-alert :value="true" v-for="(error, index) in errors" :key="index" type="error">
+          {{ error.message }}
+        </v-alert>
+      </v-flex>
+    </v-layout>
     <v-layout row>
       <v-flex>
         <div class="title">{{ supplier.name }}</div>
@@ -124,6 +131,7 @@
                   :disabled="selected.length === 0"
                   @click="addSelectedSubItems(item)"
                   block
+                  class="elevation-0"
                 >
                   Selectie toevoegen
                 </v-btn>
@@ -142,7 +150,7 @@
           <v-btn
             block
             color="primary"
-            class="mt-0"
+            class="mt-0 elevation-0"
             :disabled="order.orderItems.length === 0 || editing"
             @click="placeOrder()"
           >
@@ -185,7 +193,7 @@
           single-line
           hide-details
           clearable
-          class="mb-2 menuSearch"
+          class="mb-2 pt-0 menuSearch"
         ></v-text-field>
         <v-btn
           v-if="this.$store.state.authenticated && this.order.id"
@@ -193,6 +201,7 @@
           color="primary"
           :disabled="selected.length === 0"
           @click="addSelectionToOrder"
+          class="elevation-0"
         >
           Selectie toevoegen aan bestelling
         </v-btn>
@@ -224,11 +233,14 @@
             </tr>
           </template>
           <template slot="items" slot-scope="props">
-            <tr :active="props.selected" @click="props.selected = !props.selected">
+            <tr :active="props.selected" @click="$store.state.authenticated ? props.selected = !props.selected : false">
               <td>{{ props.item.name }}<span v-if="props.item.name === 'Mezzomix'"> &#10084;</span></td>
               <td>{{ props.item.category }}</td>
               <td>{{ props.item.price | formatMoney }}</td>
             </tr>
+          </template>
+          <template slot="pageText" slot-scope="{ pageStart, pageStop, itemsLength }">
+            {{ pageStart }}-{{ pageStop }} van {{ itemsLength }}
           </template>
         </v-data-table>
         <v-btn
@@ -237,6 +249,7 @@
           color="primary"
           :disabled="selected.length === 0"
           @click="addSelectionToOrder"
+          class="elevation-0"
         >
           Selectie toevoegen aan bestelling
         </v-btn>
@@ -268,10 +281,6 @@ table.datatable > tbody > tr {
 
 #expandedListTile {
   height: 176px;
-}
-
-.menuSearch {
-  padding: 0px;
 }
 </style>
 
@@ -320,16 +329,12 @@ export default {
   },
   methods: {
     getSupplier() {
-      this.$store.commit('loader', true)
       this.$axios
         .get(process.env.API + '/suppliers/slug/' + this.$route.params.slug)
         .then(response => {
-          this.$store.commit('loader', false)
           this.supplier = response.data
         })
         .catch(error => {
-          this.$store.commit('loader', false)
-          console.error(error)
           this.errors.unshift(error)
         })
     },
@@ -349,8 +354,6 @@ export default {
       // Only if authenticated
       if (!this.$store.state.authenticated) { return }
 
-      // API
-      this.$store.commit('loader', true)
       this.$axios
         .get(
           process.env.API +
@@ -360,22 +363,17 @@ export default {
             this.$route.params.slug
         )
         .then(response => {
-          this.$store.commit('loader', false)
           this.order = response.data
           // Recalculate price
           this.calculateOrderPrice()
         })
         .catch(error => {
-          this.$store.commit('loader', false)
-          console.error(error)
           this.errors.unshift(error)
         })
     },
     addSelectionToOrder() {
       // Add selected items to order as order items
       this.selected.forEach(selectedItem => {
-        // API
-        this.$store.commit('loader', true)
         this.$axios
           .post(process.env.API + '/Orders/' + this.order.id + '/orderItems', {
             menuItemId: selectedItem.id,
@@ -383,8 +381,6 @@ export default {
             info: ''
           })
           .then(response => {
-            this.$store.commit('loader', false)
-
             // Add to order items
             this.order.orderItems.push({
               menuItem: selectedItem,
@@ -399,8 +395,7 @@ export default {
             this.order.updatedOn = new Date().toISOString()
           })
           .catch(error => {
-            this.$store.commit('loader', false)
-            console.error(error)
+            this.errors.unshift(error)
           })
       })
     },
@@ -413,17 +408,12 @@ export default {
       this.calculateOrderPrice()
 
       // API
-      this.$store.commit('loader', true)
       this.$axios
         .patch(process.env.API + '/OrderItems/' + item.id, {
           quantity: item.quantity
         })
-        .then(response => {
-          this.$store.commit('loader', false)
-        })
         .catch(error => {
-          this.$store.commit('loader', false)
-          console.error(error)
+          this.errors.unshift(error)
         })
     },
     toggleEditItemInfoOnOrder(item) {
@@ -439,19 +429,14 @@ export default {
       this.order.updatedOn = new Date().toISOString()
 
       // API
-      this.$store.commit('loader', true)
       this.$axios
         .patch(process.env.API + '/OrderItems/' + item.id, {
           info: item.info,
           priceOverride: item.priceOverride,
           subItems: item.subItems
         })
-        .then(response => {
-          this.$store.commit('loader', false)
-        })
         .catch(error => {
-          this.$store.commit('loader', false)
-          console.error(error)
+          this.errors.unshift(error)
         })
     },
     addSelectedSubItems(item) {
@@ -483,15 +468,10 @@ export default {
       this.calculateOrderPrice()
 
       // API
-      this.$store.commit('loader', true)
       this.$axios
         .delete(process.env.API + '/OrderItems/' + item.id)
-        .then(response => {
-          this.$store.commit('loader', false)
-        })
         .catch(error => {
-          this.$store.commit('loader', false)
-          console.error(error)
+          this.errors.unshift(error)
         })
     },
     calculateOrderPrice() {
@@ -516,12 +496,17 @@ export default {
           this.$router.push({ name: 'Root' })
         })
         .catch(error => {
-          console.error(error)
+          this.errors.unshift(error)
         })
     }
   },
   watch: {
     $route(to, from) {
+      // Reset
+      this.errors = []
+      this.editing = false
+
+      // Retrieve
       this.getSupplier()
       this.getOrder()
     }

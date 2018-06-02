@@ -11,10 +11,25 @@ module.exports = function(UserModel) {
   // Remove username uniqueness
   delete UserModel.validations.username;
 
+  // After save
+  UserModel.observe('after save', function afterSave(ctx, next) {
+    // Cascade unlink on soft delete
+    // If deletedOn is set, delete Orders
+    if (ctx.data && ctx.data.deletedOn !== null) {
+      var Order = UserModel.app.models.Order;
+      Order.destroyAll(
+        {
+          userModelId: ctx.where.and[0].id,
+        },
+        function(err, result) {}
+      );
+    }
+
+    next();
+  });
+
   // Create logic
   UserModel.beforeRemote('create', function(ctx, userInstance, next) {
-    console.log('> UserModel.afterRemote.create');
-
     // Lower case email address
     ctx.req.body.email = ctx.req.body.email.toLowerCase();
     // aarixa to aariXa
@@ -41,8 +56,6 @@ module.exports = function(UserModel) {
 
   // Login logic
   UserModel.beforeRemote('login', function(ctx, userInstance, next) {
-    console.log('> UserModel.afterRemote.login');
-
     // Lower case email address
     ctx.req.body.email = ctx.req.body.email.toLowerCase();
     // aarixa to aariXa
@@ -56,8 +69,6 @@ module.exports = function(UserModel) {
 
   // Include roles, remove fields on login
   UserModel.afterRemote('login', function(ctx, userInstance, next) {
-    console.log('> UserModel.afterRemote.login');
-
     var resultJSON = ctx.result.toJSON();
 
     // Overwrite user with roles
@@ -87,7 +98,6 @@ module.exports = function(UserModel) {
       var credentialsAsBase64 = Buffer.from(
         JSON.stringify(resultJSON)
       ).toString('base64');
-      console.log(credentialsAsBase64);
 
       var htmlEmail = '<a href="';
       htmlEmail += app.get('loginHrefApp') + '?credentials=' + credentialsAsBase64;
@@ -96,7 +106,6 @@ module.exports = function(UserModel) {
       // Don't send emails during local dev
       if (process.env.NODE_ENV === 'local') {
         resultJSON.credentials = credentialsAsBase64;
-        console.log(resultJSON);
         ctx.result = resultJSON;
         next();
         return;
@@ -110,11 +119,9 @@ module.exports = function(UserModel) {
         html: htmlEmail,
       }, function(err) {
         if (err) {
-          console.log('> Error sending password reset email');
           ctx.result = {code: 'ERROR_SENDING_AUTH_EMAIL'};
           next();
         } else {
-          console.log('> Auth email sent to:', userJSON.email);
           // Set ctx result to email sent
           ctx.result = {code: 'AUTH_EMAIL_SENT'};
           next();
@@ -148,7 +155,7 @@ module.exports = function(UserModel) {
         if (err) { return cb(err); }
         if (order) {
           // Update time on order
-          order.updatedOn = moment().toISOString()
+          order.updatedOn = moment().toISOString();
           // Return draft order
           cb(null, order);
         } else {

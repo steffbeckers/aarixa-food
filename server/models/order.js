@@ -17,7 +17,7 @@ module.exports = function(Order) {
   // After save
   Order.observe('after save', function afterSave(ctx, next) {
     // Cascade unlink on soft delete
-    // If deletedOn is set, unlink MenuItems
+    // If deletedOn is set, unlink MenuItems (delete orderItems)
     if (ctx.data && ctx.data.deletedOn !== null) {
       var OrderItem = Order.app.models.OrderItem;
       OrderItem.destroyAll(

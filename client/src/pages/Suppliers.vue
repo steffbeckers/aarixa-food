@@ -1,6 +1,13 @@
 <template>
   <transition name="bounce">
     <v-container grid-list-lg fluid>
+      <v-layout v-if="errors.length > 0" row>
+        <v-flex>
+          <v-alert :value="true" v-for="(error, index) in errors" :key="index" type="error">
+            {{ error.message }}
+          </v-alert>
+        </v-flex>
+      </v-layout>
       <v-layout row>
         <v-flex>
           <div class="title">Leveranciers</div>
@@ -85,16 +92,12 @@ export default {
   },
   methods: {
     listSuppliers() {
-      this.$store.commit('loader', true)
       this.$axios
         .get(process.env.API + '/suppliers')
         .then(response => {
-          this.$store.commit('loader', false)
           this.suppliers = response.data
         })
         .catch(error => {
-          this.$store.commit('loader', false)
-          console.error(error)
           this.errors.unshift(error)
         })
     },

@@ -1,9 +1,9 @@
 'use strict';
 
-module.exports = function(app) {
-  var Role = app.models.Role;
-  var RoleMapping = app.models.RoleMapping;
-  var UserModel = app.models.UserModel;
+module.exports = function(server) {
+  var Role = server.models.Role;
+  var RoleMapping = server.models.RoleMapping;
+  var UserModel = server.models.UserModel;
 
   // Role relations
   RoleMapping.belongsTo(UserModel);
