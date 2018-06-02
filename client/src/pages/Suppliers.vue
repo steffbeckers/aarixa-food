@@ -72,9 +72,6 @@
 </style>
 
 <script>
-import store from '../store'
-import axios from 'axios'
-
 export default {
   data() {
     return {
@@ -83,28 +80,23 @@ export default {
       dayOfWeek: new Date().getDay()
     }
   },
-  beforeRouteEnter(to, from, next) {
-    store.commit('loader', true)
-    axios.get(process.env.API + '/suppliers')
-      .then(response => {
-        store.commit('loader', false)
-        next(vm => {
-          vm.setSuppliers(null, response.data)
-        })
-      })
-      .catch(error => {
-        store.commit('loader', false)
-        console.error(error)
-        next(vm => vm.setSuppliers(error))
-      })
+  created: function() {
+    this.listSuppliers()
   },
   methods: {
-    setSuppliers(err, suppliers = []) {
-      if (err) {
-        this.errors.unshift(err)
-      } else {
-        this.suppliers = suppliers
-      }
+    listSuppliers() {
+      this.$store.commit('loader', true)
+      this.$axios
+        .get(process.env.API + '/suppliers')
+        .then(response => {
+          this.$store.commit('loader', false)
+          this.suppliers = response.data
+        })
+        .catch(error => {
+          this.$store.commit('loader', false)
+          console.error(error)
+          this.errors.unshift(error)
+        })
     },
     navigateToSupplier(slug) {
       this.$router.push({ name: 'SupplierDetail', params: { slug: slug } })

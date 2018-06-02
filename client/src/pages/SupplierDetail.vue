@@ -204,7 +204,7 @@
           :pagination.sync="pagination"
           item-key="name"
           class="mb-2"
-          :loading="loading"
+          :loading="this.$store.state.loading"
           :rows-per-page-items="rowsPerPageItems"
           rows-per-page-text="Items per pagina:"
           no-results-text="Geen items gevonden in menukaart."
@@ -272,9 +272,6 @@ table.datatable > tbody > tr {
 </style>
 
 <script>
-import store from '../store'
-import axios from 'axios'
-
 export default {
   data() {
     return {
@@ -308,49 +305,29 @@ export default {
       ]
     }
   },
-  beforeRouteEnter(to, from, next) {
-    store.commit('loader', true)
-    axios.get(process.env.API + '/suppliers/slug/' + to.params.slug)
-      .then(response => {
-        store.commit('loader', false)
-        next(vm => {
-          vm.setSupplier(null, response.data)
-        })
-      })
-      .catch(error => {
-        store.commit('loader', false)
-        console.error(error)
-        next(vm => vm.setSuppliers(error))
-      })
-  },
-  beforeRouteUpdate(to, from, next) {
-    axios.get(process.env.API + '/suppliers/slug/' + to.params.slug)
-      .then(response => {
-        store.commit('loader', false)
-        this.setSupplier(null, response.data)
-        next()
-      })
-      .catch(error => {
-        store.commit('loader', false)
-        console.error(error)
-        this.setSuppliers(error)
-        next()
-      })
-  },
   created: function() {
     // If no slug provided, navigate to supplier overview
     if (!this.$route.params.slug) {
       this.$router.push({ name: 'Suppliers' })
     }
+
+    this.getSupplier()
     this.getOrder()
   },
   methods: {
-    setSupplier(err, supplier = {}) {
-      if (err) {
-        this.errors.unshift(err)
-      } else {
-        this.supplier = supplier
-      }
+    getSupplier() {
+      this.$store.commit('loader', true)
+      this.$axios
+        .get(process.env.API + '/suppliers/slug/' + this.$route.params.slug)
+        .then(response => {
+          this.$store.commit('loader', false)
+          this.supplier = response.data
+        })
+        .catch(error => {
+          this.$store.commit('loader', false)
+          console.error(error)
+          this.errors.unshift(error)
+        })
     },
     toggleAll() {
       if (this.selected.length) this.selected = []
@@ -540,6 +517,7 @@ export default {
   },
   watch: {
     $route(to, from) {
+      this.getSupplier()
       this.getOrder()
     }
   },

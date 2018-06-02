@@ -195,8 +195,6 @@ div.bottom-nav--fixed {
 </style>
 
 <script>
-import axios from 'axios'
-
 export default {
   data() {
     return {
@@ -237,7 +235,7 @@ export default {
       title: 'aariXaFood'
     }
   },
-  created: function() {
+  mounted: function() {
     this.loginWithCredentialsFromEmail()
   },
   methods: {
@@ -248,7 +246,7 @@ export default {
 
       if (this.$refs.loginForm.validate()) {
         this.loginFormLoading = true
-        axios
+        this.$axios
           .post(process.env.API + '/usermodels/login', { email: this.email })
           .then(response => {
             this.loginFormLoading = false

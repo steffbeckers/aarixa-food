@@ -128,9 +128,6 @@
 </style>
 
 <script>
-import store from '../store'
-import axios from 'axios'
-
 export default {
   data() {
     return {
@@ -141,28 +138,23 @@ export default {
       deleteOrderDialog: false
     }
   },
-  beforeRouteEnter(to, from, next) {
-    store.commit('loader', true)
-    axios.get(process.env.API + '/suppliers/todaysOrders')
-      .then(response => {
-        store.commit('loader', false)
-        next(vm => {
-          vm.setSuppliers(null, response.data)
-        })
-      })
-      .catch(error => {
-        store.commit('loader', false)
-        console.error(error)
-        next(vm => vm.setSuppliers(error))
-      })
+  created: function() {
+    this.listSuppliersWithOrders()
   },
   methods: {
-    setSuppliers(err, suppliers = []) {
-      if (err) {
-        this.errors.unshift(err)
-      } else {
-        this.suppliersWithOrders = suppliers
-      }
+    listSuppliersWithOrders() {
+      this.$store.commit('loader', true)
+      this.$axios
+        .get(process.env.API + '/suppliers/todaysOrders')
+        .then(response => {
+          this.$store.commit('loader', false)
+          this.suppliersWithOrders = response.data
+        })
+        .catch(error => {
+          this.$store.commit('loader', false)
+          console.error(error)
+          this.errors.unshift(error)
+        })
     },
     navigateToSupplier(slug) {
       this.$router.push({ name: 'SupplierDetail', params: { slug: slug } })
@@ -177,7 +169,7 @@ export default {
     deleteOrderOnAPI() {
       // API
       this.$axios
-        .delete(process.env.API + '/Orders/' + this.deleteOrder.id)
+        .delete(process.env.API + '/orders/' + this.deleteOrder.id)
         .then(response => {
           // Remove from listing
           let supplierIndex = this.suppliersWithOrders.findIndex(supplier => {
@@ -194,6 +186,7 @@ export default {
         })
         .catch(error => {
           console.error(error)
+          this.errors.unshift(error)
         })
     }
   },
