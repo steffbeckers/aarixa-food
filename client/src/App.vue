@@ -117,9 +117,10 @@
     <v-toolbar 
       :clipped-left="clipped"
       app
+      color="primary white--text"
     >
-      <v-toolbar-side-icon class="mr-1" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-progress-circular v-if="$store.state.loading" :size="50" :indeterminate="true" color="primary">
+      <v-toolbar-side-icon class="white--text mr-1" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-progress-circular v-if="$store.state.loading" :size="50" :indeterminate="true" color="white">
         <img class="mt-2" src="@/assets/aariXa_Shield_32x32.png" alt="aariXa Schild" width="32" height="32" />
       </v-progress-circular>
       <div v-if="!$store.state.loading" style="position: relative; width: 50px; height: 50px;">
@@ -127,11 +128,11 @@
           <img src="@/assets/aariXa_Shield_32x32.png" alt="aariXa Schild" width="32" height="32" />
         </div>
       </div>
-      <v-toolbar-title class="ml-1" v-text="title"></v-toolbar-title>
+      <v-toolbar-title class="ml-1 white--text" v-text="title"></v-toolbar-title>
       <v-spacer></v-spacer>      
       <v-toolbar-items>
-        <v-btn :to="{ name: 'SupplierDetail', params: { slug: 'chanry' }}" flat>Chanry</v-btn>
-        <v-btn :to="{ name: 'SupplierDetail', params: { slug: 'orient' }}" flat>Orient</v-btn>
+        <v-btn class="white--text" :to="{ name: 'SupplierDetail', params: { slug: 'chanry' }}" flat>Chanry</v-btn>
+        <v-btn class="white--text" :to="{ name: 'SupplierDetail', params: { slug: 'orient' }}" flat>Orient</v-btn>
       </v-toolbar-items>
     </v-toolbar>
     <v-content>
@@ -141,6 +142,7 @@
       :fixed="fixed" 
       :value="showBottomNav"
       :active.sync="showBottomNavActive"
+      class="elevation-0"
     >
       <v-btn :to="{ name: 'Root' }" exact flat color="primary">
         <span>Bestellingen</span>
@@ -226,7 +228,7 @@ export default {
         }
       ],
       buildDateTime: process.env.BUILD_DATETIME,
-      clipped: false,
+      clipped: true,
       drawer: !this.$store.state.authenticated,
       showBottomNav: true,
       showBottomNavActive: this.$route.name === 'Root' ? 0 : 1,

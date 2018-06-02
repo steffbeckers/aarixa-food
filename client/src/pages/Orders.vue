@@ -9,7 +9,7 @@
       <v-layout row wrap>
         <v-flex
           xs12
-          v-if="suppliersWithOrders.length === 0 || suppliersWithOrders[0].orders.length === 0"
+          v-if="!$store.state.loading && (suppliersWithOrders.length === 0 || suppliersWithOrders[0].orders.length === 0)"
         >
           <p>Iedereen is gezonder bezig vandaag, er is nog niets besteld.</p>
           <v-btn class="ml-0" color="primary" flat @click="$router.push('leveranciers')">Maak je keuze</v-btn>

@@ -12,8 +12,8 @@
         md6
         sm12
       >
-        <v-card>
-          <v-toolbar color="primary" dark>
+        <v-card class="elevation-0">
+          <v-toolbar color="primary" class="elevation-0" dark>
             <v-toolbar-title>
               Mijn bestelling
             </v-toolbar-title>
@@ -85,12 +85,12 @@
                     <v-icon color="grey lighten-1">edit</v-icon>
                   </v-btn>
                 </v-list-tile-action>
-                <v-list-tile-action v-else @click="toggleEditItemInfoOnOrder(item); selectedCategory = ''" class="mr-2">
+                <v-list-tile-action v-else @click="toggleEditItemInfoOnOrder(item); calculateOrderPrice(); selectedCategory = ''" class="mr-2">
                   <v-btn icon ripple>
                     <v-icon color="grey lighten-1">done</v-icon>
                   </v-btn>
                 </v-list-tile-action>
-                <v-list-tile-action @click="removeItemFromOrder(item); selectedCategory = ''" v-if="!item.editInfo">
+                <v-list-tile-action @click="removeItemFromOrder(item); calculateOrderPrice(); selectedCategory = ''" v-if="!item.editInfo">
                   <v-btn icon ripple>
                     <v-icon color="grey lighten-1">delete</v-icon>
                   </v-btn>
@@ -158,7 +158,7 @@
         <div class="subtitle">Menukaart</div>
         <v-layout row wrap>
           <v-flex>
-            <v-expansion-panel>
+            <v-expansion-panel class="elevation-0">
               <v-expansion-panel-content>
                 <div slot="header">Categorieën</div>
                 <v-chip 
@@ -185,7 +185,7 @@
           single-line
           hide-details
           clearable
-          class="mb-2"
+          class="mb-2 menuSearch"
         ></v-text-field>
         <v-btn
           v-if="this.$store.state.authenticated && this.order.id"
@@ -268,6 +268,10 @@ table.datatable > tbody > tr {
 
 #expandedListTile {
   height: 176px;
+}
+
+.menuSearch {
+  padding: 0px;
 }
 </style>
 
@@ -439,7 +443,8 @@ export default {
       this.$axios
         .patch(process.env.API + '/OrderItems/' + item.id, {
           info: item.info,
-          priceOverride: item.priceOverride
+          priceOverride: item.priceOverride,
+          subItems: item.subItems
         })
         .then(response => {
           this.$store.commit('loader', false)
