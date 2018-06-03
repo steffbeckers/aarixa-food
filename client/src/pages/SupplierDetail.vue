@@ -161,8 +161,8 @@
           <div class="subtitle">Meest besteld</div>
           <v-layout row wrap>
             <v-flex>
-              <v-chip v-if="item && item.timesOrdered && item.timesOrdered > 0" v-for="(item, index) in mostOrderedMenuItems" :key="index" @click="addMenuItemToOrder(item)" color="grey lighten-1" text-color="white">
-                <v-avatar color="grey">{{ item.timesOrdered }}</v-avatar>
+              <v-chip v-if="item && item.timesOrdered && item.timesOrdered > 0" v-for="(item, index) in mostOrderedMenuItems" :key="index" @click="addMenuItemToOrder(item)" color="grey" text-color="white">
+                <v-avatar color="grey darken-1">{{ item.timesOrdered }}</v-avatar>
                 {{ item.name }} ({{ item.category }})
               </v-chip>
             </v-flex>
