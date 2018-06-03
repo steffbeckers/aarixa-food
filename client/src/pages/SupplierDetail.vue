@@ -15,7 +15,7 @@
     </v-layout>
     <v-layout row wrap>
       <v-flex
-        v-if="this.$store.state.authenticated && this.order.id"
+        v-if="this.$store.state.authenticated && this.order && this.order.id"
         md6
         sm12
       >
@@ -125,9 +125,8 @@
                   </v-chip>
                 </template>
               </v-select>
-              <v-flex class="text-xs-center mx-2">
+              <v-flex v-if="item.editInfo && selected" class="text-xs-center mx-2">
                 <v-btn
-                  v-if="item.editInfo && selected"
                   color="primary"
                   :disabled="selected.length === 0"
                   @click="addSelectedSubItems(item)"
@@ -141,8 +140,8 @@
               </div>
             </template>
           </v-list>
-          <v-list class="pa-0" cl>
-            <v-list-tile v-if="order.price != 0">
+          <v-list v-if="order.price != 0" class="pa-0" cl>
+            <v-list-tile>
               <v-list-tile-content>
                 <v-list-tile-title class="text-xs-center">Totaal: {{ order.price | formatMoney }}</v-list-tile-title>
               </v-list-tile-content>
@@ -158,6 +157,17 @@
             Bestelling plaatsen
           </v-btn>
         </v-card>
+        <div class="mt-4" v-if="mostOrderedMenuItems.length > 0">
+          <div class="subtitle">Meest besteld</div>
+          <v-layout row wrap>
+            <v-flex>
+              <v-chip v-if="item && item.timesOrdered && item.timesOrdered > 0" v-for="(item, index) in mostOrderedMenuItems" :key="index" @click="addMenuItemToOrder(item)" color="grey lighten-1" text-color="white">
+                <v-avatar color="grey">{{ item.timesOrdered }}</v-avatar>
+                {{ item.name }} ({{ item.category }})
+              </v-chip>
+            </v-flex>
+          </v-layout>
+        </div>
       </v-flex>
       <v-flex
         v-bind:md6="$store.state.authenticated"
@@ -197,7 +207,7 @@
           class="mb-2 pt-0 menuSearch"
         ></v-text-field>
         <v-btn
-          v-if="this.$store.state.authenticated && this.order.id"
+          v-if="this.$store.state.authenticated && this.order && this.order.id"
           block
           color="primary"
           :disabled="selected.length === 0"
@@ -245,7 +255,7 @@
           </template>
         </v-data-table>
         <v-btn
-          v-if="this.$store.state.authenticated && this.order.id"
+          v-if="this.$store.state.authenticated && this.order && this.order.id"
           block
           color="primary"
           :disabled="selected.length === 0"
@@ -274,9 +284,9 @@ table.datatable > tbody > tr {
 }
 
 /* Overridden on index.html to fix datatable selection fix */
-.application .theme--light.table tbody tr[active], 
+.application .theme--light.table tbody tr[active],
 .theme--light .table tbody tr[active] {
-  background: #1976d2!important;
+  background: #1976d2 !important;
   color: #ffffff;
 }
 
@@ -292,6 +302,8 @@ table.datatable > tbody > tr {
 </style>
 
 <script>
+import _ from 'lodash'
+
 export default {
   data() {
     return {
@@ -325,7 +337,18 @@ export default {
       ]
     }
   },
-  created: function() {
+  computed: {
+    mostOrderedMenuItems: function() {
+      return _.orderBy(
+        _.filter(this.supplier.menuItems, function(item) {
+          if (item.timesOrdered > 0) return item
+        }),
+        ['timesOrdered'],
+        ['desc']
+      )
+    }
+  },
+  created() {
     // If no slug provided, navigate to supplier overview
     if (!this.$route.params.slug) {
       this.$router.push({ name: 'Suppliers' })
@@ -359,7 +382,9 @@ export default {
     },
     getOrder() {
       // Only if authenticated
-      if (!this.$store.state.authenticated) { return }
+      if (!this.$store.state.authenticated) {
+        return
+      }
 
       this.$axios
         .get(
@@ -373,6 +398,29 @@ export default {
           this.order = response.data
           // Recalculate price
           this.calculateOrderPrice()
+        })
+        .catch(error => {
+          this.errors.unshift(error)
+        })
+    },
+    addMenuItemToOrder(item) {
+      this.$axios
+        .post(process.env.API + '/Orders/' + this.order.id + '/orderItems', {
+          menuItemId: item.id,
+          quantity: 1,
+          info: ''
+        })
+        .then(response => {
+          // Add to order items
+          this.order.orderItems.push({
+            menuItem: item,
+            subItems: [],
+            ...response.data
+          })
+          // Recalculate price
+          this.calculateOrderPrice()
+          // Set updatedOn
+          this.order.updatedOn = new Date().toISOString()
         })
         .catch(error => {
           this.errors.unshift(error)
@@ -448,7 +496,9 @@ export default {
     },
     addSelectedSubItems(item) {
       // If subItems not exists on item, create empty array
-      if (item.subItems === undefined) { item.subItems = [] }
+      if (item.subItems === undefined) {
+        item.subItems = []
+      }
       // Merge subItems with selected items
       item.subItems = [...item.subItems, ...this.selected]
       // Reset selection
@@ -505,7 +555,8 @@ export default {
     calculateOrderPrice() {
       this.order.price = 0
       this.order.orderItems.forEach(item => {
-        this.order.price += (item.priceOverride || item.menuItem.price) * item.quantity
+        this.order.price +=
+          (item.priceOverride || item.menuItem.price) * item.quantity
       })
     },
     placeOrder() {

@@ -39,6 +39,7 @@ Vue.prototype.$axios.interceptors.request.use(
 )
 
 // Global response interceptor
+var statusCode0Count = 0
 Vue.prototype.$axios.interceptors.response.use(
   function(response) {
     // Loader
@@ -56,12 +57,22 @@ Vue.prototype.$axios.interceptors.response.use(
     // Loader
     store.commit('loader', false)
 
+    // If request status is 0 (no connection to API)
+    if (error.request.status === 0 && statusCode0Count === 0) {
+      statusCode0Count++
+      // Custom response
+      error.response = {data: {error: {message: 'Kan niet connecteren naar API.'}}}
+      return Promise.reject(error.response.data.error)
+    } else if (error.request.status === 0) {
+      return Promise.resolve(error)
+    }
+
     // Logging
-    console.log(error.request.responseURL)
-    console.log(error.response.status, JSON.parse(JSON.stringify(error.response.data)))
+    if (error.request) console.log(error.request.responseURL)
+    if (error.response) console.log(error.response.status, JSON.parse(JSON.stringify(error.response.data)))
 
     // Log out on unauthorized
-    if (error.response.status === 401) {
+    if (error.response && error.response.status === 401) {
       store.commit('signOut')
       store.commit('drawer', true)
     }

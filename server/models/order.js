@@ -16,16 +16,49 @@ module.exports = function(Order) {
 
   // After save
   Order.observe('after save', function afterSave(ctx, next) {
+    var OrderItem = Order.app.models.OrderItem;
+    var MenuItem = Order.app.models.MenuItem;
+
     // Cascade unlink on soft delete
     // If deletedOn is set, unlink MenuItems (delete orderItems)
     if (ctx.data && ctx.data.deletedOn !== null) {
-      var OrderItem = Order.app.models.OrderItem;
-      OrderItem.destroyAll(
-        {
-          orderId: ctx.where.and[0].id,
-        },
-        function(err, result) {}
-      );
+      // Remove the timesOrdered value on MenuItems
+      OrderItem.find({where: {orderId: ctx.where.and[0].id}}, function(err, orderItems) {
+        orderItems.forEach(orderItem => {
+          orderItem.menuItem.get().then(function(menuItem) {
+            if (menuItem.timesOrdered) {
+              var times = menuItem.timesOrdered - orderItem.quantity;
+              if (times < 0) times = 0;
+              menuItem.updateAttribute('timesOrdered', times, function(err, updatedMenuItem) {});
+            }
+          });
+        });
+        OrderItem.destroyAll(
+          {
+            orderId: ctx.where.and[0].id,
+          },
+          function(err, result) {}
+        );
+      });
+    }
+
+    // If the Order updates to state ready, add timesOrdered on MenuItem
+    if (ctx.instance && ctx.instance.state === 'ready') {
+      OrderItem.find({where: {orderId: ctx.instance.id}}, function(err, orderItems) {
+        orderItems.forEach(orderItem => {
+          orderItem.menuItem.get().then(function(menuItem) {
+            if (menuItem.timesOrdered === undefined) {
+              menuItem.updateAttribute('timesOrdered', orderItem.quantity, function(err, updatedMenuItem) {
+                console.log(updatedMenuItem);
+              });
+            } else {
+              menuItem.updateAttribute('timesOrdered', menuItem.timesOrdered + orderItem.quantity, function(err, updatedMenuItem) {
+                console.log(updatedMenuItem);
+              });
+            }
+          });
+        });
+      });
     }
 
     next();
