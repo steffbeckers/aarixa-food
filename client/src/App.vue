@@ -42,7 +42,7 @@
             <v-form 
               ref="loginForm"
               v-model="loginFormValid"
-              lazy-validation
+              @submit="sendLoginCredentialsEmail"
             >
               <v-text-field
                 v-model="email"
@@ -50,7 +50,6 @@
                 label="E-mail"
                 required
                 :loading="this.$store.state.loading"
-                @keyup.enter="sendLoginCredentialsEmail"
                 clearable
               >
               </v-text-field>
@@ -58,7 +57,7 @@
                 block
                 color="primary"
                 :disabled="!loginFormValid"
-                @click="sendLoginCredentialsEmail"
+                type="submit"
               >
                 Verstuur e-mail
               </v-btn>
@@ -243,7 +242,9 @@ export default {
     this.$store.commit('drawer', !this.$store.state.authenticated)
   },
   methods: {
-    sendLoginCredentialsEmail() {
+    sendLoginCredentialsEmail(e) {
+      e.preventDefault() // Submit
+
       // Reset messages
       this.emailSent = false
       this.emailError = false
@@ -304,7 +305,7 @@ export default {
   },
   computed: {
     firstLetterOfUser() {
-      if (this.$store.state.user.username) {
+      if (this.$store.state.authenticated && this.$store.state.user.username) {
         return this.$store.state.user.username.substr(0, 1)
       }
       return ''
