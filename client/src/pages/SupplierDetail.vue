@@ -57,6 +57,7 @@
                     <span v-if="item.quantity > 1">{{ item.quantity }} </span>
                     <span v-if="item.quantity > 1 && item.menuItem.namePlural">{{ item.menuItem.namePlural }}</span>
                     <span v-else>{{ item.menuItem.name }}</span>
+                    <span v-if="item.subItems.length > 0">{{ subItemsListing(item) }}</span>
                   </v-list-tile-title>
                   <v-list-tile-sub-title class="text--primary" v-if="item.info && !item.editInfo">{{ item.info }}</v-list-tile-sub-title>
                   <v-list-tile-sub-title>{{ item.menuItem.category }}</v-list-tile-sub-title>
@@ -282,6 +283,12 @@ table.datatable > tbody > tr {
 #expandedListTile {
   height: 176px;
 }
+
+.list__tile__title {
+  height: auto;
+  max-height: 72px;
+  white-space: normal;
+}
 </style>
 
 <script>
@@ -443,7 +450,7 @@ export default {
       // If subItems not exists on item, create empty array
       if (item.subItems === undefined) { item.subItems = [] }
       // Merge subItems with selected items
-      item.subItems = [...this.selected, ...item.subItems]
+      item.subItems = [...item.subItems, ...this.selected]
       // Reset selection
       this.selected = []
 
@@ -457,6 +464,27 @@ export default {
       item.subItems.splice(item.subItems.indexOf(subItem), 1)
       // Trigger changes
       item.subItems = [...item.subItems]
+
+      // Set updatedOn
+      this.order.updatedOn = new Date().toISOString()
+      // Recalculate price
+      this.calculateOrderPrice()
+    },
+    subItemsListing(item) {
+      let list = 'met '
+
+      for (let i = 0; i < item.subItems.length; i++) {
+        const subItem = item.subItems[i]
+        // Add comma or end with ampersand
+        if (item.subItems.length > 1 && i === item.subItems.length - 1) {
+          list += ' & '
+        } else if (i > 0) {
+          list += ', '
+        }
+        list += subItem.name || subItem
+      }
+
+      return list
     },
     removeItemFromOrder(item) {
       // Local
