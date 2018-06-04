@@ -34,8 +34,14 @@
                 </div>
                 <div v-if="supplier.openingHours && supplier.openingHours[dayOfWeek]">
                   <span v-for="(timespan, i) in supplier.openingHours[dayOfWeek]" v-bind:key="i">
-                    {{ timespan.from }} - {{ timespan.until }}
+                    <span v-if="i > 0">& </span>{{ timespan.from }} - {{ timespan.until }}
                   </span>
+                </div>
+                <div style="color: green" v-if="supplier.openingHours && supplier.openingHours[dayOfWeek] && supplierOpen(supplier.openingHours[dayOfWeek])">
+                  Open
+                </div>
+                <div style="color: red" v-else>
+                  Gesloten
                 </div>
               </div>
             </v-card-title>
@@ -79,6 +85,8 @@
 </style>
 
 <script>
+import moment from 'moment'
+
 export default {
   data() {
     return {
@@ -103,6 +111,21 @@ export default {
     },
     navigateToSupplier(slug) {
       this.$router.push({ name: 'SupplierDetail', params: { slug: slug } })
+    },
+    supplierOpen(timespans) {
+      var isOpen = false
+      var now = moment()
+
+      timespans.forEach(timespan => {
+        var fromDate = moment(timespan.from, 'HH:mm')
+        var untilDate = moment(timespan.until, 'HH:mm')
+
+        if (now.isBetween(fromDate, untilDate)) {
+          isOpen = true
+        }
+      })
+
+      return isOpen
     }
   },
   name: 'Suppliers'
