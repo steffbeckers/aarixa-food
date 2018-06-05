@@ -1,0 +1,44 @@
+[
+  {
+    "supplierId": "5b019b9fd380602808b60b78",
+    "name": "Döner kebab",
+    "namePlural": "döner kebabs",
+    "category": "Broodjes",
+    "types": [
+      {
+        "default": true,
+        "type": "Klein",
+        "name": "Döner kebab",
+        "namePlural": "döner kebabs",
+        "price": 6
+      },
+      {
+        "type": "Groot",
+        "name": "Grote döner kebab",
+        "namePlural": "grote döner kebabs",
+        "price": 10
+      }
+    ]
+  },
+  {
+    "supplierId": "5b019b9fd380602808b60b78",
+    "name": "Broodje kip",
+    "namePlural": "broodjes kip",
+    "category": "Broodjes",
+    "types": [
+      {
+        "default": true,
+        "type": "Klein",
+        "name": "Broodje kip",
+        "namePlural": "broodjes kip",
+        "price": 6
+      },
+      {
+        "type": "Groot",
+        "name": "Groot broodje kip",
+        "namePlural": "grote broodjes kip",
+        "price": 10
+      }
+    ]
+  }
+]

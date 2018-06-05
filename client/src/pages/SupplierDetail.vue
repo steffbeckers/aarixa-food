@@ -45,23 +45,32 @@
                   </v-btn>
                 </v-list-tile-action>
                 <v-list-tile-action v-else id="quantitySelector">
-                  <v-btn @click="menuItemQuantity(item, 1)" icon ripple>
+                  <v-spacer></v-spacer>
+                  <v-btn class="mb-2" @click="menuItemQuantity(item, 1)" icon ripple>
                     <v-icon color="grey lighten-1">add</v-icon>
                   </v-btn>
-                  <v-btn @click="menuItemQuantity(item, -1)" icon ripple>
+                  <v-btn class="mt-2" @click="menuItemQuantity(item, -1)" icon ripple>
                     <v-icon color="grey lighten-1">remove</v-icon>
                   </v-btn>
+                  <v-spacer></v-spacer>
                 </v-list-tile-action>
                 <v-list-tile-content>
                   <v-list-tile-title>
                     <span v-if="item.quantity > 1">{{ item.quantity }} </span>
-                    <span v-if="item.quantity > 1 && item.menuItem.namePlural">{{ item.menuItem.namePlural }}</span>
-                    <span v-else>{{ item.menuItem.name }}</span>
+                    <span v-if="item.selectedType && item.quantity > 1">{{ item.menuItem.types[item.selectedType].namePlural }}</span>
+                    <span v-if="item.selectedType && item.quantity === 1">{{ item.menuItem.types[item.selectedType].name }}</span>
+                    <span v-if="!item.selectedType && item.quantity > 1">{{ item.menuItem.namePlural }}</span>
+                    <span v-if="!item.selectedType && item.quantity === 1">{{ item.menuItem.name }}</span>
                     <span v-if="item.subItems.length > 0">{{ subItemsListing(item) }}</span>
                   </v-list-tile-title>
                   <v-list-tile-sub-title class="text--primary" v-if="item.info && !item.editInfo">{{ item.info }}</v-list-tile-sub-title>
                   <v-list-tile-sub-title>{{ item.menuItem.category }}</v-list-tile-sub-title>
-                  <div v-if="item.editInfo">
+                  <v-list-tile-sub-title v-if="item.editInfo && item.menuItem.types && item.menuItem.types.length > 0">
+                    <v-radio-group class="pt-2 pb-2" v-model="item.selectedType" hide-details row>
+                      <v-radio :ripple="false" color="primary" v-for="(itemType, index) in item.menuItem.types" :key="index" :label="itemType.type" :value="index"></v-radio>
+                    </v-radio-group>
+                  </v-list-tile-sub-title>
+                  <div style="width: 100%;" v-if="item.editInfo">
                     <v-text-field
                       :rules="[(v) => v.length <= 50 || 'Max 50 characters']"
                       :counter="50"
@@ -81,24 +90,31 @@
                     ></v-text-field>
                   </div>
                 </v-list-tile-content>
-                <v-list-tile-content style="min-width: 65px">
+                <v-list-tile-content v-if="item.menuItem.price && (item.menuItem.price > 0 || item.priceOverride > 0)" style="min-width: 65px">
                   <v-list-tile-title class="text-xs-right" v-if="item.quantity === 1">{{ (item.priceOverride || item.menuItem.price) | formatMoney }}</v-list-tile-title>                  
                   <v-list-tile-title class="text-xs-right" v-if="item.quantity > 1">{{ (item.priceOverride || item.menuItem.price) * item.quantity | formatMoney }}</v-list-tile-title>
                   <v-list-tile-title class="text-xs-right" style="color: rgba(0, 0, 0, 0.5); font-size: 14px" v-if="item.quantity > 1">
                     {{ (item.priceOverride || item.menuItem.price) | formatMoney }}
                   </v-list-tile-title>
                 </v-list-tile-content>
-                <v-list-tile-action v-if="!item.editInfo" @click="toggleEditItemInfoOnOrder(item); search = ''; selectedCategory = 'Sauzen'">
+                <v-list-tile-content v-if="item.menuItem.types && item.menuItem.types.length > 0 && item.selectedType >= 0" style="min-width: 65px">
+                  <v-list-tile-title v-if="item.quantity === 1" class="text-xs-right">{{ (item.priceOverride || item.menuItem.types[item.selectedType].price) | formatMoney }}</v-list-tile-title>                  
+                  <v-list-tile-title v-if="item.quantity > 1" class="text-xs-right">{{ (item.priceOverride || item.menuItem.types[item.selectedType].price) * item.quantity | formatMoney }}</v-list-tile-title>
+                  <v-list-tile-title v-if="item.quantity > 1" class="text-xs-right" style="color: rgba(0, 0, 0, 0.5); font-size: 14px">
+                    {{ (item.priceOverride || item.menuItem.types[item.selectedType].price) | formatMoney }}
+                  </v-list-tile-title>
+                </v-list-tile-content>
+                <v-list-tile-action v-if="!item.editInfo" @click="toggleEditItemInfoOnOrder(item); search = ''">
                   <v-btn icon ripple>
                     <v-icon color="grey lighten-1">edit</v-icon>
                   </v-btn>
                 </v-list-tile-action>
-                <v-list-tile-action v-else @click="toggleEditItemInfoOnOrder(item); calculateOrderPrice(); selectedCategory = ''" class="mr-2">
+                <v-list-tile-action v-else @click="toggleEditItemInfoOnOrder(item); calculateOrderPrice()" class="mr-2" style="min-width: 40px;">
                   <v-btn icon ripple>
                     <v-icon color="grey lighten-1">done</v-icon>
                   </v-btn>
                 </v-list-tile-action>
-                <v-list-tile-action @click="removeItemFromOrder(item); calculateOrderPrice(); selectedCategory = ''" v-if="!item.editInfo">
+                <v-list-tile-action @click="removeItemFromOrder(item); calculateOrderPrice()" v-if="!item.editInfo">
                   <v-btn icon ripple>
                     <v-icon color="grey lighten-1">delete</v-icon>
                   </v-btn>
@@ -224,7 +240,6 @@
           :pagination.sync="pagination"
           item-key="name"
           class="mb-2"
-          :loading="this.$store.state.loading"
           :rows-per-page-items="rowsPerPageItems"
           rows-per-page-text="Items per pagina:"
           no-results-text="Geen items gevonden in menukaart."
@@ -247,7 +262,13 @@
             <tr :active="props.selected" @click="$store.state.authenticated ? props.selected = !props.selected : false">
               <td>{{ props.item.name }}<span v-if="props.item.name === 'Mezzomix'"> &#10084;</span></td>
               <td>{{ props.item.category }}</td>
-              <td>{{ props.item.price | formatMoney }}</td>
+              <td>
+                <span v-if="props.item.price > 0">{{ props.item.price | formatMoney }}</span>
+                <div v-else-if="props.item.types" v-for="itemType in props.item.types" :key="itemType.type">
+                  <span class="d-inline-block" style="min-width: 40px;">{{ itemType.type }}:</span>
+                  <span class="d-inline-block" style="min-width: 51px;">{{ itemType.price | formatMoney }}</span>
+                </div>
+              </td>
             </tr>
           </template>
           <template slot="pageText" slot-scope="{ pageStart, pageStop, itemsLength }">
@@ -273,6 +294,10 @@
 <style scoped>
 th.column {
   text-align: left;
+}
+
+#quantitySelector {
+  min-width: 40px;
 }
 
 #quantitySelector.list__tile__action--stack {
@@ -403,6 +428,15 @@ export default {
           this.errors.unshift(error)
         })
     },
+    checkForDefaultMenuItemType(menuItem) {
+      if (menuItem.types) {
+        for (let i = 0; i < menuItem.types.length; i++) {
+          if (menuItem.types[i].default === true) {
+            return i
+          }
+        }
+      }
+    },
     addMenuItemToOrder(item) {
       this.$axios
         .post(process.env.API + '/Orders/' + this.order.id + '/orderItems', {
@@ -415,6 +449,7 @@ export default {
           this.order.orderItems.push({
             menuItem: item,
             subItems: [],
+            selectedType: this.checkForDefaultMenuItemType(item) || 0,
             ...response.data
           })
           // Recalculate price
@@ -429,6 +464,8 @@ export default {
     addSelectionToOrder() {
       // Add selected items to order as order items
       this.selected.forEach(selectedItem => {
+        this.checkForDefaultMenuItemType(selectedItem)
+
         this.$axios
           .post(process.env.API + '/Orders/' + this.order.id + '/orderItems', {
             menuItemId: selectedItem.id,
@@ -440,6 +477,7 @@ export default {
             this.order.orderItems.push({
               menuItem: selectedItem,
               subItems: [],
+              selectedType: this.checkForDefaultMenuItemType(selectedItem) || 0,
               ...response.data
             })
             // Reset selection
@@ -480,6 +518,9 @@ export default {
       // Editing
       this.editing = item.editInfo
 
+      // If edit mode, don't save yet
+      if (item.editInfo) { return }
+
       // Set updatedOn
       this.order.updatedOn = new Date().toISOString()
 
@@ -488,7 +529,8 @@ export default {
         .patch(process.env.API + '/OrderItems/' + item.id, {
           info: item.info,
           priceOverride: item.priceOverride,
-          subItems: item.subItems
+          subItems: item.subItems,
+          selectedType: item.selectedType
         })
         .catch(error => {
           this.errors.unshift(error)
@@ -555,8 +597,13 @@ export default {
     calculateOrderPrice() {
       this.order.price = 0
       this.order.orderItems.forEach(item => {
-        this.order.price +=
-          (item.priceOverride || item.menuItem.price) * item.quantity
+        if (item.priceOverride) {
+          this.order.price += item.priceOverride * item.quantity
+        } else if (item.menuItem.types && item.menuItem.types.length > 0 && item.selectedType >= 0) {
+          this.order.price += item.menuItem.types[item.selectedType].price * item.quantity
+        } else if (item.menuItem.price) {
+          this.order.price += item.menuItem.price * item.quantity
+        }
       })
     },
     placeOrder() {

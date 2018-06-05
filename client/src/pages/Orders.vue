@@ -61,8 +61,10 @@
                     <v-list-tile-content v-for="(item, itemIndex) in order.orderItems" :key="itemIndex">
                       <v-list-tile-title>
                         <span v-if="item.quantity > 1">{{ item.quantity }} </span>
-                        <span v-if="item.quantity > 1 && item.menuItem.namePlural">{{ item.menuItem.namePlural }}</span>
-                        <span v-else>{{ item.menuItem.name }}</span>
+                        <span v-if="item.selectedType && item.quantity > 1">{{ item.menuItem.types[item.selectedType].namePlural }}</span>
+                        <span v-if="item.selectedType && item.quantity === 1">{{ item.menuItem.types[item.selectedType].name }}</span>
+                        <span v-if="!item.selectedType && item.quantity > 1">{{ item.menuItem.namePlural }}</span>
+                        <span v-if="!item.selectedType && item.quantity === 1">{{ item.menuItem.name }}</span>
                         <span v-if="item.subItems.length > 0">{{ subItemsListing(item) }}</span>
                       </v-list-tile-title>
                       <v-list-tile-sub-title class="text--primary" v-if="item.info">{{ item.info }}</v-list-tile-sub-title>
