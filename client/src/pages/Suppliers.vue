@@ -36,12 +36,12 @@
                   <span v-for="(timespan, i) in supplier.openingHours[dayOfWeek]" v-bind:key="i">
                     <span v-if="i > 0">& </span>{{ timespan.from }} - {{ timespan.until }}
                   </span>
-                </div>
-                <div style="color: green" v-if="supplier.openingHours && supplier.openingHours[dayOfWeek] && supplierOpen(supplier.openingHours[dayOfWeek])">
-                  Open
-                </div>
-                <div style="color: red" v-else>
-                  Gesloten
+                  <!-- <span class="ml-1" style="color: green" v-if="supplier.openingHours && supplier.openingHours[dayOfWeek] && supplierOpen(supplier.openingHours[dayOfWeek])">
+                    Open
+                  </span>
+                  <span class="ml-1" style="color: red" v-else>
+                    Gesloten
+                  </span> -->
                 </div>
               </div>
             </v-card-title>
