@@ -26,6 +26,10 @@
     "info": {
       "type": "string"
     },
+    "selectedType": {
+      "type": "number",
+      "default": 0
+    },
     "priceOverride": {
       "type": "number"
     },

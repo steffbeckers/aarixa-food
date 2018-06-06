@@ -109,10 +109,17 @@
                     <v-icon color="grey lighten-1">edit</v-icon>
                   </v-btn>
                 </v-list-tile-action>
-                <v-list-tile-action v-else @click="toggleEditItemInfoOnOrder(item); calculateOrderPrice()" class="mr-2" style="min-width: 40px;">
-                  <v-btn icon ripple>
+                <v-list-tile-action v-else class="mr-2" style="min-width: 40px;">
+                  <v-spacer></v-spacer>
+                  <v-spacer></v-spacer>
+                  <v-btn class="mb-2" icon ripple @click="toggleEditItemInfoOnOrder(item); calculateOrderPrice()">
                     <v-icon color="grey lighten-1">done</v-icon>
                   </v-btn>
+                  <v-btn class="mt-2" icon ripple @click="favoriteItem(item)">
+                    <v-icon v-if="item.favorite" color='yellow accent-3'>star</v-icon>
+                    <v-icon v-else color='grey lighten-1'>star</v-icon>
+                  </v-btn>
+                  <v-spacer></v-spacer>
                 </v-list-tile-action>
                 <v-list-tile-action @click="removeItemFromOrder(item); calculateOrderPrice()" v-if="!item.editInfo">
                   <v-btn icon ripple>
@@ -137,7 +144,8 @@
                     close
                     @input="removeSubItem(item, data.item)"
                   >
-                    <strong>{{ data.item.name || data.item }}<span v-if="data.item.price > 0"> - {{ data.item.price | formatMoney }}</span></strong>
+                    <strong>{{ data.item.name || data.item }}</strong>
+                    <!-- <strong>{{ data.item.name || data.item }}<span v-if="data.item.price > 0"> - {{ data.item.price | formatMoney }}</span></strong> -->
                   </v-chip>
                 </template>
               </v-select>
@@ -173,6 +181,16 @@
             Bestelling plaatsen
           </v-btn>
         </v-card>
+        <div class="mt-4" v-if="$store.state.user.favoriteMenuItems && $store.state.user.favoriteMenuItems[supplier.id] && $store.state.user.favoriteMenuItems[supplier.id].length > 0">
+          <div class="subtitle">Mijn favorieten</div>
+          <v-layout row wrap>
+            <v-flex>
+              <p v-for="item in $store.state.user.favoriteMenuItems[supplier.id]" :key="item.id">
+                {{ item.menuItem.name }}
+              </p>
+            </v-flex>
+          </v-layout>
+        </div>
         <div class="mt-4" v-if="mostOrderedMenuItems.length > 0">
           <div class="subtitle">Meest besteld</div>
           <v-layout row wrap>
@@ -510,11 +528,13 @@ export default {
         })
     },
     toggleEditItemInfoOnOrder(item) {
+      // Toggle editInfo
       if (item.editInfo === undefined) {
         item.editInfo = true
       } else {
         item.editInfo = !item.editInfo
       }
+
       // Editing
       this.editing = item.editInfo
 
@@ -531,6 +551,34 @@ export default {
           priceOverride: item.priceOverride,
           subItems: item.subItems,
           selectedType: item.selectedType
+        })
+        .catch(error => {
+          this.errors.unshift(error)
+        })
+    },
+    favoriteItem(item) {
+      let favorites = this.$store.state.user.favoriteMenuItems
+        ? this.$store.state.user.favoriteMenuItems[this.supplier.id] || []
+        : []
+
+      item.favorite = !item.favorite
+
+      if (item.favorite) {
+        favorites.push(item)
+      } else {
+        let index = favorites.indexOf(item)
+        if (index !== -1) favorites.splice(index, 1)
+      }
+
+      this.$store.commit(
+        'setUserFavoriteMenuItemsBySupplier',
+        { supplierId: this.supplier.id, favorites: favorites }
+      )
+
+      // API
+      this.$axios
+        .patch(process.env.API + '/UserModels/' + this.$store.state.user.id, {
+          favoriteMenuItems: this.$store.state.user.favoriteMenuItems || []
         })
         .catch(error => {
           this.errors.unshift(error)
@@ -580,7 +628,7 @@ export default {
     },
     removeItemFromOrder(item) {
       // Local
-      var index = this.order.orderItems.indexOf(item)
+      let index = this.order.orderItems.indexOf(item)
       if (index !== -1) this.order.orderItems.splice(index, 1)
       // Set updatedOn
       this.order.updatedOn = new Date().toISOString()

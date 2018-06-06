@@ -60,6 +60,23 @@ export default new Vuex.Store({
       Vue.cookie.delete('$aariXaFood$user')
       // Remove Authorization token on header
       delete Vue.prototype.$axios.defaults.headers.common['Authorization']
+    },
+    setUserFavoriteMenuItems(state, favorites) {
+      state.user.favoriteMenuItems = favorites
+    },
+    setUserFavoriteMenuItemsBySupplier(state, supplierIdAndFavorites) {
+      if (state.user.favoriteMenuItems === undefined) {
+        state.user.favoriteMenuItems = {}
+      }
+      state.user.favoriteMenuItems[supplierIdAndFavorites.supplierId] = supplierIdAndFavorites.favorites
+
+      // Clean up userModel object
+      if (supplierIdAndFavorites.favorites.length === 0) {
+        delete state.user.favoriteMenuItems[supplierIdAndFavorites.supplierId]
+      }
+
+      // Save cookie
+      Vue.cookie.set('$aariXaFood$user', JSON.stringify(state.user))
     }
   }
 })
