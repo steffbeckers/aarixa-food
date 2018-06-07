@@ -13,12 +13,11 @@ export default new Vuex.Store({
     authenticated: Vue.cookie.get('$aariXaFood$token') !== null,
     token: Vue.cookie.get('$aariXaFood$token'),
     user: JSON.parse(Vue.cookie.get('$aariXaFood$user')),
+    favoriteMenuItems: JSON.parse(localStorage.getItem('$aariXaFood$favoriteMenuItems')),
     isAdmin:
       JSON.parse(Vue.cookie.get('$aariXaFood$user')) &&
       JSON.parse(Vue.cookie.get('$aariXaFood$user')).roles
-        ? JSON.parse(Vue.cookie.get('$aariXaFood$user')).roles.includes(
-          'Administrator'
-        )
+        ? JSON.parse(Vue.cookie.get('$aariXaFood$user')).roles.includes('Administrator')
         : false
   },
   mutations: {
@@ -34,6 +33,10 @@ export default new Vuex.Store({
       state.drawer = bool
     },
     authenticate(state, credentials) {
+      // Set favoriteMenuItems
+      state.favoriteMenuItems = credentials.user.favoriteMenuItems
+      localStorage.setItem('$aariXaFood$favoriteMenuItems', JSON.stringify(state.favoriteMenuItems))
+      delete credentials.user.favoriteMenuItems
       // Set state
       state.authenticated = true
       state.token = credentials.id
@@ -47,8 +50,7 @@ export default new Vuex.Store({
         expires: credentials.ttl + 's'
       })
       // Set Authorization token on request
-      Vue.prototype.$axios.defaults.headers.common['Authorization'] =
-        state.token
+      Vue.prototype.$axios.defaults.headers.common['Authorization'] = state.token
     },
     signOut(state) {
       // Set state
@@ -58,25 +60,25 @@ export default new Vuex.Store({
       // Remove cookies
       Vue.cookie.delete('$aariXaFood$token')
       Vue.cookie.delete('$aariXaFood$user')
+      // Remove local storage
+      localStorage.clear()
       // Remove Authorization token on header
       delete Vue.prototype.$axios.defaults.headers.common['Authorization']
     },
-    setUserFavoriteMenuItems(state, favorites) {
-      state.user.favoriteMenuItems = favorites
-    },
     setUserFavoriteMenuItemsBySupplier(state, supplierIdAndFavorites) {
-      if (state.user.favoriteMenuItems === undefined) {
-        state.user.favoriteMenuItems = {}
+      // Update state
+      if (state.favoriteMenuItems === null || state.favoriteMenuItems === undefined) {
+        state.favoriteMenuItems = {}
       }
-      state.user.favoriteMenuItems[supplierIdAndFavorites.supplierId] = supplierIdAndFavorites.favorites
+      state.favoriteMenuItems[supplierIdAndFavorites.supplierId] = supplierIdAndFavorites.favorites
 
-      // Clean up userModel object
+      // Clean up favorites object
       if (supplierIdAndFavorites.favorites.length === 0) {
-        delete state.user.favoriteMenuItems[supplierIdAndFavorites.supplierId]
+        delete state.favoriteMenuItems[supplierIdAndFavorites.supplierId]
       }
 
-      // Save cookie
-      Vue.cookie.set('$aariXaFood$user', JSON.stringify(state.user))
+      // Update local storage
+      localStorage.setItem('$aariXaFood$favoriteMenuItems', JSON.stringify(state.favoriteMenuItems))
     }
   }
 })

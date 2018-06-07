@@ -18,7 +18,7 @@ module.exports = function(Supplier) {
       // Loop over each menu item
       supplierJSON.menuItems.forEach(item => {
         // If the item's category in not in te list yet, add it
-        if (menuCategories.indexOf(item.category) === -1) {
+        if (item.category && item.category !== '' && menuCategories.indexOf(item.category) === -1) {
           menuCategories.push(item.category);
         }
       });

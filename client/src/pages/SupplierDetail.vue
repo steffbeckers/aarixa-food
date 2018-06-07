@@ -115,7 +115,7 @@
                   <v-btn class="mb-2" icon ripple @click="toggleEditItemInfoOnOrder(item); calculateOrderPrice()">
                     <v-icon color="grey lighten-1">done</v-icon>
                   </v-btn>
-                  <v-btn class="mt-2" icon ripple @click="favoriteItem(item)">
+                  <v-btn class="mt-2" icon ripple @click="favoriteItem(item); search = ''"><!-- ; search = '': Hack to trigger update UI -->
                     <v-icon v-if="item.favorite" color='yellow accent-3'>star</v-icon>
                     <v-icon v-else color='grey lighten-1'>star</v-icon>
                   </v-btn>
@@ -181,17 +181,26 @@
             Bestelling plaatsen
           </v-btn>
         </v-card>
-        <div class="mt-4" v-if="$store.state.user.favoriteMenuItems && $store.state.user.favoriteMenuItems[supplier.id] && $store.state.user.favoriteMenuItems[supplier.id].length > 0">
+        <div class="mt-4" v-if="$store.state.favoriteMenuItems && $store.state.favoriteMenuItems[supplier.id] && $store.state.favoriteMenuItems[supplier.id].length > 0">
           <div class="subtitle">Mijn favorieten</div>
           <v-layout row wrap>
             <v-flex>
-              <p v-for="item in $store.state.user.favoriteMenuItems[supplier.id]" :key="item.id">
-                {{ item.menuItem.name }}
-              </p>
+              <v-chip v-for="item in $store.state.favoriteMenuItems[supplier.id]" :key="item.id" color="grey" text-color="white">
+                <v-avatar @click="removeFavoriteItem(item)">
+                  <v-icon>close</v-icon>
+                </v-avatar>
+                <div @click="addFavoriteToOrder(item)">
+                  <span v-if="item.selectedType && item.quantity === 1">{{ item.menuItem.types[item.selectedType].name }}</span>
+                  <span v-if="!item.selectedType && item.quantity === 1">{{ item.menuItem.name }}</span>
+                  <span v-if="item.subItems.length > 0">{{ subItemsListing(item) }}</span>
+                  <span v-if="item.info">/ {{ item.info }}</span>
+                  <span v-if="item.menuItem.category">&nbsp;({{ item.menuItem.category }})</span>
+                </div>
+              </v-chip>
             </v-flex>
           </v-layout>
         </div>
-        <div class="mt-4" v-if="mostOrderedMenuItems.length > 0">
+        <div class="mt-4 mb-2" v-if="mostOrderedMenuItems.length > 0">
           <div class="subtitle">Meest besteld</div>
           <v-layout row wrap>
             <v-flex>
@@ -557,8 +566,8 @@ export default {
         })
     },
     favoriteItem(item) {
-      let favorites = this.$store.state.user.favoriteMenuItems
-        ? this.$store.state.user.favoriteMenuItems[this.supplier.id] || []
+      let favorites = this.$store.state.favoriteMenuItems
+        ? this.$store.state.favoriteMenuItems[this.supplier.id] || []
         : []
 
       item.favorite = !item.favorite
@@ -578,7 +587,58 @@ export default {
       // API
       this.$axios
         .patch(process.env.API + '/UserModels/' + this.$store.state.user.id, {
-          favoriteMenuItems: this.$store.state.user.favoriteMenuItems || []
+          favoriteMenuItems: this.$store.state.favoriteMenuItems || {}
+        })
+        .catch(error => {
+          this.errors.unshift(error)
+        })
+    },
+    removeFavoriteItem(item) {
+      let favorites = this.$store.state.favoriteMenuItems
+        ? this.$store.state.favoriteMenuItems[this.supplier.id] || []
+        : []
+
+      let index = favorites.indexOf(item)
+      if (index !== -1) favorites.splice(index, 1)
+
+      this.$store.commit(
+        'setUserFavoriteMenuItemsBySupplier',
+        { supplierId: this.supplier.id, favorites: favorites }
+      )
+
+      // API
+      this.$axios
+        .patch(process.env.API + '/UserModels/' + this.$store.state.user.id, {
+          favoriteMenuItems: this.$store.state.favoriteMenuItems || {}
+        })
+        .catch(error => {
+          this.errors.unshift(error)
+        })
+    },
+    addFavoriteToOrder(item) {
+      let newOrderItem = Object.assign({}, item)
+
+      // Update newOrderItem
+      delete newOrderItem.id
+      delete newOrderItem.createdOn
+      delete newOrderItem.updatedOn
+      delete newOrderItem.deletedOn
+      newOrderItem.orderId = this.order.id
+      newOrderItem.editInfo = false
+      newOrderItem.quantity = 1
+
+      this.$axios
+        .post(process.env.API + '/Orders/' + this.order.id + '/orderItems', newOrderItem)
+        .then(response => {
+          // Add to order items
+          this.order.orderItems.push({
+            menuItem: newOrderItem.menuItem,
+            ...response.data
+          })
+          // Recalculate price
+          this.calculateOrderPrice()
+          // Set updatedOn
+          this.order.updatedOn = new Date().toISOString()
         })
         .catch(error => {
           this.errors.unshift(error)
