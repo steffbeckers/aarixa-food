@@ -139,7 +139,6 @@
     <v-bottom-nav
       :fixed="fixed" 
       :value="showBottomNav"
-      :active.sync="showBottomNavActive"
       class="elevation-0"
       style="background-color: rgba(255, 255, 255, 0.75)"
     >
@@ -149,7 +148,11 @@
       </v-btn>
       <v-btn :to="{ name: 'Suppliers' }" flat color="primary">
         <span>Leveranciers</span>
-        <v-icon>place</v-icon>
+        <v-icon>fastfood</v-icon>
+      </v-btn>
+      <v-btn :to="{ name: 'Fridge' }" flat color="primary">
+        <span>Koelkast</span>
+        <v-icon>kitchen</v-icon>
       </v-btn>
     </v-bottom-nav>
     <v-footer 
@@ -243,7 +246,6 @@ export default {
       buildDateTime: process.env.BUILD_DATETIME,
       clipped: false,
       showBottomNav: true,
-      showBottomNavActive: this.$route.name === 'Root' ? 0 : 1,
       miniVariant: false,
       fixed: true,
       title: 'aariXaFood'

@@ -30,12 +30,12 @@ export default new Router({
       component: SupplierDetail
     },
     {
-      path: '/kitchen/fridge',
+      path: '/keuken/koelkast',
       name: 'Fridge',
       component: Fridge
     },
     {
-      path: '/kitchen',
+      path: '/keuken',
       name: 'Kitchen',
       component: Kitchen
     },
