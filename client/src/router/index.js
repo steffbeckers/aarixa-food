@@ -8,6 +8,8 @@ import AdminUserModels from '@/admin/UserModels'
 import Orders from '@/pages/Orders'
 import Suppliers from '@/pages/Suppliers'
 import SupplierDetail from '@/pages/SupplierDetail'
+import Kitchen from '@/pages/Kitchen'
+import Fridge from '@/pages/Fridge'
 
 // Errors
 import PageNotFound from '@/errors/PageNotFound'
@@ -26,6 +28,16 @@ export default new Router({
       path: '/leveranciers/:slug',
       name: 'SupplierDetail',
       component: SupplierDetail
+    },
+    {
+      path: '/kitchen/fridge',
+      name: 'Fridge',
+      component: Fridge
+    },
+    {
+      path: '/kitchen',
+      name: 'Kitchen',
+      component: Kitchen
     },
     {
       path: '/leveranciers',

@@ -85,7 +85,6 @@
       </v-toolbar>
       <v-list>
         <v-list-tile
-          value="true"
           v-for="(item, i) in sideMenuItems"
           :key="i"
           :to="item.page"
@@ -220,10 +219,24 @@ export default {
           }
         },
         {
-          icon: 'place',
+          icon: 'fastfood',
           title: 'Leveranciers',
           page: {
             name: 'Suppliers'
+          }
+        },
+        {
+          icon: 'assignment_ind',
+          title: 'Keuken',
+          page: {
+            name: 'Kitchen'
+          }
+        },
+        {
+          icon: 'kitchen',
+          title: 'Koelkast',
+          page: {
+            name: 'Fridge'
           }
         }
       ],
