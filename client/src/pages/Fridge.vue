@@ -19,7 +19,9 @@
           lg4
           md6
           sm12
+          v-for="item in items" :key="item.id"
         >
+        {{ item.name }}
         </v-flex>
       </v-layout>
     </v-container>
@@ -34,47 +36,26 @@
 </style>
 
 <script>
-import moment from 'moment'
-
 export default {
   data() {
     return {
       errors: [],
-      suppliers: [],
-      dayOfWeek: new Date().getDay()
+      items: []
     }
   },
   created: function() {
-    this.listSuppliers()
+    this.listItems()
   },
   methods: {
-    listSuppliers() {
+    listItems() {
       this.$axios
-        .get(process.env.API + '/suppliers')
+        .get(process.env.API + '/fridgeItems')
         .then(response => {
-          this.suppliers = response.data
+          this.items = response.data
         })
         .catch(error => {
           this.errors.unshift(error)
         })
-    },
-    navigateToSupplier(slug) {
-      this.$router.push({ name: 'SupplierDetail', params: { slug: slug } })
-    },
-    supplierOpen(timespans) {
-      var isOpen = false
-      var now = moment()
-
-      timespans.forEach(timespan => {
-        var fromDate = moment(timespan.from, 'HH:mm')
-        var untilDate = moment(timespan.until, 'HH:mm')
-
-        if (now.isBetween(fromDate, untilDate)) {
-          isOpen = true
-        }
-      })
-
-      return isOpen
     }
   },
   name: 'Fridge'

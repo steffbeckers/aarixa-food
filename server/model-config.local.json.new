@@ -60,5 +60,9 @@
   "OrderItem": {
     "dataSource": "mongodb",
     "public": true
+  },
+  "FridgeItem": {
+    "dataSource": "mongodb",
+    "public": true
   }
 }
