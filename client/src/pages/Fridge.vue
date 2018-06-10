@@ -61,7 +61,7 @@
       </v-layout>
       <v-layout v-if="!$store.state.authenticated" row wrap>
         <v-flex xs12>
-          <v-alert :value="true" type="info" @click.stop="$store.commit('drawer', !$store.state.drawer)">
+          <v-alert :value="true" type="info" @click.stop="$store.commit('drawer', true)">
             Meld je aan om drank uit de koelkast te kopen.
           </v-alert>
         </v-flex>
