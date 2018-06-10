@@ -8,6 +8,13 @@
         </v-alert>
       </v-flex>
     </v-layout>
+    <v-layout v-if="!$store.state.authenticated" row wrap>
+      <v-flex xs12>
+        <v-alert :value="true" type="info" @click.stop="$store.commit('drawer', !$store.state.drawer)">
+          Meld je aan om iets te bestellen van {{ supplier.name }}.
+        </v-alert>
+      </v-flex>
+    </v-layout>
     <v-layout row>
       <v-flex>
         <div class="title">{{ supplier.name }}</div>
@@ -740,9 +747,7 @@ export default {
       this.errors = []
       this.editing = false
 
-      // Retrieve
-      this.getSupplier()
-      this.getOrder()
+      this.created()
     }
   },
   name: 'SupplierDetail'

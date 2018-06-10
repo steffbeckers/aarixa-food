@@ -1,6 +1,57 @@
 <template>
   <transition name="bounce">
     <v-container grid-list-lg fluid>
+      <v-dialog v-model="makePaymentDialog" max-width="300px">
+        <v-card>
+          <v-form 
+            ref="paymentForm"
+            v-model="paymentFormValid"
+            @submit="makePayment"
+          >
+            <v-card-title>
+              <div class="title">Betaling maken</div>
+            </v-card-title>
+            <v-card-text>
+              <v-container grid-list-xs>
+                <v-layout wrap>
+                  <v-flex xs12>
+                    <v-text-field 
+                      :rules="paymentRules"
+                      type="number"
+                      v-model="payment"
+                      label="Euro"
+                      required
+                      clearable
+                    ></v-text-field>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn :disabled="!paymentFormValid" block color="primary" type="submit">Betalen</v-btn>
+            </v-card-actions>
+          </v-form>
+        </v-card>
+      </v-dialog>
+      <v-dialog v-model="resetDialog" max-width="500px">
+        <v-card>
+          <v-card-title>
+            <div class="title">Resetten</div>
+          </v-card-title>
+          <v-card-text>
+            <v-container grid-list-xs>
+              <v-layout wrap>
+                <v-flex xs12>
+                  <p>Weet je het zeker dat je je koelkast data wilt resetten?</p>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn block color="red" class="white--text" @click="reset()">Ja, ik weet het zeker</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       <v-layout v-if="errors.length > 0" row>
         <v-flex>
           <v-alert :value="true" v-for="(error, index) in errors" :key="index" type="error">
@@ -10,25 +61,48 @@
       </v-layout>
       <v-layout v-if="!$store.state.authenticated" row wrap>
         <v-flex xs12>
-          <v-alert :value="true" type="info">
+          <v-alert :value="true" type="info" @click.stop="$store.commit('drawer', !$store.state.drawer)">
             Meld je aan om drank uit de koelkast te kopen.
           </v-alert>
         </v-flex>
       </v-layout>
       <v-layout row wrap>
         <v-flex>
-          <div class="title">Koelkast</div>
+          <div class="title">
+            Koelkast
+            <v-btn v-if="$store.state.authenticated && fridgeDataOfUser !== null" small style="margin-top: 5px; float: right" color="red" flat @click="resetDialog = true">Resetten</v-btn>
+          </div>
           <p class="mt-2 mb-0">Alle items aan &euro; 0.50, tenzij anders vermeld.</p>
         </v-flex>
       </v-layout>
-      <v-layout v-if="$store.state.authenticated && fridgeDataOfUser !== null" row wrap>
-        <v-flex>
-          <span>
-            Mijn saldo: 
-            <span v-if="fridgeDataOfUser.saldo > 0" style="color: green; font-weight: bold">{{ fridgeDataOfUser.saldo | formatMoney }}</span>
-            <span v-else-if="fridgeDataOfUser.saldo < 0" style="color: red">{{ fridgeDataOfUser.saldo | formatMoney }}</span>
-            <span v-else>&euro; 0.00</span>
-          </span>
+      <v-layout v-if="$store.state.authenticated && fridgeDataOfUser !== null" row wrap class="mb-2">
+        <v-flex class="pt-0">
+          <v-expansion-panel class="elevation-0" id="extraInfo">
+            <v-expansion-panel-content :expand-icon="fridgeDataOfUser.total ? 'info' : 'false'">
+              <div slot="header" :style="fridgeDataOfUser.total ? 'cursor: pointer' : 'cursor: default'">
+                <span>
+                  <span class="mr-2">Mijn saldo:</span>
+                  <span v-if="fridgeDataOfUser.saldo > 0" style="color: green; font-weight: bold">{{ fridgeDataOfUser.saldo | formatMoney }}</span>
+                  <span v-else-if="fridgeDataOfUser.saldo < 0" style="color: red">{{ fridgeDataOfUser.saldo | formatMoney }}</span>
+                  <span v-else>&euro; 0.00</span>
+                </span>
+                <v-btn style="margin-top: 5px" color="primary" flat @click="makePaymentDialog = true">Betalen</v-btn>
+              </div>
+              <v-container v-if="fridgeDataOfUser.total" grid-list-xl fluid class="pt-0">
+                <v-layout row wrap>
+                  <v-flex>
+                    <span v-if="fridgeDataOfUser.total.items" class="mr-4">Totaal aantal items: <span class="ml-2">{{ fridgeDataOfUser.total.items }}</span></span>
+                  </v-flex>
+                  <v-flex>
+                    <span v-if="fridgeDataOfUser.total.price" class="mr-4">Totaal uitgave: <span class="ml-2">{{ fridgeDataOfUser.total.price | formatMoney }}</span></span>                  
+                  </v-flex>
+                  <v-flex>
+                    <span v-if="fridgeDataOfUser.total.items && fridgeDataOfUser.dateTime">Sinds: <span class="ml-2">{{ fridgeDataOfUser.dateTime | formatDateTime }}</span></span>                  
+                  </v-flex>
+                </v-layout>
+              </v-container>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
         </v-flex>
       </v-layout>
       <v-layout row wrap justify-center>
@@ -60,6 +134,9 @@
 </template>
 
 <style scoped>
+#extraInfo div.expansion-panel__header {
+  padding: 10px;
+}
 </style>
 
 <script>
@@ -67,14 +144,24 @@ export default {
   data() {
     return {
       errors: [],
-      authenticated: this.$store.state.authenticated,
       fridgeDataOfUser: null,
-      items: []
+      items: [],
+      makePaymentDialog: false,
+      payment: null,
+      paymentRules: [
+        v => !!v || 'Waarde is vereist',
+        v => v !== 0 || 'Waarde moet groter of kleiner dan 0 zijn'
+      ],
+      paymentFormValid: false,
+      resetDialog: false
     }
   },
   watch: {
     authenticated: function() {
       this.getFridgeDataOfUser()
+    },
+    $route(to, from) {
+      this.created()
     },
     fridgeDataOfUser: {
       handler: function(data, old) {
@@ -123,6 +210,11 @@ export default {
 
       let update = Object.assign({}, this.fridgeDataOfUser)
 
+      // Since date time
+      if (!update.dateTime) {
+        update.dateTime = new Date().toISOString()
+      }
+
       // Totals
       if (update.total === undefined) { update.total = { items: 0, price: 0 } }
       update.total.items++
@@ -159,6 +251,27 @@ export default {
       update.items[item.slug]--
 
       this.fridgeDataOfUser = update
+    },
+    makePayment(e) {
+      e.preventDefault() // Submit
+
+      // Validation
+      if (!this.$refs.paymentForm.validate()) { return }
+
+      let update = Object.assign({}, this.fridgeDataOfUser)
+
+      // Saldo
+      if (update.saldo === undefined) { update.saldo = 0 }
+      update.saldo = update.saldo + parseFloat(this.payment)
+
+      this.fridgeDataOfUser = update
+
+      this.makePaymentDialog = false
+      this.payment = null
+    },
+    reset() {
+      this.fridgeDataOfUser = { dateTime: new Date().toISOString() }
+      this.resetDialog = false
     }
   },
   name: 'Fridge'

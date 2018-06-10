@@ -17,8 +17,8 @@
         <v-flex
           xl3
           lg4
-          md6
-          sm12
+          sm6
+          xs12
           v-for="supplier in suppliers" :key="supplier.id"
         >
           <v-card>

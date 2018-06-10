@@ -45,6 +45,7 @@
               @submit="sendLoginCredentialsEmail"
             >
               <v-text-field
+                id="email"
                 v-model="email"
                 :rules="emailRules"
                 label="E-mail"
@@ -264,30 +265,31 @@ export default {
       this.emailSent = false
       this.emailError = false
 
-      if (this.$refs.loginForm.validate()) {
-        this.$axios
-          .post(process.env.API + '/usermodels/login', { email: this.email })
-          .then(response => {
-            // Show message
-            if (response.data.code === 'AUTH_EMAIL_SENT') {
-              this.emailSent = true
-            }
+      // Validation
+      if (!this.$refs.loginForm.validate()) { return }
 
-            // Login automatically in development
-            if (process.env.NODE_ENV === 'development') {
-              this.$router.push({
-                path: '/',
-                query: {
-                  credentials: response.data.credentials,
-                  redirect: this.$route.fullPath
-                }
-              })
-            }
-          })
-          .catch(() => {
-            this.emailError = true
-          })
-      }
+      this.$axios
+        .post(process.env.API + '/usermodels/login', { email: this.email })
+        .then(response => {
+          // Show message
+          if (response.data.code === 'AUTH_EMAIL_SENT') {
+            this.emailSent = true
+          }
+
+          // Login automatically in development
+          if (process.env.NODE_ENV === 'development') {
+            this.$router.push({
+              path: '/',
+              query: {
+                credentials: response.data.credentials,
+                redirect: this.$route.fullPath
+              }
+            })
+          }
+        })
+        .catch(() => {
+          this.emailError = true
+        })
     },
     loginWithCredentialsFromEmail() {
       // Retrieve credentials from route
