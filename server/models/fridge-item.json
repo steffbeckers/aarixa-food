@@ -25,6 +25,9 @@
     "price": {
       "type": "number",
       "default": 0.5
+    },
+    "image": {
+      "type": "string"
     }
   },
   "validations": [],

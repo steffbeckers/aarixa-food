@@ -13,15 +13,16 @@
           <div class="title">Koelkast</div>
         </v-flex>
       </v-layout>
-      <v-layout row wrap>
+      <v-layout row wrap justify-center>
         <v-flex
-          xl3
-          lg4
-          md6
-          sm12
+          lg2
+          md3
+          sm4
+          xs6
           v-for="item in items" :key="item.id"
         >
-        {{ item.name }}
+        <img class="d-block mx-auto" :src="'static/img/fridge/' + item.image" :alt="item.name">
+        <p class="mt-2 text-xs-center">{{ item.name }}</p>
         </v-flex>
       </v-layout>
     </v-container>
