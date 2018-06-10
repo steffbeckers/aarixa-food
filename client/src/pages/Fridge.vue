@@ -8,24 +8,27 @@
           </v-alert>
         </v-flex>
       </v-layout>
-      <v-layout row>
+      <v-layout v-if="!$store.state.authenticated" row wrap>
+        <v-flex xs12>
+          <v-alert :value="true" type="info">
+            Meld je aan om drank uit de koelkast te kopen.
+          </v-alert>
+        </v-flex>
+      </v-layout>
+      <v-layout row wrap>
         <v-flex>
           <div class="title">Koelkast</div>
+          <p class="mt-2 mb-0">Alle items aan &euro; 0.50, tenzij anders vermeld.</p>
         </v-flex>
       </v-layout>
       <v-layout v-if="$store.state.authenticated && fridgeDataOfUser !== null" row wrap>
-        <v-flex xs12>
+        <v-flex>
           <span>
-            Saldo: 
+            Mijn saldo: 
             <span v-if="fridgeDataOfUser.saldo > 0" style="color: green; font-weight: bold">{{ fridgeDataOfUser.saldo | formatMoney }}</span>
             <span v-else-if="fridgeDataOfUser.saldo < 0" style="color: red">{{ fridgeDataOfUser.saldo | formatMoney }}</span>
             <span v-else>&euro; 0.00</span>
           </span>
-        </v-flex>
-      </v-layout>
-      <v-layout v-else row wrap>
-        <v-flex xs12>
-          <p>Meld je aan om drank uit de koelkast te kopen.</p>
         </v-flex>
       </v-layout>
       <v-layout row wrap justify-center>
@@ -37,17 +40,17 @@
           v-for="item in items" :key="item.id"
           class="mb-3"
         >
-          <img @click="buy(item)" :src="'static/img/fridge/' + item.image" :alt="item.name" class="d-block mx-auto" style="height: 200px">
-          <div v-if="$store.state.authenticated && fridgeDataOfUser.items && fridgeDataOfUser.items[item.slug]" class="d-block mx-auto mt-2 text-xs-center">
-            <v-btn @click="remove(item)" icon ripple>
+          <img @click="buy(item)" :src="'static/img/fridge/' + item.image" :alt="item.name" class="d-block mx-auto" :style="$store.state.authenticated ? 'height: 200px; cursor: pointer;' : 'height: 200px'">
+          <div v-if="$store.state.authenticated && fridgeDataOfUser && fridgeDataOfUser.items && fridgeDataOfUser.items[item.slug]" class="d-block mx-auto mt-2 text-xs-center">
+            <v-btn class="mt-0 mb-0" @click="remove(item)" icon ripple>
               <v-icon color="grey lighten-1">remove</v-icon>
             </v-btn>
-            <span class="d-inline-block" style="font-size: 24px; font-weight: bold;">{{ fridgeDataOfUser.items[item.slug] }}</span>
-            <v-btn @click="buy(item)" icon ripple>
+            <div class="d-inline-block" style="font-size: 24px; font-weight: bold; position: relative; top: 4px">{{ fridgeDataOfUser.items[item.slug] }}</div>
+            <v-btn class="mt-0 mb-0" @click="buy(item)" icon ripple>
               <v-icon color="grey lighten-1">add</v-icon>
             </v-btn>
           </div>
-          <p v-if="fridgeDataOfUser.items && fridgeDataOfUser.items[item.slug] > 1" class="mt-2 mb-0 text-xs-center">{{ item.namePlural }}</p>
+          <p v-if="$store.state.authenticated && fridgeDataOfUser && fridgeDataOfUser.items && fridgeDataOfUser.items[item.slug] > 1" class="mt-2 mb-0 text-xs-center">{{ item.namePlural }}</p>
           <p v-else class="mt-2 mb-0 text-xs-center">{{ item.name }}</p>
           <p v-if="item.price !== 0.5" class="text-xs-center">{{ item.price | formatMoney }}</p>
         </v-flex>
@@ -57,10 +60,6 @@
 </template>
 
 <style scoped>
-.card__media,
-.card__title {
-  cursor: pointer;
-}
 </style>
 
 <script>
@@ -68,11 +67,15 @@ export default {
   data() {
     return {
       errors: [],
+      authenticated: this.$store.state.authenticated,
       fridgeDataOfUser: null,
       items: []
     }
   },
   watch: {
+    authenticated: function() {
+      this.getFridgeDataOfUser()
+    },
     fridgeDataOfUser: {
       handler: function(data, old) {
         this.$axios
@@ -91,6 +94,8 @@ export default {
   },
   methods: {
     getFridgeDataOfUser() {
+      if (!this.$store.state.authenticated) { return }
+
       let filter = {
         fields: 'fridge'
       }
@@ -114,6 +119,8 @@ export default {
         })
     },
     buy(item) {
+      if (!this.$store.state.authenticated) { return }
+
       let update = Object.assign({}, this.fridgeDataOfUser)
 
       // Totals
@@ -133,6 +140,8 @@ export default {
       this.fridgeDataOfUser = update
     },
     remove(item) {
+      if (!this.$store.state.authenticated) { return }
+
       let update = Object.assign({}, this.fridgeDataOfUser)
 
       // Totals
