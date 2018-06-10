@@ -144,7 +144,7 @@ export default {
   data() {
     return {
       errors: [],
-      fridgeDataOfUser: null,
+      fridgeDataOfUser: {},
       items: [],
       makePaymentDialog: false,
       payment: null,
