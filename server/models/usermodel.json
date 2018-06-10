@@ -16,6 +16,9 @@
   "properties": {
     "favoriteMenuItems": {
       "type": "object"
+    },
+    "fridge": {
+      "type": "object"
     }
   },
   "validations": [],
