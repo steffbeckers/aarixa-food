@@ -747,7 +747,13 @@ export default {
       this.errors = []
       this.editing = false
 
-      this.created()
+      // If no slug provided, navigate to supplier overview
+      if (!to.params.slug) {
+        this.$router.push({ name: 'Suppliers' })
+      }
+
+      this.getSupplier()
+      this.getOrder()
     }
   },
   name: 'SupplierDetail'

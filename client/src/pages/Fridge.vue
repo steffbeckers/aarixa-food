@@ -70,12 +70,12 @@
         <v-flex>
           <div class="title">
             Koelkast
-            <v-btn v-if="$store.state.authenticated && fridgeDataOfUser !== null" small style="margin-top: 5px; float: right" color="red" flat @click="resetDialog = true">Resetten</v-btn>
+            <v-btn v-if="$store.state.authenticated && fridgeDataOfUser" small style="margin-top: 5px; float: right" color="red" flat @click="resetDialog = true">Resetten</v-btn>
           </div>
           <p class="mt-2 mb-0">Alle items aan &euro; 0.50, tenzij anders vermeld.</p>
         </v-flex>
       </v-layout>
-      <v-layout v-if="$store.state.authenticated && fridgeDataOfUser !== null" row wrap class="mb-2">
+      <v-layout v-if="$store.state.authenticated && fridgeDataOfUser" row wrap class="mb-2">
         <v-flex class="pt-0">
           <v-expansion-panel class="elevation-0" id="extraInfo">
             <v-expansion-panel-content :expand-icon="fridgeDataOfUser.total ? 'info' : 'false'">
@@ -157,11 +157,9 @@ export default {
     }
   },
   watch: {
-    authenticated: function() {
-      this.getFridgeDataOfUser()
-    },
     $route(to, from) {
-      this.created()
+      this.getFridgeDataOfUser()
+      this.listItems()
     },
     fridgeDataOfUser: {
       handler: function(data, old) {

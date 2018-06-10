@@ -118,7 +118,9 @@
         </v-flex>
         <v-dialog v-if="deleteOrder.id" v-model="deleteOrderDialog" max-width="250px">
           <v-card>
-            <v-card-title>Bestelling verwijderen?</v-card-title>
+            <v-card-title>
+              <div class="title">Bestelling verwijderen?</div>
+            </v-card-title>
             <v-card-actions>
               <v-btn color="primary" flat @click.stop="deleteOrder = {}; deleteOrderDialog = false">Sluiten</v-btn>
               <v-spacer></v-spacer>
