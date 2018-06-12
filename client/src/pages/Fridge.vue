@@ -90,11 +90,11 @@
               </div>
               <v-container v-if="fridgeDataOfUser.saldo !== undefined" grid-list-xl fluid class="pt-0">
                 <v-layout v-if="fridgeDataOfUser.total || fridgeDataOfUser.dateTime" row wrap>
-                  <v-flex v-if="fridgeDataOfUser.total">
-                    <span v-if="fridgeDataOfUser.total.items" class="mr-4">Totaal aantal items: <span class="ml-2">{{ fridgeDataOfUser.total.items }}</span></span>
+                  <v-flex v-if="fridgeDataOfUser.total && fridgeDataOfUser.total.items">
+                    <span class="mr-4">Totaal aantal items: <span class="ml-2">{{ fridgeDataOfUser.total.items }}</span></span>
                   </v-flex>
-                  <v-flex v-if="fridgeDataOfUser.total">
-                    <span v-if="fridgeDataOfUser.total.price" class="mr-4">Totaal uitgave: <span class="ml-2">{{ fridgeDataOfUser.total.price | formatMoney }}</span></span>                  
+                  <v-flex v-if="fridgeDataOfUser.total && fridgeDataOfUser.total.price">
+                    <span class="mr-4">Totaal uitgave: <span class="ml-2">{{ fridgeDataOfUser.total.price | formatMoney }}</span></span>                  
                   </v-flex>
                   <v-flex>
                     <span v-if="fridgeDataOfUser.dateTime">Sinds: <span class="ml-2">{{ fridgeDataOfUser.dateTime | formatDateTime }}</span></span>                  
