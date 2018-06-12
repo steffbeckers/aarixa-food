@@ -209,7 +209,7 @@ export default {
       this.$axios
         .get(process.env.API + '/fridgeItems')
         .then(response => {
-          this.items = response.data
+          if (response.data) this.items = response.data
         })
         .catch(error => {
           this.errors.unshift(error)
@@ -224,7 +224,7 @@ export default {
       await this.$axios
         .get(process.env.API + '/UserModels/' + this.$store.state.user.id + '?filter=' + encodeURIComponent(JSON.stringify(filter)))
         .then(response => {
-          this.fridgeDataOfUser = response.data.fridge
+          if (response.data) this.fridgeDataOfUser = response.data.fridge
         })
         .catch(error => {
           this.errors.unshift(error)
@@ -236,7 +236,7 @@ export default {
       this.$axios
         .patch(process.env.API + '/UserModels/' + this.$store.state.user.id, { fridge: this.fridgeDataOfUser })
         .then(response => {
-          this.fridgeDataOfUser = response.data.fridge
+          if (response.data) this.fridgeDataOfUser = response.data.fridge
         })
         .catch(error => {
           this.errors.unshift(error)
