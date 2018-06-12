@@ -70,7 +70,7 @@
         <v-flex>
           <div class="title">
             Koelkast
-            <v-btn v-if="$store.state.authenticated && fridgeDataOfUser" small style="margin-top: 5px; float: right" color="red" flat @click="resetDialog = true">Resetten</v-btn>
+            <v-btn v-if="$store.state.authenticated && fridgeDataOfUser && fridgeDataOfUser.saldo !== undefined" small style="margin-top: 5px; float: right" color="red" flat @click="resetDialog = true">Resetten</v-btn>
           </div>
           <p class="mt-2 mb-0">Alle items aan &euro; 0.50, tenzij anders vermeld.</p>
         </v-flex>
@@ -78,18 +78,18 @@
       <v-layout v-if="$store.state.authenticated && fridgeDataOfUser" row wrap class="mb-2">
         <v-flex class="pt-0">
           <v-expansion-panel class="elevation-0" id="extraInfo">
-            <v-expansion-panel-content :expand-icon="fridgeDataOfUser.total ? 'info' : 'false'">
-              <div slot="header" :style="fridgeDataOfUser.total ? 'cursor: pointer' : 'cursor: default'">
+            <v-expansion-panel-content :expand-icon="fridgeDataOfUser.saldo !== undefined ? 'info' : 'false'">
+              <div slot="header" :style="fridgeDataOfUser.saldo !== undefined ? 'cursor: pointer' : 'cursor: default'">
                 <span>
                   <span class="mr-2">Mijn saldo:</span>
                   <span v-if="fridgeDataOfUser.saldo > 0" style="color: green; font-weight: bold">{{ fridgeDataOfUser.saldo | formatMoney }}</span>
-                  <span v-else-if="fridgeDataOfUser.saldo < 0" style="color: red">{{ fridgeDataOfUser.saldo | formatMoney }}</span>
+                  <span v-else-if="fridgeDataOfUser.saldo < 0" style="color: red;">{{ fridgeDataOfUser.saldo | formatMoney }}</span>
                   <span v-else>&euro; 0.00</span>
                 </span>
                 <v-btn style="margin-top: 5px" color="primary" flat @click="makePaymentDialog = true">Betalen</v-btn>
               </div>
-              <v-container v-if="fridgeDataOfUser.total" grid-list-xl fluid class="pt-0">
-                <v-layout row wrap>
+              <v-container v-if="fridgeDataOfUser.saldo !== undefined" grid-list-xl fluid class="pt-0">
+                <v-layout v-if="fridgeDataOfUser.total" row wrap>
                   <v-flex>
                     <span v-if="fridgeDataOfUser.total.items" class="mr-4">Totaal aantal items: <span class="ml-2">{{ fridgeDataOfUser.total.items }}</span></span>
                   </v-flex>
@@ -98,6 +98,41 @@
                   </v-flex>
                   <v-flex>
                     <span v-if="fridgeDataOfUser.total.items && fridgeDataOfUser.dateTime">Sinds: <span class="ml-2">{{ fridgeDataOfUser.dateTime | formatDateTime }}</span></span>                  
+                  </v-flex>
+                </v-layout>
+                <v-layout row wrap>
+                  <v-flex
+                    v-if="fridgeDataOfUser.payments"
+                    xs12
+                  >
+                    Betalingen
+                    <table id="payments" cellspacing="0px" class="mt-2" style="min-width: 350px;">
+                      <thead>
+                        <tr>
+                          <th>Datum & tijd</th>
+                          <th>Saldo</th>
+                          <th>Waarde</th>
+                          <th>Nieuw saldo</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="(payment, i) in fridgeDataOfUser.payments" :key="i">
+                          <td>{{ payment.dateTime | formatDateTime }}</td>
+                          <td v-if="payment.saldo.old">{{ payment.saldo.old | formatMoney }}</td>
+                          <td v-else></td>
+                          <td>{{ payment.value | formatMoney }}</td>
+                          <td>
+                            <span v-if="payment.saldo.new > 0" style="color: green; font-weight: bold">{{ payment.saldo.new | formatMoney }}</span>
+                            <span v-else-if="payment.saldo.new < 0" style="color: red;">{{ payment.saldo.new | formatMoney }}</span>
+                            <span v-else>&euro; 0.00</span>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </v-flex>
+                  <v-flex v-else>
+                    Betalingen
+                    <p class="mb-0 mt-2">Je hebt nog geen betalingen gedaan.</p>
                   </v-flex>
                 </v-layout>
               </v-container>
@@ -137,6 +172,9 @@
 #extraInfo div.expansion-panel__header {
   padding: 10px;
 }
+#payments td, th {
+  padding-right: 10px;
+}
 </style>
 
 <script>
@@ -158,41 +196,15 @@ export default {
   },
   watch: {
     $route(to, from) {
-      this.getFridgeDataOfUser()
       this.listItems()
-    },
-    fridgeDataOfUser: {
-      handler: function(data, old) {
-        this.$axios
-          .patch(process.env.API + '/UserModels/' + this.$store.state.user.id, { fridge: data })
-          .catch(error => {
-            this.fridgeDataOfUser = old
-            this.errors.unshift(error)
-          })
-      },
-      deep: true
+      this.getFridgeDataOfUser()
     }
   },
   created: function() {
-    this.getFridgeDataOfUser()
     this.listItems()
+    this.getFridgeDataOfUser()
   },
   methods: {
-    getFridgeDataOfUser() {
-      if (!this.$store.state.authenticated) { return }
-
-      let filter = {
-        fields: 'fridge'
-      }
-      this.$axios
-        .get(process.env.API + '/UserModels/' + this.$store.state.user.id + '?filter=' + encodeURIComponent(JSON.stringify(filter)))
-        .then(response => {
-          this.fridgeDataOfUser = response.data.fridge
-        })
-        .catch(error => {
-          this.errors.unshift(error)
-        })
-    },
     listItems() {
       this.$axios
         .get(process.env.API + '/fridgeItems')
@@ -203,72 +215,128 @@ export default {
           this.errors.unshift(error)
         })
     },
-    buy(item) {
+    async getFridgeDataOfUser() {
       if (!this.$store.state.authenticated) { return }
 
-      let update = Object.assign({}, this.fridgeDataOfUser)
+      let filter = {
+        fields: 'fridge'
+      }
+      await this.$axios
+        .get(process.env.API + '/UserModels/' + this.$store.state.user.id + '?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .then(response => {
+          this.fridgeDataOfUser = response.data.fridge
+        })
+        .catch(error => {
+          this.errors.unshift(error)
+        })
+    },
+    updateFridgeDataOfUser() {
+      if (!this.$store.state.authenticated) { return }
+
+      this.$axios
+        .patch(process.env.API + '/UserModels/' + this.$store.state.user.id, { fridge: this.fridgeDataOfUser })
+        .then(response => {
+          this.fridgeDataOfUser = response.data.fridge
+        })
+        .catch(error => {
+          this.errors.unshift(error)
+        })
+    },
+    async buy(item) {
+      if (!this.$store.state.authenticated) { return }
+
+      // Retrieve latest data
+      await this.getFridgeDataOfUser()
 
       // Since date time
-      if (!update.dateTime) {
-        update.dateTime = new Date().toISOString()
+      if (!this.fridgeDataOfUser.dateTime) {
+        this.fridgeDataOfUser.dateTime = new Date().toISOString()
       }
 
       // Totals
-      if (update.total === undefined) { update.total = { items: 0, price: 0 } }
-      update.total.items++
-      update.total.price = update.total.price + item.price
+      if (this.fridgeDataOfUser.total === undefined) { this.fridgeDataOfUser.total = { items: 0, price: 0 } }
+      this.fridgeDataOfUser.total.items++
+      this.fridgeDataOfUser.total.price = this.fridgeDataOfUser.total.price + item.price
 
       // Saldo
-      if (update.saldo === undefined) { update.saldo = 0 }
-      update.saldo = update.saldo - item.price
+      if (this.fridgeDataOfUser.saldo === undefined) { this.fridgeDataOfUser.saldo = 0 }
+      this.fridgeDataOfUser.saldo = this.fridgeDataOfUser.saldo - item.price
 
       // Items counter
-      if (update.items === undefined) { update.items = {} }
-      if (update.items[item.slug] === undefined) { update.items[item.slug] = 0 }
-      update.items[item.slug]++
+      if (this.fridgeDataOfUser.items === undefined) { this.fridgeDataOfUser.items = {} }
+      if (this.fridgeDataOfUser.items[item.slug] === undefined) { this.fridgeDataOfUser.items[item.slug] = 0 }
+      this.fridgeDataOfUser.items[item.slug]++
 
-      this.fridgeDataOfUser = update
+      // Update data
+      this.updateFridgeDataOfUser()
     },
-    remove(item) {
+    async remove(item) {
       if (!this.$store.state.authenticated) { return }
 
-      let update = Object.assign({}, this.fridgeDataOfUser)
+      // Retrieve latest data
+      await this.getFridgeDataOfUser()
 
       // Totals
-      if (update.total === undefined) { update.total = { items: 0, price: 0 } }
-      update.total.items--
-      update.total.price = update.total.price - item.price
+      if (this.fridgeDataOfUser.total === undefined) { this.fridgeDataOfUser.total = { items: 0, price: 0 } }
+      this.fridgeDataOfUser.total.items--
+      this.fridgeDataOfUser.total.price = this.fridgeDataOfUser.total.price - item.price
 
       // Saldo
-      if (update.saldo === undefined) { update.saldo = 0 }
-      update.saldo = update.saldo + item.price
+      if (this.fridgeDataOfUser.saldo === undefined) { this.fridgeDataOfUser.saldo = 0 }
+      this.fridgeDataOfUser.saldo = this.fridgeDataOfUser.saldo + item.price
 
       // Items counter
-      if (update.items === undefined) { update.items = {} }
-      if (update.items[item.slug] === undefined) { update.items[item.slug] = 0 }
-      update.items[item.slug]--
+      if (this.fridgeDataOfUser.items === undefined) { this.fridgeDataOfUser.items = {} }
+      if (this.fridgeDataOfUser.items[item.slug] === undefined) { this.fridgeDataOfUser.items[item.slug] = 0 }
+      this.fridgeDataOfUser.items[item.slug]--
 
-      this.fridgeDataOfUser = update
+      // Update data
+      this.updateFridgeDataOfUser()
     },
-    makePayment(e) {
+    async makePayment(e) {
       e.preventDefault() // Submit
 
-      // Validation
-      if (!this.$refs.paymentForm.validate()) { return }
+      if (!this.$store.state.authenticated || !this.$refs.paymentForm.validate()) { return }
 
-      let update = Object.assign({}, this.fridgeDataOfUser)
+      // Retrieve latest data
+      await this.getFridgeDataOfUser()
+
+      // To keep track of payments
+      let paymentObject = {
+        dateTime: new Date().toISOString(),
+        value: parseFloat(this.payment),
+        saldo: { old: null, new: null }
+      }
+
+      // Save old saldo
+      if (this.fridgeDataOfUser.saldo) paymentObject.saldo.old = this.fridgeDataOfUser.saldo
+
+      // Copy without references
+      paymentObject = Object.assign({}, paymentObject)
 
       // Saldo
-      if (update.saldo === undefined) { update.saldo = 0 }
-      update.saldo = update.saldo + parseFloat(this.payment)
+      if (this.fridgeDataOfUser.saldo === undefined) { this.fridgeDataOfUser.saldo = 0 }
+      this.fridgeDataOfUser.saldo = this.fridgeDataOfUser.saldo + parseFloat(this.payment)
 
-      this.fridgeDataOfUser = update
+      // Save new saldo
+      if (this.fridgeDataOfUser.saldo) paymentObject.saldo.new = this.fridgeDataOfUser.saldo
+
+      // Payments
+      if (this.fridgeDataOfUser.payments === undefined) { this.fridgeDataOfUser.payments = [] }
+      this.fridgeDataOfUser.payments.unshift(paymentObject)
+
+      // Update data
+      await this.updateFridgeDataOfUser()
 
       this.makePaymentDialog = false
       this.payment = null
     },
-    reset() {
+    async reset() {
       this.fridgeDataOfUser = { dateTime: new Date().toISOString() }
+
+      // Update data
+      await this.updateFridgeDataOfUser()
+
       this.resetDialog = false
     }
   },
