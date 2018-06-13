@@ -13,7 +13,7 @@ export default new Vuex.Store({
     authenticated: Vue.cookie.get('$aariXaFood$token') !== null,
     token: Vue.cookie.get('$aariXaFood$token'),
     user: JSON.parse(Vue.cookie.get('$aariXaFood$user')),
-    favoriteMenuItems: JSON.parse(decodeURIComponent(localStorage.getItem('$aariXaFood$favoriteMenuItems'))),
+    // favoriteMenuItems: JSON.parse(decodeURIComponent(localStorage.getItem('$aariXaFood$favoriteMenuItems'))),
     isAdmin:
       JSON.parse(Vue.cookie.get('$aariXaFood$user')) &&
       JSON.parse(Vue.cookie.get('$aariXaFood$user')).roles
@@ -71,21 +71,22 @@ export default new Vuex.Store({
 
       // Remove Authorization token on header
       delete Vue.prototype.$axios.defaults.headers.common['Authorization']
-    },
-    setUserFavoriteMenuItemsBySupplier(state, supplierIdAndFavorites) {
-      // Update state
-      if (state.favoriteMenuItems === null || state.favoriteMenuItems === undefined) {
-        state.favoriteMenuItems = {}
-      }
-      state.favoriteMenuItems[supplierIdAndFavorites.supplierId] = supplierIdAndFavorites.favorites
-
-      // Clean up favorites object
-      if (supplierIdAndFavorites.favorites.length === 0) {
-        delete state.favoriteMenuItems[supplierIdAndFavorites.supplierId]
-      }
-
-      // Update local storage
-      localStorage.setItem('$aariXaFood$favoriteMenuItems', encodeURIComponent(JSON.stringify(state.favoriteMenuItems)))
     }
+    // },
+    // setUserFavoriteMenuItemsBySupplier(state, supplierIdAndFavorites) {
+    //   // Update state
+    //   if (state.favoriteMenuItems === null || state.favoriteMenuItems === undefined) {
+    //     state.favoriteMenuItems = {}
+    //   }
+    //   state.favoriteMenuItems[supplierIdAndFavorites.supplierId] = supplierIdAndFavorites.favorites
+
+    //   // Clean up favorites object
+    //   if (supplierIdAndFavorites.favorites.length === 0) {
+    //     delete state.favoriteMenuItems[supplierIdAndFavorites.supplierId]
+    //   }
+
+    //   // Update local storage
+    //   localStorage.setItem('$aariXaFood$favoriteMenuItems', encodeURIComponent(JSON.stringify(state.favoriteMenuItems)))
+    // }
   }
 })

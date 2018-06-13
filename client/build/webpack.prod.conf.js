@@ -102,7 +102,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     new SWPrecacheWebpackPlugin({
       cacheId: 'aarixa-food',
       filename: 'service-worker.js',
-      staticFileGlobs: ['dist/**/*.{js,html,css,png,woff,woff2,ttf}'],
+      staticFileGlobs: ['dist/**/*.{js,html,css,png,jpg,woff,woff2,ttf}'],
       minify: true,
       stripPrefix: 'dist/',
       runtimeCaching: [

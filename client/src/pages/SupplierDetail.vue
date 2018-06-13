@@ -24,7 +24,7 @@
       <v-flex
         v-if="this.$store.state.authenticated && this.order && this.order.id"
         md6
-        sm12
+        xs12
       >
         <v-card class="elevation-0">
           <v-toolbar color="primary" class="elevation-0" dark>
@@ -44,14 +44,14 @@
           </v-list>
           <v-list v-show="order.orderItems.length > 0" three-line>
             <template v-for="(item, index) in order.orderItems">
-              <div :key="index">
+              <div :key="index" :class="!item.menuItem ? 'noMenuItem' : ''">
                 <v-list-tile :class="item.editInfo ? 'expandedListTile' : ''">
-                <v-list-tile-action v-if="item.quantity < 2" id="quantitySelector">
+                <v-list-tile-action v-if="item.menuItem && item.quantity < 2" id="quantitySelector">
                   <v-btn @click="menuItemQuantity(item, 1)" icon ripple>
                     <v-icon color="grey lighten-1">add</v-icon>
                   </v-btn>
                 </v-list-tile-action>
-                <v-list-tile-action v-else id="quantitySelector">
+                <v-list-tile-action v-else-if="item.menuItem" id="quantitySelector">
                   <v-spacer></v-spacer>
                   <v-btn class="mb-2" @click="menuItemQuantity(item, 1)" icon ripple>
                     <v-icon color="grey lighten-1">add</v-icon>
@@ -62,7 +62,7 @@
                   <v-spacer></v-spacer>
                 </v-list-tile-action>
                 <v-list-tile-content>
-                  <v-list-tile-title>
+                  <v-list-tile-title v-if="item.menuItem">
                     <span v-if="item.quantity > 1">{{ item.quantity }} </span>
                     <span v-if="item.selectedType && item.quantity > 1">{{ item.menuItem.types[item.selectedType].namePlural }}</span>
                     <span v-if="item.selectedType && item.quantity === 1">{{ item.menuItem.types[item.selectedType].name }}</span>
@@ -70,9 +70,12 @@
                     <span v-if="!item.selectedType && item.quantity === 1">{{ item.menuItem.name }}</span>
                     <span v-if="item.subItems.length > 0">{{ subItemsListing(item) }}</span>
                   </v-list-tile-title>
-                  <v-list-tile-sub-title class="text--primary" v-if="item.info && !item.editInfo">{{ item.info }}</v-list-tile-sub-title>
-                  <v-list-tile-sub-title>{{ item.menuItem.category }}</v-list-tile-sub-title>
-                  <v-list-tile-sub-title v-if="item.editInfo && item.menuItem.types && item.menuItem.types.length > 0">
+                  <v-list-tile-title v-else-if="item.info">
+                    {{ item.info }}
+                  </v-list-tile-title>
+                  <v-list-tile-sub-title class="text--primary" v-if="item.menuItem && item.info && !item.editInfo">{{ item.info }}</v-list-tile-sub-title>
+                  <v-list-tile-sub-title v-if="item.menuItem && item.menuItem.category">{{ item.menuItem.category }}</v-list-tile-sub-title>
+                  <v-list-tile-sub-title v-if="item.editInfo && item.menuItem && item.menuItem.types && item.menuItem.types.length > 0">
                     <v-radio-group class="pt-2 pb-2" v-model="item.selectedType" hide-details row>
                       <v-radio :ripple="false" color="primary" v-for="(itemType, index) in item.menuItem.types" :key="index" :label="itemType.type" :value="index"></v-radio>
                     </v-radio-group>
@@ -97,36 +100,35 @@
                     ></v-text-field>
                   </div>
                 </v-list-tile-content>
-                <v-list-tile-content v-if="item.menuItem.price && (item.menuItem.price > 0 || item.priceOverride > 0)" style="min-width: 65px">
+                <v-list-tile-content v-if="item.menuItem && item.menuItem.price && (item.menuItem.price > 0 || item.priceOverride > 0)" style="min-width: 65px">
                   <v-list-tile-title class="text-xs-right" v-if="item.quantity === 1">{{ (item.priceOverride || item.menuItem.price) | formatMoney }}</v-list-tile-title>                  
                   <v-list-tile-title class="text-xs-right" v-if="item.quantity > 1">{{ (item.priceOverride || item.menuItem.price) * item.quantity | formatMoney }}</v-list-tile-title>
                   <v-list-tile-title class="text-xs-right" style="color: rgba(0, 0, 0, 0.5); font-size: 14px" v-if="item.quantity > 1">
                     {{ (item.priceOverride || item.menuItem.price) | formatMoney }}
                   </v-list-tile-title>
                 </v-list-tile-content>
-                <v-list-tile-content v-if="item.menuItem.types && item.menuItem.types.length > 0 && item.selectedType >= 0" style="min-width: 65px">
+                <v-list-tile-content v-if="item.menuItem && item.menuItem.types && item.menuItem.types.length > 0 && item.selectedType >= 0" style="min-width: 65px">
                   <v-list-tile-title v-if="item.quantity === 1" class="text-xs-right">{{ (item.priceOverride || item.menuItem.types[item.selectedType].price) | formatMoney }}</v-list-tile-title>                  
                   <v-list-tile-title v-if="item.quantity > 1" class="text-xs-right">{{ (item.priceOverride || item.menuItem.types[item.selectedType].price) * item.quantity | formatMoney }}</v-list-tile-title>
                   <v-list-tile-title v-if="item.quantity > 1" class="text-xs-right" style="color: rgba(0, 0, 0, 0.5); font-size: 14px">
                     {{ (item.priceOverride || item.menuItem.types[item.selectedType].price) | formatMoney }}
                   </v-list-tile-title>
                 </v-list-tile-content>
-                <v-list-tile-action v-if="!item.editInfo" @click="toggleEditItemInfoOnOrder(item); search = ''">
+                <v-list-tile-action v-if="item.menuItem && !item.editInfo" @click="toggleEditItemInfoOnOrder(item); search = ''">
                   <v-btn icon ripple>
                     <v-icon color="grey lighten-1">edit</v-icon>
                   </v-btn>
                 </v-list-tile-action>
-                <v-list-tile-action v-else class="mr-2" style="min-width: 40px;">
+                <v-list-tile-action v-else-if="item.menuItem" class="mr-2" style="min-width: 40px;">
                   <v-spacer></v-spacer>
-                  <v-spacer></v-spacer>
-                  <v-btn class="mb-2" icon ripple @click="toggleEditItemInfoOnOrder(item); calculateOrderPrice()">
+                  <v-btn icon ripple @click="toggleEditItemInfoOnOrder(item); calculateOrderPrice()">
                     <v-icon color="grey lighten-1">done</v-icon>
                   </v-btn>
-                  <v-btn class="mt-2" icon ripple @click="favoriteItem(item); search = ''"><!-- ; search = '': Hack to trigger update UI -->
+                  <v-spacer></v-spacer>
+                  <!-- <v-btn class="mt-2" icon ripple @click="favoriteItem(item); search = ''"> ; search = '': Hack to trigger update UI
                     <v-icon v-if="item.favorite" color='yellow accent-3'>star</v-icon>
                     <v-icon v-else color='grey lighten-1'>star</v-icon>
-                  </v-btn>
-                  <v-spacer></v-spacer>
+                  </v-btn> -->
                 </v-list-tile-action>
                 <v-list-tile-action @click="removeItemFromOrder(item); calculateOrderPrice()" v-if="!item.editInfo">
                   <v-btn icon ripple>
@@ -182,13 +184,13 @@
             block
             color="primary"
             class="mt-0 elevation-0"
-            :disabled="order.orderItems.length === 0 || editing"
+            :disabled="order.orderItems && order.orderItems.length === 0 || editing"
             @click="placeOrder()"
           >
             Bestelling plaatsen
           </v-btn>
         </v-card>
-        <div class="mt-4" v-if="$store.state.favoriteMenuItems && $store.state.favoriteMenuItems[supplier.id] && $store.state.favoriteMenuItems[supplier.id].length > 0">
+        <!-- <div class="mt-4" v-if="$store.state.favoriteMenuItems && $store.state.favoriteMenuItems[supplier.id] && $store.state.favoriteMenuItems[supplier.id].length > 0">
           <div class="subtitle">Mijn favorieten</div>
           <v-layout row wrap>
             <v-flex>
@@ -206,7 +208,7 @@
               </v-chip>
             </v-flex>
           </v-layout>
-        </div>
+        </div> -->
         <div class="mt-4 mb-2" v-if="mostOrderedMenuItems.length > 0">
           <div class="subtitle">Meest besteld</div>
           <v-layout row wrap>
@@ -220,9 +222,9 @@
         </div>
       </v-flex>
       <v-flex
-        v-bind:md6="$store.state.authenticated"
-        v-bind:md12="!this.$store.state.authenticated"
-        sm12
+        :md6="$store.state.authenticated"
+        :md12="!this.$store.state.authenticated"
+        xs12
       >
         <div class="subtitle">Menukaart</div>
         <v-layout row wrap>
@@ -319,6 +321,29 @@
         >
           Selectie toevoegen aan bestelling
         </v-btn>
+        <div class="subtitle mt-4">Niet op de menukaart? <span style="font-size: larger">&#x1F914;</span> Voeg hier zelf iets toe aan je bestelling.</div>
+        <v-form 
+          ref="customItemForm"
+          v-model="customItemFormValid"
+          @submit="addCustomItemToOrder"
+        >
+          <v-text-field 
+            :rules="customItemRules"
+            type="text"
+            v-model="customItem"
+            label="Beschrijving"
+            clearable
+          ></v-text-field>
+          <v-btn
+            :disabled="!customItemFormValid"
+            block
+            color="primary"
+            type="submit"
+            class="elevation-0"
+          >
+            Toevoegen aan bestelling
+          </v-btn>          
+        </v-form>
       </v-flex>
     </v-layout>
   </v-container>
@@ -370,6 +395,11 @@ export default {
       editing: false,
       supplier: {},
       order: { orderItems: [] },
+      customItem: null,
+      customItemRules: [
+        v => !!v || 'Beschrijving is vereist'
+      ],
+      customItemFormValid: false,
       rowsPerPageItems: [5, 10, 25, 50, { text: 'Alles', value: -1 }],
       pagination: {
         sortBy: 'name'
@@ -463,7 +493,7 @@ export default {
         })
     },
     checkForDefaultMenuItemType(menuItem) {
-      if (menuItem.types) {
+      if (menuItem && menuItem.types) {
         for (let i = 0; i < menuItem.types.length; i++) {
           if (menuItem.types[i].default === true) {
             return i
@@ -709,14 +739,40 @@ export default {
           this.errors.unshift(error)
         })
     },
+    addCustomItemToOrder(e) {
+      e.preventDefault() // Submit
+
+      if (!this.$store.state.authenticated || !this.$refs.customItemForm.validate()) { return }
+
+      this.$axios
+        .post(process.env.API + '/Orders/' + this.order.id + '/orderItems', {
+          info: this.customItem
+        })
+        .then(response => {
+          // Add to order items
+          this.order.orderItems.push({
+            ...response.data
+          })
+          // Set updatedOn
+          this.order.updatedOn = new Date().toISOString()
+
+          // Reset custom item
+          this.customItem = null
+
+          return true
+        })
+        .catch(error => {
+          this.errors.unshift(error)
+        })
+    },
     calculateOrderPrice() {
       this.order.price = 0
       this.order.orderItems.forEach(item => {
         if (item.priceOverride) {
           this.order.price += item.priceOverride * item.quantity
-        } else if (item.menuItem.types && item.menuItem.types.length > 0 && item.selectedType >= 0) {
+        } else if (item.menuItem && item.menuItem.types && item.menuItem.types.length > 0 && item.selectedType >= 0) {
           this.order.price += item.menuItem.types[item.selectedType].price * item.quantity
-        } else if (item.menuItem.price) {
+        } else if (item.menuItem && item.menuItem.price) {
           this.order.price += item.menuItem.price * item.quantity
         }
       })

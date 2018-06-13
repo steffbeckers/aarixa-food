@@ -22,6 +22,7 @@
                       label="Euro"
                       required
                       clearable
+                      autofocus
                     ></v-text-field>
                   </v-flex>
                 </v-layout>

@@ -59,7 +59,7 @@
                       <v-list-tile-sub-title v-if="order.price > 0">{{ order.price | formatMoney }}</v-list-tile-sub-title>
                     </v-list-tile-content>
                     <v-list-tile-content v-for="(item, itemIndex) in order.orderItems" :key="itemIndex">
-                      <v-list-tile-title>
+                      <v-list-tile-title v-if="item.menuItem">
                         <span v-if="item.quantity > 1">{{ item.quantity }} </span>
                         <span v-if="item.selectedType && item.quantity > 1">{{ item.menuItem.types[item.selectedType].namePlural }}</span>
                         <span v-if="item.selectedType && item.quantity === 1">{{ item.menuItem.types[item.selectedType].name }}</span>
@@ -67,8 +67,11 @@
                         <span v-if="!item.selectedType && item.quantity === 1">{{ item.menuItem.name }}</span>
                         <span v-if="item.subItems.length > 0">{{ subItemsListing(item) }}</span>
                       </v-list-tile-title>
-                      <v-list-tile-sub-title class="text--primary" v-if="item.info">{{ item.info }}</v-list-tile-sub-title>
-                      <v-list-tile-sub-title>{{ item.menuItem.category }}</v-list-tile-sub-title>
+                      <v-list-tile-title v-else-if="item.info">
+                        {{ item.info }}
+                      </v-list-tile-title>
+                      <v-list-tile-sub-title class="text--primary" v-if="item.menuItem && item.info && !item.editInfo">{{ item.info }}</v-list-tile-sub-title>
+                      <v-list-tile-sub-title v-if="item.menuItem && item.menuItem.category">{{ item.menuItem.category }}</v-list-tile-sub-title>
                     </v-list-tile-content>
                     <!-- <v-list-tile-action v-if="$store.state.authenticated && order.userModelId === $store.state.user.id">
                       <v-btn icon ripple>
