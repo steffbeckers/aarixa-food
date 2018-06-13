@@ -100,7 +100,7 @@
                     ></v-text-field>
                   </div>
                 </v-list-tile-content>
-                <v-list-tile-content v-if="item.menuItem && item.menuItem.price && (item.menuItem.price > 0 || item.priceOverride > 0)" style="min-width: 65px">
+                <v-list-tile-content v-if="item.menuItem && (item.menuItem.price > 0 || item.priceOverride > 0)" style="min-width: 65px">
                   <v-list-tile-title class="text-xs-right" v-if="item.quantity === 1">{{ (item.priceOverride || item.menuItem.price) | formatMoney }}</v-list-tile-title>                  
                   <v-list-tile-title class="text-xs-right" v-if="item.quantity > 1">{{ (item.priceOverride || item.menuItem.price) * item.quantity | formatMoney }}</v-list-tile-title>
                   <v-list-tile-title class="text-xs-right" style="color: rgba(0, 0, 0, 0.5); font-size: 14px" v-if="item.quantity > 1">
