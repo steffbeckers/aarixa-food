@@ -151,7 +151,7 @@
           v-for="item in items" :key="item.id"
           class="mb-3"
         >
-          <img @click="buy(item)" :src="'static/img/fridge/' + item.image" :alt="item.name" class="d-block mx-auto" :style="$store.state.authenticated ? 'height: 200px; cursor: pointer;' : 'height: 200px'">
+          <img @click="buy(item)" :src="'/static/img/fridge/' + item.image" :alt="item.name" class="d-block mx-auto" :style="$store.state.authenticated ? 'height: 200px; cursor: pointer;' : 'height: 200px'">
           <div v-if="$store.state.authenticated && fridgeDataOfUser && fridgeDataOfUser.items && fridgeDataOfUser.items[item.slug]" class="d-block mx-auto mt-2 text-xs-center">
             <v-btn class="mt-0 mb-0" @click="remove(item)" icon ripple>
               <v-icon color="grey lighten-1">remove</v-icon>
