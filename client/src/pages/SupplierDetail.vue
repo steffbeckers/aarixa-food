@@ -321,8 +321,9 @@
         >
           Selectie toevoegen aan bestelling
         </v-btn>
-        <div class="subtitle mt-4">Niet op de menukaart? <span style="font-size: larger">&#x1F914;</span> Voeg hier zelf iets toe aan je bestelling.</div>
-        <v-form 
+        <div v-if="this.$store.state.authenticated && this.order && this.order.id" class="subtitle mt-4">Niet op de menukaart? <span style="font-size: larger">&#x1F914;</span> Voeg hier zelf iets toe aan je bestelling.</div>
+        <v-form
+          v-if="this.$store.state.authenticated && this.order && this.order.id"
           ref="customItemForm"
           v-model="customItemFormValid"
           @submit="addCustomItemToOrder"

@@ -1,18 +1,23 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-// Administration
-import AdminUserModels from '@/admin/UserModels'
-
-// Pages
-import Orders from '@/pages/Orders'
-import Suppliers from '@/pages/Suppliers'
-import SupplierDetail from '@/pages/SupplierDetail'
-import Kitchen from '@/pages/Kitchen'
-import Fridge from '@/pages/Fridge'
-
 // Errors
 import PageNotFound from '@/errors/PageNotFound'
+
+// Pages
+// import Orders from '@/pages/Orders'
+const Orders = () => import('@/pages/Orders')
+// import Suppliers from '@/pages/Suppliers'
+const Suppliers = () => import('@/pages/Suppliers')
+// import SupplierDetail from '@/pages/SupplierDetail'
+const SupplierDetail = () => import('@/pages/SupplierDetail')
+// import Kitchen from '@/pages/Kitchen'
+const Kitchen = () => import('@/pages/Kitchen')
+// import Fridge from '@/pages/Fridge'
+const Fridge = () => import('@/pages/Fridge')
+
+// Administration
+const AdminUserModels = () => import('@/admin/UserModels')
 
 Vue.use(Router)
 
