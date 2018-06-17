@@ -42,17 +42,13 @@
       ]
     }
   },
-  "files": {},
-  "final": {
-    "loopback#urlNotFound": {},
-    "express-history-api-fallback": {
-      "params": [
-        "index.html",
-        {
-          "root": "$!../client/dist"
-        }
-      ]
+  "files": {
+    "loopback#static": {
+      "params": "$!../client/dist"
     }
+  },
+  "final": {
+    "loopback#urlNotFound": {}
   },
   "final:after": {
     "strong-error-handler": {}
