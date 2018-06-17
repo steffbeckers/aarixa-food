@@ -101,7 +101,7 @@ export default {
   methods: {
     listSuppliers() {
       this.$axios
-        .get(process.env.API + '/suppliers')
+        .get(process.env.API + '/Suppliers')
         .then(response => {
           this.suppliers = response.data
         })

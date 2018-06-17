@@ -18,7 +18,12 @@ export default new Vuex.Store({
       JSON.parse(Vue.cookie.get('$aariXaFood$user')) &&
       JSON.parse(Vue.cookie.get('$aariXaFood$user')).roles
         ? JSON.parse(Vue.cookie.get('$aariXaFood$user')).roles.includes('Administrator')
-        : false
+        : false,
+    isOfficeManager:
+    JSON.parse(Vue.cookie.get('$aariXaFood$user')) &&
+    JSON.parse(Vue.cookie.get('$aariXaFood$user')).roles
+      ? JSON.parse(Vue.cookie.get('$aariXaFood$user')).roles.includes('OfficeManager')
+      : false
   },
   mutations: {
     loader(state, bool) {
@@ -44,6 +49,7 @@ export default new Vuex.Store({
       state.token = credentials.id
       state.user = credentials.user
       state.isAdmin = credentials.user.roles.includes('Administrator')
+      state.isOfficeManager = credentials.user.roles.includes('OfficeManager')
 
       // Save cookies
       Vue.cookie.set('$aariXaFood$token', credentials.id, {

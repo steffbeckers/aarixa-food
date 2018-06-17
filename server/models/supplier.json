@@ -67,6 +67,12 @@
     {
       "accessType": "*",
       "principalType": "ROLE",
+      "principalId": "OfficeManager",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
       "principalId": "Administrator",
       "permission": "ALLOW"
     }

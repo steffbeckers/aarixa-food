@@ -64,5 +64,9 @@
   "FridgeItem": {
     "dataSource": "mongodb",
     "public": true
+  },
+  "KitchenDuty": {
+    "dataSource": "mongodb",
+    "public": true
   }
 }

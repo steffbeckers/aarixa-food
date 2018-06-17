@@ -449,7 +449,7 @@ export default {
   methods: {
     getSupplier() {
       this.$axios
-        .get(process.env.API + '/suppliers/slug/' + this.$route.params.slug)
+        .get(process.env.API + '/Suppliers/slug/' + this.$route.params.slug)
         .then(response => {
           this.supplier = response.data
         })

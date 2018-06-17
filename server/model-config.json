@@ -62,7 +62,11 @@
     "public": true
   },
   "FridgeItem": {
-    "dataSource": "mongodb",
+    "dataSource": "db",
+    "public": true
+  },
+  "KitchenDuty": {
+    "dataSource": "db",
     "public": true
   }
 }

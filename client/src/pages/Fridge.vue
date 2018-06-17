@@ -71,7 +71,8 @@
         <v-flex>
           <div class="title">
             Koelkast
-            <v-btn v-if="$store.state.authenticated && fridgeDataOfUser && fridgeDataOfUser.saldo !== undefined" small style="margin-top: 5px; float: right" color="red" flat @click="resetDialog = true">Resetten</v-btn>
+            <v-btn class="mt-0 mb-0" v-if="$store.state.authenticated && fridgeDataOfUser && fridgeDataOfUser.saldo !== undefined" small style="float: right" color="red" flat @click="resetDialog = true">Resetten</v-btn>
+            <v-btn class="mt-0 mb-0" small style="float: right" color="primary" flat @click="$router.push({name: 'Kitchen'})">Overzicht keuken</v-btn>
           </div>
           <p class="mt-2 mb-0">Alle items aan &euro; 0.50, tenzij anders vermeld.</p>
         </v-flex>
@@ -208,7 +209,7 @@ export default {
   methods: {
     listItems() {
       this.$axios
-        .get(process.env.API + '/fridgeItems')
+        .get(process.env.API + '/FridgeItems')
         .then(response => {
           if (response.data) this.items = response.data
         })

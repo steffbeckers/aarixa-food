@@ -159,7 +159,7 @@ export default {
   methods: {
     listSuppliersWithOrders() {
       this.$axios
-        .get(process.env.API + '/suppliers/todaysOrders')
+        .get(process.env.API + '/Suppliers/todaysOrders')
         .then(response => {
           this.suppliersWithOrders = response.data
         })
@@ -195,7 +195,7 @@ export default {
     },
     deleteOrderOnAPI() {
       this.$axios
-        .delete(process.env.API + '/orders/' + this.deleteOrder.id)
+        .delete(process.env.API + '/Orders/' + this.deleteOrder.id)
         .then(response => {
           // Remove from listing
           let supplierIndex = this.suppliersWithOrders.findIndex(supplier => {

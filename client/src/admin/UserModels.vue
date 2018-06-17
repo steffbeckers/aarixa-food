@@ -124,7 +124,7 @@ export default {
   methods: {
     getUserModels() {
       this.$axios
-        .get(process.env.API + '/usermodels')
+        .get(process.env.API + '/UserModels')
         .then(response => {
           this.userModels = response.data
         })
@@ -139,7 +139,7 @@ export default {
     },
     createUserModel() {
       this.$axios
-        .post(process.env.API + '/usermodels', this.newUserModel)
+        .post(process.env.API + '/UserModels', this.newUserModel)
         .then(response => {
           // Add new user to list
           this.userModels.push(response.data)
@@ -151,7 +151,7 @@ export default {
     },
     updateUsernameOfUserModel(userModel) {
       this.$axios
-        .patch(process.env.API + '/usermodels/' + userModel.id, { username: userModel.username })
+        .patch(process.env.API + '/UserModels/' + userModel.id, { username: userModel.username })
         .catch(error => {
           this.errors.unshift(error)
         })
@@ -159,7 +159,7 @@ export default {
     deleteUserModel(userModel) {
       if (!confirm('Ben je zeker dat je ' + userModel.username + ' wilt verwijderen?')) { return }
       this.$axios
-        .delete(process.env.API + '/usermodels/' + userModel.id)
+        .delete(process.env.API + '/UserModels/' + userModel.id)
         .then(response => {
           // Remove from listing
           let userModelIndex = this.userModels.findIndex(user => {

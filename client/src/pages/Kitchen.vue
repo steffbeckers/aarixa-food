@@ -8,30 +8,59 @@
           </v-alert>
         </v-flex>
       </v-layout>
+      <v-layout row wrap>
+        <v-flex xs12>
+          <v-alert :value="true" type="info">
+            Deze pagina is nog niet volledig klaar.
+          </v-alert>
+        </v-flex>
+      </v-layout>
       <v-layout row>
         <v-flex>
           <div class="title">Keuken</div>
+          <p class="mt-2 mb-0">Steff staat deze week in voor de keuken.</p>
         </v-flex>
       </v-layout>
-      <v-layout row wrap>
+      <v-layout row wrap class="mt-0">
         <v-flex
-          xl3
-          lg4
           md6
-          sm12
+          xs12
         >
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="Zoeken"
+            single-line
+            hide-details
+            clearable
+            class="mb-2 pt-0 menuSearch"
+          ></v-text-field>
+          <v-data-table
+            :headers="headers"
+            :items="dutyPeriodsList"
+            :loading="this.$store.state.loading"
+            :search="search"
+            disable-initial-sort
+            :pagination.sync="pagination"
+            :rows-per-page-items="rowsPerPageItems"
+            rows-per-page-text="Items per pagina:"
+            no-results-text="Geen resultaten gevonden."
+            no-data-text="Er staat nog niets op de planning."
+          >
+            <template slot="items" slot-scope="props">
+              <td>{{ props.item.userModel.username }}</td>
+              <td>{{ props.item.startDate | formatDate }}</td>
+              <td>{{ props.item.endDate | formatDate }}</td>
+            </template>
+            <template slot="pageText" slot-scope="{ pageStart, pageStop, itemsLength }">
+              {{ pageStart }}-{{ pageStop }} van {{ itemsLength }}
+            </template>
+          </v-data-table>
         </v-flex>
       </v-layout>
     </v-container>
   </transition>
 </template>
-
-<style scoped>
-.card__media,
-.card__title {
-  cursor: pointer;
-}
-</style>
 
 <script>
 import moment from 'moment'
@@ -40,41 +69,46 @@ export default {
   data() {
     return {
       errors: [],
-      suppliers: [],
-      dayOfWeek: new Date().getDay()
+      dutyPeriodsList: [],
+      dateTime: moment(),
+      search: '',
+      rowsPerPageItems: [5, 10, 25, 50, { text: 'Alles', value: -1 }],
+      pagination: {
+        sortBy: 'startDate'
+      },
+      headers: [
+        {
+          text: 'aariXiaan',
+          align: 'left',
+          value: 'userModel.username'
+        },
+        {
+          text: 'Van',
+          align: 'left',
+          value: 'startDate'
+        },
+        {
+          text: 'Tot',
+          align: 'left',
+          value: 'endDate'
+        }
+      ]
     }
   },
   created: function() {
-    this.listSuppliers()
+    this.listDutyPeriods()
   },
   methods: {
-    listSuppliers() {
+    listDutyPeriods() {
+      let filter = {include: {relation: 'userModel', scope: {fields: ['id', 'username']}}}
       this.$axios
-        .get(process.env.API + '/suppliers')
+        .get(process.env.API + '/KitchenDuties?filter=' + JSON.stringify(filter))
         .then(response => {
-          this.suppliers = response.data
+          this.dutyPeriodsList = response.data
         })
         .catch(error => {
           this.errors.unshift(error)
         })
-    },
-    navigateToSupplier(slug) {
-      this.$router.push({ name: 'SupplierDetail', params: { slug: slug } })
-    },
-    supplierOpen(timespans) {
-      var isOpen = false
-      var now = moment()
-
-      timespans.forEach(timespan => {
-        var fromDate = moment(timespan.from, 'HH:mm')
-        var untilDate = moment(timespan.until, 'HH:mm')
-
-        if (now.isBetween(fromDate, untilDate)) {
-          isOpen = true
-        }
-      })
-
-      return isOpen
     }
   },
   name: 'Kitchen'

@@ -36,6 +36,9 @@
     },
     "image": {
       "type": "string"
+    },
+    "stock": {
+      "type": "object"
     }
   },
   "validations": [],
@@ -51,6 +54,12 @@
       "accessType": "READ",
       "principalType": "ROLE",
       "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "OfficeManager",
       "permission": "ALLOW"
     },
     {

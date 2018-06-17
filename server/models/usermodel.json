@@ -32,6 +32,10 @@
     "orders": {
       "type": "hasMany",
       "model": "Order"
+    },
+    "kitchenDuties": {
+      "type": "hasMany",
+      "model": "KitchenDuty"
     }
   },
   "acls": [

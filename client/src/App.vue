@@ -77,6 +77,8 @@
             </v-list-tile-avatar>
             <v-list-tile-content v-if="this.$store.state.user.username">
               <v-list-tile-title>{{ this.$store.state.user.username }}</v-list-tile-title>
+              <v-list-tile-sub-title v-if="this.$store.state.isAdmin">Administrator</v-list-tile-sub-title>
+              <v-list-tile-sub-title v-if="this.$store.state.isOfficeManager">Office Manager</v-list-tile-sub-title>
             </v-list-tile-content>
             <v-list-tile-action @click="signOut">
               <v-icon>fa-sign-out</v-icon>
@@ -269,7 +271,7 @@ export default {
       if (!this.$refs.loginForm.validate()) { return }
 
       this.$axios
-        .post(process.env.API + '/usermodels/login', { email: this.email })
+        .post(process.env.API + '/UserModels/login', { email: this.email })
         .then(response => {
           // Show message
           if (response.data.code === 'AUTH_EMAIL_SENT') {
@@ -312,7 +314,7 @@ export default {
     },
     signOut() {
       this.$axios
-        .post(process.env.API + '/usermodels/logout')
+        .post(process.env.API + '/UserModels/logout')
         .then(response => {
           this.$store.commit('signOut')
           // Reset login email
