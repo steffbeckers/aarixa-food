@@ -26,7 +26,7 @@ module.exports = function(Order) {
       OrderItem.find({where: {orderId: ctx.where.and[0].id}}, function(err, orderItems) {
         orderItems.forEach(orderItem => {
           // If menu item attached
-          if (orderItem.menuItem) {
+          if (orderItem.menuItem && orderItem.menuItem.id) {
             orderItem.menuItem.get().then(function(menuItem) {
               if (menuItem.timesOrdered) {
                 var times = menuItem.timesOrdered - orderItem.quantity;
@@ -50,7 +50,7 @@ module.exports = function(Order) {
       OrderItem.find({where: {orderId: ctx.instance.id}}, function(err, orderItems) {
         orderItems.forEach(orderItem => {
           // If menu item attached
-          if (orderItem.menuItem) {
+          if (orderItem.menuItem && orderItem.menuItem.id) {
             orderItem.menuItem.get().then(function(menuItem) {
               if (menuItem.timesOrdered === undefined) {
                 menuItem.updateAttribute('timesOrdered', orderItem.quantity, function(err, updatedMenuItem) {});
