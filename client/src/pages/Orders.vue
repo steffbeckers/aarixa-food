@@ -14,7 +14,7 @@
         </v-flex>
         <v-flex
           xs12
-          v-if="!$store.state.loading && (suppliersWithOrders.length === 0 || ordersByState(suppliersWithOrders[0].orders, 'ready').length === 0)"
+          v-show="!$store.state.loading && ordersByState(suppliersWithOrders[0].orders, 'ready').length === 0"
         >
           <p>Iedereen is gezonder bezig vandaag, er is nog niets besteld.</p>
           <v-btn class="ml-0" color="primary" flat @click="$router.push('leveranciers')">Maak je keuze</v-btn>
