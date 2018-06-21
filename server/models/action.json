@@ -1,6 +1,6 @@
 {
-  "name": "Supplier",
-  "plural": "Suppliers",
+  "name": "Action",
+  "plural": "Actions",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {
@@ -18,41 +18,32 @@
     }
   },
   "properties": {
-    "name": {
+    "type": {
       "type": "string",
       "required": true
     },
-    "slug": {
+    "state": {
       "type": "string",
       "required": true
     },
-    "telephone": {
-      "type": "string",
-      "required": true
+    "startDate": {
+      "type": "date"
     },
-    "website": {
-      "type": "string"
-    },
-    "openingHours": {
-      "type": "object"
-    },
-    "address": {
-      "type": "object"
+    "endDate": {
+      "type": "date"
     }
   },
   "validations": [],
   "relations": {
-    "menuItems": {
-      "type": "hasMany",
-      "model": "MenuItem"
+    "userModel": {
+      "type": "belongsTo",
+      "model": "UserModel",
+      "foreignKey": "userModelId"
     },
-    "orders": {
-      "type": "hasMany",
-      "model": "Order"
-    },
-    "actions": {
-      "type": "hasMany",
-      "model": "Action"
+    "supplier": {
+      "type": "belongsTo",
+      "model": "Supplier",
+      "foreignKey": "supplierId"
     }
   },
   "acls": [
@@ -66,6 +57,12 @@
       "accessType": "READ",
       "principalType": "ROLE",
       "principalId": "$everyone",
+      "permission": "ALLOW"
+    },
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "$owner",
       "permission": "ALLOW"
     },
     {

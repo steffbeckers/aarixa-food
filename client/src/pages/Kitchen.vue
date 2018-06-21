@@ -15,10 +15,12 @@
           </v-alert>
         </v-flex>
       </v-layout>
-      <v-layout row>
-        <v-flex>
+      <v-layout row wrap>
+        <v-flex xs12>
           <div class="title">Keuken</div>
-          <p class="mt-2 mb-0">Steff staat deze week in voor de keuken.</p>
+        </v-flex>
+        <v-flex xs12>
+          <p class="mb-0"><v-icon>assignment_ind</v-icon> Steff staat deze week in voor de keuken.</p>
         </v-flex>
       </v-layout>
       <v-layout row wrap class="mt-0">
@@ -69,7 +71,7 @@ export default {
   data() {
     return {
       errors: [],
-      dutyPeriodsList: [],
+      dutyPeriodsList: JSON.parse(localStorage.getItem('kitchen:dutyPeriods')) || [],
       dateTime: moment(),
       search: '',
       rowsPerPageItems: [5, 10, 25, 50, { text: 'Alles', value: -1 }],
@@ -105,6 +107,7 @@ export default {
         .get(process.env.API + '/KitchenDuties?filter=' + JSON.stringify(filter))
         .then(response => {
           this.dutyPeriodsList = response.data
+          localStorage.setItem('kitchen:dutyPeriods', JSON.stringify(this.dutyPeriodsList))
         })
         .catch(error => {
           this.errors.unshift(error)

@@ -3,7 +3,7 @@
     <v-container grid-list-lg fluid>
       <v-dialog v-model="makePaymentDialog" max-width="300px">
         <v-card>
-          <v-form 
+          <v-form
             ref="paymentForm"
             v-model="paymentFormValid"
             @submit="makePayment"
@@ -15,7 +15,7 @@
               <v-container grid-list-xs>
                 <v-layout wrap>
                   <v-flex xs12>
-                    <v-text-field 
+                    <v-text-field
                       :rules="paymentRules"
                       type="number"
                       v-model="payment"
@@ -68,13 +68,15 @@
         </v-flex>
       </v-layout>
       <v-layout row wrap>
-        <v-flex>
+        <v-flex xs12>
           <div class="title">
             Koelkast
             <v-btn class="mt-0 mb-0" v-if="$store.state.authenticated && fridgeDataOfUser && fridgeDataOfUser.saldo !== undefined" small style="float: right" color="red" flat @click="resetDialog = true">Resetten</v-btn>
             <v-btn class="mt-0 mb-0" small style="float: right" color="primary" flat @click="$router.push({name: 'Kitchen'})">Overzicht keuken</v-btn>
           </div>
-          <p class="mt-2 mb-0">Alle items aan &euro; 0.50, tenzij anders vermeld.</p>
+        </v-flex>
+        <v-flex xs12 class="pt-0">
+          <p class="mb-0">Alle items aan &euro; 0.50, tenzij anders vermeld.</p>
         </v-flex>
       </v-layout>
       <v-layout v-if="$store.state.authenticated && fridgeDataOfUser" row wrap class="mb-2">
@@ -96,10 +98,10 @@
                     <span class="mr-4">Totaal aantal items: <span class="ml-2">{{ fridgeDataOfUser.total.items }}</span></span>
                   </v-flex>
                   <v-flex v-if="fridgeDataOfUser.total && fridgeDataOfUser.total.price">
-                    <span class="mr-4">Totaal uitgave: <span class="ml-2">{{ fridgeDataOfUser.total.price | formatMoney }}</span></span>                  
+                    <span class="mr-4">Totaal uitgave: <span class="ml-2">{{ fridgeDataOfUser.total.price | formatMoney }}</span></span>
                   </v-flex>
                   <v-flex>
-                    <span v-if="fridgeDataOfUser.dateTime">Sinds: <span class="ml-2">{{ fridgeDataOfUser.dateTime | formatDateTime }}</span></span>                  
+                    <span v-if="fridgeDataOfUser.dateTime">Sinds: <span class="ml-2">{{ fridgeDataOfUser.dateTime | formatDateTime }}</span></span>
                   </v-flex>
                 </v-layout>
                 <v-layout row wrap>
@@ -185,7 +187,7 @@ export default {
     return {
       errors: [],
       fridgeDataOfUser: {},
-      items: [],
+      items: JSON.parse(localStorage.getItem('fridge:items')) || [],
       makePaymentDialog: false,
       payment: null,
       paymentRules: [
@@ -212,6 +214,7 @@ export default {
         .get(process.env.API + '/FridgeItems')
         .then(response => {
           if (response.data) this.items = response.data
+          localStorage.setItem('fridge:items', JSON.stringify(this.items))
         })
         .catch(error => {
           this.errors.unshift(error)

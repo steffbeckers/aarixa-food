@@ -46,12 +46,12 @@
             <template v-for="(item, index) in order.orderItems">
               <div :key="index" :class="!item.menuItem ? 'noMenuItem' : ''">
                 <v-list-tile :class="item.editInfo ? 'expandedListTile' : ''">
-                <v-list-tile-action v-if="item.menuItem && item.quantity < 2" id="quantitySelector">
+                <v-list-tile-action v-if="item.menuItem && item.quantity < 2" class="quantitySelector">
                   <v-btn @click="menuItemQuantity(item, 1)" icon ripple>
                     <v-icon color="grey lighten-1">add</v-icon>
                   </v-btn>
                 </v-list-tile-action>
-                <v-list-tile-action v-else-if="item.menuItem" id="quantitySelector">
+                <v-list-tile-action v-else-if="item.menuItem" class="quantitySelector">
                   <v-spacer></v-spacer>
                   <v-btn class="mb-2" @click="menuItemQuantity(item, 1)" icon ripple>
                     <v-icon color="grey lighten-1">add</v-icon>
@@ -101,17 +101,22 @@
                   </div>
                 </v-list-tile-content>
                 <v-list-tile-content v-if="item.menuItem && (item.menuItem.price > 0 || item.priceOverride > 0)" style="min-width: 65px">
-                  <v-list-tile-title class="text-xs-right" v-if="item.quantity === 1">{{ (item.priceOverride || item.menuItem.price) | formatMoney }}</v-list-tile-title>                  
+                  <v-list-tile-title class="text-xs-right" v-if="item.quantity === 1">{{ (item.priceOverride || item.menuItem.price) | formatMoney }}</v-list-tile-title>
                   <v-list-tile-title class="text-xs-right" v-if="item.quantity > 1">{{ (item.priceOverride || item.menuItem.price) * item.quantity | formatMoney }}</v-list-tile-title>
                   <v-list-tile-title class="text-xs-right" style="color: rgba(0, 0, 0, 0.5); font-size: 14px" v-if="item.quantity > 1">
                     {{ (item.priceOverride || item.menuItem.price) | formatMoney }}
                   </v-list-tile-title>
                 </v-list-tile-content>
                 <v-list-tile-content v-if="item.menuItem && item.menuItem.types && item.menuItem.types.length > 0 && item.selectedType >= 0" style="min-width: 65px">
-                  <v-list-tile-title v-if="item.quantity === 1" class="text-xs-right">{{ (item.priceOverride || item.menuItem.types[item.selectedType].price) | formatMoney }}</v-list-tile-title>                  
+                  <v-list-tile-title v-if="item.quantity === 1" class="text-xs-right">{{ (item.priceOverride || item.menuItem.types[item.selectedType].price) | formatMoney }}</v-list-tile-title>
                   <v-list-tile-title v-if="item.quantity > 1" class="text-xs-right">{{ (item.priceOverride || item.menuItem.types[item.selectedType].price) * item.quantity | formatMoney }}</v-list-tile-title>
                   <v-list-tile-title v-if="item.quantity > 1" class="text-xs-right" style="color: rgba(0, 0, 0, 0.5); font-size: 14px">
                     {{ (item.priceOverride || item.menuItem.types[item.selectedType].price) | formatMoney }}
+                  </v-list-tile-title>
+                </v-list-tile-content>
+                <v-list-tile-content v-if="!item.menuItem && item.priceOverride > 0" style="min-width: 65px">
+                  <v-list-tile-title class="text-xs-right">
+                    {{ item.priceOverride | formatMoney }}
                   </v-list-tile-title>
                 </v-list-tile-content>
                 <v-list-tile-action v-if="item.menuItem && !item.editInfo" @click="toggleEditItemInfoOnOrder(item); search = ''">
@@ -232,12 +237,12 @@
             <v-expansion-panel class="elevation-0">
               <v-expansion-panel-content>
                 <div slot="header">Categorieën</div>
-                <v-chip 
+                <v-chip
                   v-for="(category, categoryIndex) in supplier.menuCategories"
                   v-bind:key="categoryIndex"
                   @click="search = '';
-                      selectedCategory != category ? 
-                      selectedCategory = category : 
+                      selectedCategory != category ?
+                      selectedCategory = category :
                       selectedCategory = ''"
                   v-bind:outline="selectedCategory != category"
                   label
@@ -290,7 +295,7 @@
                 @click="changeSort(header.value)"
               >
                 {{ header.text }}
-                <v-icon small>arrow_upward</v-icon>                
+                <v-icon small>arrow_upward</v-icon>
               </th>
             </tr>
           </template>
@@ -328,22 +333,36 @@
           v-model="customItemFormValid"
           @submit="addCustomItemToOrder"
         >
-          <v-text-field 
-            :rules="customItemRules"
-            type="text"
-            v-model="customItem"
-            label="Beschrijving"
-            clearable
-          ></v-text-field>
+          <v-layout row>
+            <v-flex xs8>
+              <v-text-field
+                :rules="customItemRules.description"
+                type="text"
+                v-model="customItem.description"
+                label="Beschrijving"
+                clearable
+              ></v-text-field>
+            </v-flex>
+            <v-flex xs4>
+              <v-text-field
+                v-model.number="customItem.price"
+                label="Prijs"
+                type="number"
+                step="0.1"
+                min="0"
+                clearable
+              ></v-text-field>
+            </v-flex>
+          </v-layout>
           <v-btn
             :disabled="!customItemFormValid"
             block
             color="primary"
             type="submit"
-            class="elevation-0"
+            class="elevation-0 mt-0"
           >
             Toevoegen aan bestelling
-          </v-btn>          
+          </v-btn>
         </v-form>
       </v-flex>
     </v-layout>
@@ -356,11 +375,11 @@ th.column {
   text-align: left;
 }
 
-#quantitySelector {
+.quantitySelector {
   min-width: 40px;
 }
 
-#quantitySelector.list__tile__action--stack {
+.quantitySelector.list__tile__action--stack {
   align-items: flex-start;
 }
 
@@ -373,10 +392,6 @@ table.datatable > tbody > tr {
 .theme--light .table tbody tr[active] {
   background: #1976d2 !important;
   color: #ffffff;
-}
-
-#expandedListTile {
-  height: 176px;
 }
 
 .list__tile__title {
@@ -394,12 +409,14 @@ export default {
     return {
       errors: [],
       editing: false,
-      supplier: {},
-      order: { orderItems: [] },
-      customItem: null,
-      customItemRules: [
-        v => !!v || 'Beschrijving is vereist'
-      ],
+      supplier: JSON.parse(localStorage.getItem('supplier:' + this.$route.params.slug)) || {},
+      order: JSON.parse(localStorage.getItem('order:' + this.$route.params.slug)) || { orderItems: [] },
+      customItem: { description: null, price: null },
+      customItemRules: {
+        description: [
+          v => !!v || 'Beschrijving is vereist'
+        ]
+      },
       customItemFormValid: false,
       rowsPerPageItems: [5, 10, 25, 50, { text: 'Alles', value: -1 }],
       pagination: {
@@ -453,6 +470,7 @@ export default {
         .get(process.env.API + '/Suppliers/slug/' + this.$route.params.slug)
         .then(response => {
           this.supplier = response.data
+          localStorage.setItem('supplier:' + this.$route.params.slug, JSON.stringify(this.supplier))
         })
         .catch(error => {
           this.errors.unshift(error)
@@ -488,6 +506,7 @@ export default {
           this.order = response.data
           // Recalculate price
           this.calculateOrderPrice()
+          localStorage.setItem('order:' + this.$route.params.slug, JSON.stringify(this.order))
         })
         .catch(error => {
           this.errors.unshift(error)
@@ -747,7 +766,8 @@ export default {
 
       this.$axios
         .post(process.env.API + '/Orders/' + this.order.id + '/orderItems', {
-          info: this.customItem
+          info: this.customItem.description,
+          priceOverride: this.customItem.price
         })
         .then(response => {
           // Add to order items
@@ -757,14 +777,17 @@ export default {
           // Set updatedOn
           this.order.updatedOn = new Date().toISOString()
 
-          // Reset custom item
-          this.customItem = null
+          // Recalculate price
+          this.calculateOrderPrice()
 
-          return true
+          // Reset custom item
+          this.customItem = { description: null, price: null }
         })
         .catch(error => {
           this.errors.unshift(error)
         })
+
+      this.customItemFormValid = true
     },
     calculateOrderPrice() {
       this.order.price = 0

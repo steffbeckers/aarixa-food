@@ -43,38 +43,62 @@ module.exports = function(Supplier) {
   // List orders, with filter functionality
   Supplier.todaysOrders = function(cb) {
     var filter = {
-      include: {
-        relation: 'orders',
-        scope: {
-          include: [
-            {
-              relation: 'orderItems',
-              scope: {
-                include: 'menuItem',
-              },
-            },
-            {
-              relation: 'userModel',
-              scope: {
-                fields: {
-                  id: false,
-                  username: true,
+      include: [
+        {
+          relation: 'orders',
+          scope: {
+            include: [
+              {
+                relation: 'orderItems',
+                scope: {
+                  include: 'menuItem',
                 },
               },
-            },
-          ],
-          order: 'updatedOn DESC',
-          where: {
-            state: 'ready',
-            updatedOn: {
-              between: [
-                new Date().setHours(0, 0, 0, 0), // Today
-                new Date().setHours(23, 59, 59, 999), // Just before tomorrow
-              ],
+              {
+                relation: 'userModel',
+                scope: {
+                  fields: {
+                    id: false,
+                    username: true,
+                  },
+                },
+              },
+            ],
+            where: {
+              updatedOn: {
+                between: [
+                  new Date().setHours(0, 0, 0, 0), // Today
+                  new Date().setHours(23, 59, 59, 999), // Just before tomorrow
+                ],
+              },
             },
           },
         },
-      },
+        {
+          relation: 'actions',
+          scope: {
+            include: [
+              {
+                relation: 'userModel',
+                scope: {
+                  fields: {
+                    id: false,
+                    username: true,
+                  },
+                },
+              },
+            ],
+            where: {
+              updatedOn: {
+                between: [
+                  new Date().setHours(0, 0, 0, 0), // Today
+                  new Date().setHours(23, 59, 59, 999), // Just before tomorrow
+                ],
+              },
+            },
+          },
+        },
+      ]
     };
     Supplier.find(filter, function(err, suppliers) {
       if (err) { return cb(err); }

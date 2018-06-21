@@ -25,13 +25,16 @@ module.exports = function(Order) {
       // Remove the timesOrdered value on MenuItems
       OrderItem.find({where: {orderId: ctx.where.and[0].id}}, function(err, orderItems) {
         orderItems.forEach(orderItem => {
-          orderItem.menuItem.get().then(function(menuItem) {
-            if (menuItem.timesOrdered) {
-              var times = menuItem.timesOrdered - orderItem.quantity;
-              if (times < 0) times = 0;
-              menuItem.updateAttribute('timesOrdered', times, function(err, updatedMenuItem) {});
-            }
-          });
+          // If menu item attached
+          if (orderItem.menuItem) {
+            orderItem.menuItem.get().then(function(menuItem) {
+              if (menuItem.timesOrdered) {
+                var times = menuItem.timesOrdered - orderItem.quantity;
+                if (times < 0) times = 0;
+                menuItem.updateAttribute('timesOrdered', times, function(err, updatedMenuItem) {});
+              }
+            });
+          }
         });
         OrderItem.destroyAll(
           {
@@ -46,17 +49,16 @@ module.exports = function(Order) {
     if (ctx.instance && ctx.instance.state === 'ready') {
       OrderItem.find({where: {orderId: ctx.instance.id}}, function(err, orderItems) {
         orderItems.forEach(orderItem => {
-          orderItem.menuItem.get().then(function(menuItem) {
-            if (menuItem.timesOrdered === undefined) {
-              menuItem.updateAttribute('timesOrdered', orderItem.quantity, function(err, updatedMenuItem) {
-                console.log(updatedMenuItem);
-              });
-            } else {
-              menuItem.updateAttribute('timesOrdered', menuItem.timesOrdered + orderItem.quantity, function(err, updatedMenuItem) {
-                console.log(updatedMenuItem);
-              });
-            }
-          });
+          // If menu item attached
+          if (orderItem.menuItem) {
+            orderItem.menuItem.get().then(function(menuItem) {
+              if (menuItem.timesOrdered === undefined) {
+                menuItem.updateAttribute('timesOrdered', orderItem.quantity, function(err, updatedMenuItem) {});
+              } else {
+                menuItem.updateAttribute('timesOrdered', menuItem.timesOrdered + orderItem.quantity, function(err, updatedMenuItem) {});
+              }
+            });
+          }
         });
       });
     }

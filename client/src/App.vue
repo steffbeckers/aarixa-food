@@ -39,7 +39,7 @@
             <v-alert :value="emailError" type="error">
               Er ging even iets mis, probeer het later opnieuw. Of stuur een <a style="color: #fff;" href="mailto:steff@steffbeckers.eu?subject=aariXaFood - Error bij aanmelden&body=Dag Steff, Ik kan me niet aanmelden op aariXaFood. ...">e-mail naar Steff</a>.
             </v-alert>
-            <v-form 
+            <v-form
               ref="loginForm"
               v-model="loginFormValid"
               @submit="sendLoginCredentialsEmail"
@@ -59,6 +59,7 @@
                 color="primary"
                 :disabled="!loginFormValid"
                 type="submit"
+                class="elevation-0"
               >
                 Verstuur e-mail
               </v-btn>
@@ -99,7 +100,7 @@
           <v-list-tile-title v-text="item.title"></v-list-tile-title>
         </v-list-tile>
       </v-list>
-      <v-list v-if="this.$store.state.isAdmin">
+      <v-list v-if="$store.state.isAdmin">
         <v-list-group
           prepend-icon="account_circle"
         >
@@ -115,7 +116,7 @@
         </v-list-group>
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar 
+    <v-toolbar
       :clipped-left="clipped"
       app
       color="primary white--text"
@@ -130,7 +131,7 @@
         </div>
       </div>
       <v-toolbar-title class="ml-1 white--text" v-text="title"></v-toolbar-title>
-      <v-spacer></v-spacer>      
+      <v-spacer></v-spacer>
       <v-toolbar-items>
         <v-btn class="white--text" :to="{ name: 'SupplierDetail', params: { slug: 'chanry' }}" flat>Chanry</v-btn>
         <v-btn class="white--text" :to="{ name: 'SupplierDetail', params: { slug: 'orient' }}" flat>Orient</v-btn>
@@ -140,7 +141,7 @@
       <router-view/>
     </v-content>
     <v-bottom-nav
-      :fixed="fixed" 
+      :fixed="fixed"
       :value="showBottomNav"
       class="elevation-0"
       style="background-color: rgba(255, 255, 255, 0.75)"
@@ -158,8 +159,8 @@
         <v-icon>kitchen</v-icon>
       </v-btn>
     </v-bottom-nav>
-    <v-footer 
-      :fixed="fixed" 
+    <v-footer
+      :fixed="fixed"
       app
     >
       <div id="buildInfo" class="ml-2">Laatste bijwerking: {{ buildDateTime }}</div>
@@ -232,7 +233,7 @@ export default {
           }
         },
         {
-          icon: 'assignment_ind',
+          icon: 'restaurant',
           title: 'Keuken',
           page: {
             name: 'Kitchen'

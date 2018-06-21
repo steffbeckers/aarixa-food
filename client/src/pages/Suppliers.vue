@@ -53,7 +53,7 @@
               >
                 Bellen
               </v-btn>
-              <v-btn 
+              <v-btn
                 v-if="supplier.website"
                 :href="supplier.website"
                 target="_blank"
@@ -91,7 +91,7 @@ export default {
   data() {
     return {
       errors: [],
-      suppliers: [],
+      suppliers: JSON.parse(localStorage.getItem('suppliers')) || [],
       dayOfWeek: new Date().getDay()
     }
   },
@@ -104,6 +104,7 @@ export default {
         .get(process.env.API + '/Suppliers')
         .then(response => {
           this.suppliers = response.data
+          localStorage.setItem('suppliers', JSON.stringify(this.suppliers))
         })
         .catch(error => {
           this.errors.unshift(error)
