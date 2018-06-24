@@ -31,6 +31,12 @@
     },
     "endDate": {
       "type": "date"
+    },
+    "result": {
+      "type": "object"
+    },
+    "info": {
+      "type": "string"
     }
   },
   "validations": [],
@@ -58,6 +64,12 @@
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "create"
     },
     {
       "accessType": "*",

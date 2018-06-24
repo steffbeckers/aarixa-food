@@ -44,6 +44,8 @@
               v-model="loginFormValid"
               @submit="sendLoginCredentialsEmail"
             >
+              <span v-if="nodeEnv === 'development'" @click="email = 'steff.beckers@aariXa.be'">steff.beckers@</span>
+              <span v-if="nodeEnv === 'development'" @click="email = 'steff@aariXa.be'">steff@</span>
               <v-text-field
                 id="email"
                 v-model="email"
@@ -248,6 +250,7 @@ export default {
         }
       ],
       buildDateTime: process.env.BUILD_DATETIME,
+      nodeEnv: process.env.NODE_ENV,
       clipped: false,
       showBottomNav: true,
       miniVariant: false,

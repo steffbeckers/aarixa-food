@@ -69,6 +69,12 @@
       "permission": "ALLOW"
     },
     {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "property": "__create__actions"
+    },
+    {
       "accessType": "*",
       "principalType": "ROLE",
       "principalId": "OfficeManager",

@@ -14,7 +14,7 @@
         </v-flex>
         <v-flex
           xs12
-          v-show="!$store.state.loading && ordersByState(suppliersWithOrders[0].orders, 'ready').length === 0"
+          v-show="!$store.state.loading && suppliersWithOrders[0] && ordersByState(suppliersWithOrders[0].orders, 'ready').length === 0"
         >
           <p>Iedereen is gezonder bezig vandaag, er is nog niets besteld.</p>
           <v-btn class="ml-0" color="primary" flat @click="$router.push('leveranciers')">Maak je keuze</v-btn>
@@ -44,32 +44,59 @@
                 <div v-else>
                   Vandaag gesloten
                 </div>
-                <!-- <div v-if="ordersByState(supplier.orders, 'draft') && ordersByState(supplier.orders, 'draft').length > 0">
+              </div>
+            </v-card-title>
+            <v-card-text class="pb-0">
+              <!-- <div class="mb-2" v-if="ordersByState(supplier.orders, 'draft') && ordersByState(supplier.orders, 'draft').length > 0">
                   <span
                     v-if="ordersByState(supplier.orders, 'draft').length === 1 &&
                           ordersByState(supplier.orders, 'draft')[0].orderItems &&
                           ordersByState(supplier.orders, 'draft')[0].orderItems.length > 0"
                   >
-                    {{ ordersByState(supplier.orders, 'draft')[0].userModel.username }} is aan het bestellen
+                <v-icon>info</v-icon> {{ ordersByState(supplier.orders, 'draft')[0].userModel.username }} is aan het bestellen
                   </span>
                   <span
                     v-else-if="ordersByState(supplier.orders, 'draft').length > 1 && order.orderItems.length > 0"
                     v-for="(order, index) in ordersByState(supplier.orders, 'draft')"
-                    :key="order.id"
+                  :key="index"
                   >
                     {{ order.userModel.username }}<span v-if="index !== ordersByState(supplier.orders, 'draft').length - 1">, </span>
                     <span v-if="index === ordersByState(supplier.orders, 'draft').length - 1"> zijn aan het bestellen</span>
                   </span>
                 </div> -->
+              <div v-if="$store.state.authenticated">
+                <v-dialog
+                  ref="goingToTimePicker"
+                  v-model="showGoingToTimePicker"
+                  lazy
+                  width="290px"
+                >
+                  <div slot="activator" d-inline-block class="mr-1">
+                    <v-icon @click="actionStateChangeTime = now.format('HH:mm')">access_time</v-icon>
+                  </div>
+                  <v-time-picker
+                    v-model="goingToTime"
+                    format="24hr"
+                    scrollable
+                    :min="now.format('HH:mm')"
+                  >
+                    <v-spacer></v-spacer>
+                    <v-btn flat color="primary" @click="goingToTime = null; showGoingToTimePicker = false">Resetten</v-btn>
+                    <v-btn flat color="primary" @click="showGoingToTimePicker = false">Kies tijd</v-btn>
+                  </v-time-picker>
+                </v-dialog>
+                <v-btn v-if="!goingToTime" @click="callNow(supplier)" color="primary" class="elevation-0 ml-0" small>Ga nu bellen</v-btn>
+                <v-btn v-if="goingToTime" @click="scheduleCall(supplier)" color="primary" class="elevation-0 ml-0" small>Ga bellen om {{ goingToTime }}</v-btn>
               </div>
-            </v-card-title>
-            <v-card-text class="pb-0">
               <v-list three-line class="pt-1 pb-1">
                 <template v-for="(item, itemIndex) in ordersAndActions(ordersByState(supplier.orders, 'ready'), supplier.actions)">
                   <div
                     :key="item.id"
                     :style="item.itemType === 'action' ? 'background-color: #fafafa' : ''"
-                    :class="item.itemType === 'action' && item.userModelId !== $store.state.user && $store.state.user.id && !$store.state.isAdmin ? 'actionItem' : ''"
+                    :class="
+                      (item.itemType === 'action' && !$store.state.authenticated) ||
+                      (item.itemType === 'action' && $store.state.authenticated && item.userModelId !== $store.state.user.id) &&
+                      !$store.state.isAdmin ? 'actionItem' : ''"
                   >
                     <v-divider v-if="itemIndex === 0"></v-divider>
                     <v-list-tile v-if="item.itemType === 'order'">
@@ -139,15 +166,38 @@
                         <v-list-tile-title v-if="item.type === 'pickup' && item.state === 'inProgress'">
                           Is naar {{ supplier.name }} om de bestelling af te halen
                         </v-list-tile-title>
-                        <v-list-tile-sub-title v-if="item.type === 'call' && ($store.state.authenticated && item.userModelId === $store.state.user.id || $store.state.isAdmin)">
-                          <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'todo'" small>Moet nog bellen</v-btn>
-                          <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'inProgress'" small>Ga nu bellen</v-btn>
-                          <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'done'" small>Heb gebeld</v-btn>
-                        </v-list-tile-sub-title>
-                        <v-list-tile-sub-title v-if="item.type === 'pickup' && ($store.state.authenticated && item.userModelId === $store.state.user.id || $store.state.isAdmin)">
-                          <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'todo'" small>Moet nog afhalen</v-btn>
-                          <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'inProgress'" small>Ga nu afhalen</v-btn>
-                          <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'done'" small>Ben gaan afhalen</v-btn>
+                        <v-list-tile-sub-title v-if="$store.state.isAdmin || $store.state.authenticated && item.userModelId === $store.state.user.id">
+                          <v-dialog
+                            ref="actionStateChangeTimePicker"
+                            v-model="showActionStateChangeTimePicker"
+                            lazy
+                            width="290px"
+                          >
+                            <div slot="activator" d-inline-block class="mr-1">
+                              <v-icon @click="actionStateChangeTime = now.format('HH:mm')">access_time</v-icon>
+                            </div>
+                            <v-time-picker
+                              v-model="actionStateChangeTime"
+                              format="24hr"
+                              scrollable
+                              :min="now.format('HH:mm')"
+                            >
+                              <v-spacer></v-spacer>
+                              <v-btn flat color="primary" @click="actionStateChangeTime = null; showActionStateChangeTimePicker = false">Resetten</v-btn>
+                              <v-btn flat color="primary" @click="showActionStateChangeTimePicker = false">Kies tijd</v-btn>
+                            </v-time-picker>
+                          </v-dialog>
+                          <template v-if="item.type === 'call'">
+                            <v-btn color="primary" class="elevation-0 ml-0" v-if="!actionStateChangeTime && item.state !== 'todo'" @click="updateStateOfAction(item, 'todo')" small>Moet nog bellen</v-btn>
+                            <v-btn color="primary" class="elevation-0 ml-0" v-if="actionStateChangeTime && item.state !== 'todo'" @click="updateStateOfAction(item, 'todo')" small>Ga bellen om {{ actionStateChangeTime }}</v-btn>
+                            <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'inProgress'" @click="updateStateOfAction(item, 'inProgress')" small>Ga nu bellen</v-btn>
+                            <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'done'" @click="updateStateOfAction(item, 'done')" small>Heb gebeld<span v-show="actionStateChangeTime">&nbsp;om {{ actionStateChangeTime }}</span></v-btn>
+                          </template>
+                          <template v-if="item.type === 'pickup'">
+                            <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'todo'" @click="updateStateOfAction(item, 'todo')" small>Moet nog afhalen</v-btn>
+                            <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'inProgress'" @click="updateStateOfAction(item, 'inProgress')" small>Ga nu afhalen</v-btn>
+                            <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'done'" @click="updateStateOfAction(item, 'done')" small>Ben gaan afhalen</v-btn>
+                          </template>
                         </v-list-tile-sub-title>
                       </v-list-tile-content>
                       <v-list-tile-action
@@ -216,6 +266,19 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+        <v-dialog v-if="afterCallAction && afterCallAction.id" v-model="afterCallActionDialog" max-width="500px">
+          <v-card>
+            <v-card-title>
+              <div class="title"></div>
+            </v-card-title>
+            <v-card-text>
+
+            </v-card-text>
+            <v-card-actions>
+              <v-btn color="primary" flat @click.stop="afterCallAction = {}; afterCallActionDialog = false">Sluiten</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-layout>
     </v-container>
   </transition>
@@ -229,17 +292,29 @@
 
 <script>
 import _ from 'lodash'
+import moment from 'moment'
 
 export default {
   data() {
     return {
       errors: [],
       suppliersWithOrders: [],
+      // Dates
       dayOfWeek: new Date().getDay(),
+      now: moment(),
+      // Deletes
       deleteOrder: {},
       deleteOrderDialog: false,
       deleteAction: {},
-      deleteActionDialog: false
+      deleteActionDialog: false,
+      // Time pickers
+      goingToTime: null,
+      showGoingToTimePicker: false,
+      actionStateChangeTime: null,
+      showActionStateChangeTimePicker: false,
+      // Popup after call action
+      afterCallActionDialog: false,
+      afterCallAction: {}
     }
   },
   created: function() {
@@ -286,6 +361,83 @@ export default {
       return _.orderBy(array, function(o) {
         return o.startDate || o.updatedOn
       }, ['desc'])
+    },
+    callNow(supplier) {
+      this.$axios
+        .post(process.env.API + '/Suppliers/' + supplier.id + '/actions',
+          {
+            type: 'call',
+            state: 'inProgress'
+          }
+        )
+        .then(response => {
+          supplier.actions.unshift({
+            ...response.data,
+            userModel: {
+              username: this.$store.state.user.username
+            }
+          })
+        })
+        .catch(error => {
+          this.errors.unshift(error)
+        })
+    },
+    scheduleCall(supplier) {
+      this.$axios
+        .post(process.env.API + '/Suppliers/' + supplier.id + '/actions', {
+          startDate: moment(this.goingToTime, 'HH:mm').toISOString(),
+          type: 'call',
+          state: 'todo'
+        })
+        .then(response => {
+          supplier.actions.unshift({
+            ...response.data,
+            userModel: {
+              username: this.$store.state.user.username
+            }
+          })
+
+          this.goingToCallTime = null
+        })
+        .catch(error => {
+          this.errors.unshift(error)
+        })
+    },
+    updateStateOfAction(action, state) {
+      // If the action has a start date and the state is inProgress or done, update the start date to now
+      if ((state === 'inProgress' || state === 'done') && action.startDate) {
+        action.startDate = moment().toISOString()
+      }
+
+      // If now, at this moment the action is happening it can't be scheduled
+      if (state === 'inProgress') {
+        this.actionStateChangeTime = null
+      }
+
+      // If time is provided, overwrite state time
+      if (this.actionStateChangeTime) {
+        action.startDate = moment(this.actionStateChangeTime, 'HH:mm').toISOString()
+      }
+
+      this.$axios
+        .patch(process.env.API + '/Actions/' + action.id, {
+          startDate: action.startDate,
+          state: state
+        })
+        .then(response => {
+          action.state = response.data.state
+
+          // After call action
+          if (action.type === 'call' && action.state === 'done') {
+            this.afterCallAction = action
+            this.afterCallActionDialog = true
+          }
+
+          this.actionStateChangeTime = null
+        })
+        .catch(error => {
+          this.errors.unshift(error)
+        })
     },
     subItemsListing(item) {
       let list = 'met '

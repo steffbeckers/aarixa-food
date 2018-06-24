@@ -68,6 +68,10 @@ export default new Vuex.Store({
       state.token = null
       state.user = null
 
+      // Set roles
+      state.isAdmin = false
+      state.isOfficeManager = false
+
       // Remove cookies
       Vue.cookie.delete('$aariXaFood$token')
       Vue.cookie.delete('$aariXaFood$user')
