@@ -12,13 +12,13 @@
         <v-flex xs12>
           <div class="title">Bestellingen</div>
         </v-flex>
-        <v-flex
+        <!-- <v-flex
           xs12
           v-show="!$store.state.loading && suppliersWithOrders[0] && ordersByState(suppliersWithOrders[0].orders, 'ready').length === 0"
         >
           <p>Iedereen is gezonder bezig vandaag, er is nog niets besteld.</p>
           <v-btn class="ml-0" color="primary" flat @click="$router.push('leveranciers')">Maak je keuze</v-btn>
-        </v-flex>
+        </v-flex> -->
       </v-layout>
       <v-layout row wrap>
         <v-flex
@@ -92,7 +92,7 @@
                 <template v-for="(item, itemIndex) in ordersAndActions(ordersByState(supplier.orders, 'ready'), supplier.actions)">
                   <div
                     :key="item.id"
-                    :style="item.itemType === 'action' ? 'background-color: #fafafa' : ''"
+                    :style="item.itemType === 'action' ? 'background-color: #efefef' : ''"
                     :class="
                       (item.itemType === 'action' && !$store.state.authenticated) ||
                       (item.itemType === 'action' && $store.state.authenticated && item.userModelId !== $store.state.user.id) &&
@@ -137,9 +137,6 @@
                       </v-list-tile-action>
                     </v-list-tile>
                     <v-list-tile v-else-if="item.itemType === 'action'" :key="itemIndex">
-                      <v-list-tile-action style="min-width: 40px;">
-                        <v-icon color="grey lighten-1">info</v-icon>
-                      </v-list-tile-action>
                       <v-list-tile-content>
                         <v-list-tile-title>
                           {{ item.userModel.username }}
@@ -152,20 +149,24 @@
                       </v-list-tile-content>
                       <v-list-tile-content>
                         <v-list-tile-title v-if="item.type === 'call' && item.state === 'todo'">
-                          Gaat<span v-if="item.startDate"> rond {{ item.startDate | formatTime }}</span> bellen naar {{ supplier.name }}
+                          Gaat<span v-if="item.startDate"> rond {{ item.startDate | formatTime }}</span> bellen naar {{ supplier.name }}.
                         </v-list-tile-title>
                         <v-list-tile-title v-if="item.type === 'call' && item.state === 'inProgress'">
-                          Is momenteel aan het bellen met {{ supplier.name }}
+                          Is momenteel aan het bellen met {{ supplier.name }}.
                         </v-list-tile-title>
                         <v-list-tile-title v-if="item.type === 'call' && item.state === 'done'">
-                          Heeft gebeld naar {{ supplier.name }}
+                          Heeft gebeld naar {{ supplier.name }}<span v-if="item.result.delivery">. Er wordt <span v-if="item.result.time">rond {{ item.result.time }} </span>geleverd</span><span v-else>. Iemand mag <span v-if="item.result.time">rond {{ item.result.time }} </span>afhalen</span>.
+                          <v-icon v-if="$store.state.isAdmin || $store.state.authenticated && item.userModelId === $store.state.user.id" small @click="afterCallSupplier = supplier; afterCallAction = item; afterCallActionDialog = true">edit</v-icon>
                         </v-list-tile-title>
                         <v-list-tile-title v-if="item.type === 'pickup' && item.state === 'todo'">
-                          Gaat<span v-if="item.startDate"> rond {{ item.startDate | formatTime }}</span> de bestelling af te halen
+                          Gaat<span v-if="item.startDate"> rond {{ item.startDate | formatTime }}</span> de bestelling af te halen.
                         </v-list-tile-title>
                         <v-list-tile-title v-if="item.type === 'pickup' && item.state === 'inProgress'">
-                          Is naar {{ supplier.name }} om de bestelling af te halen
+                          Is naar {{ supplier.name }} om de bestelling af te halen.
                         </v-list-tile-title>
+                        <v-list-tile-sub-title v-if="item.info">
+                          {{ item.info }}
+                        </v-list-tile-sub-title>
                         <v-list-tile-sub-title v-if="$store.state.isAdmin || $store.state.authenticated && item.userModelId === $store.state.user.id">
                           <v-dialog
                             ref="actionStateChangeTimePicker"
@@ -191,12 +192,12 @@
                             <v-btn color="primary" class="elevation-0 ml-0" v-if="!actionStateChangeTime && item.state !== 'todo'" @click="updateStateOfAction(item, 'todo')" small>Moet nog bellen</v-btn>
                             <v-btn color="primary" class="elevation-0 ml-0" v-if="actionStateChangeTime && item.state !== 'todo'" @click="updateStateOfAction(item, 'todo')" small>Ga bellen om {{ actionStateChangeTime }}</v-btn>
                             <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'inProgress'" @click="updateStateOfAction(item, 'inProgress')" small>Ga nu bellen</v-btn>
-                            <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'done'" @click="updateStateOfAction(item, 'done')" small>Heb gebeld<span v-show="actionStateChangeTime">&nbsp;om {{ actionStateChangeTime }}</span></v-btn>
+                            <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'done'" @click="updateStateOfAction(item, 'done', supplier)" small>Heb gebeld<span v-show="actionStateChangeTime">&nbsp;om {{ actionStateChangeTime }}</span></v-btn>
                           </template>
                           <template v-if="item.type === 'pickup'">
                             <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'todo'" @click="updateStateOfAction(item, 'todo')" small>Moet nog afhalen</v-btn>
                             <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'inProgress'" @click="updateStateOfAction(item, 'inProgress')" small>Ga nu afhalen</v-btn>
-                            <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'done'" @click="updateStateOfAction(item, 'done')" small>Ben gaan afhalen</v-btn>
+                            <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'done'" @click="updateStateOfAction(item, 'done', supplier)" small>Ben gaan afhalen</v-btn>
                           </template>
                         </v-list-tile-sub-title>
                       </v-list-tile-content>
@@ -248,7 +249,7 @@
               <div class="title">Bestelling verwijderen?</div>
             </v-card-title>
             <v-card-actions>
-              <v-btn color="primary" flat @click.stop="deleteOrder = {}; deleteOrderDialog = false">Sluiten</v-btn>
+              <v-btn flat @click.stop="deleteOrder = {}; deleteOrderDialog = false">Sluiten</v-btn>
               <v-spacer></v-spacer>
               <v-btn color="red" flat @click.stop="deleteOrderOnAPI()">Verwijderen</v-btn>
             </v-card-actions>
@@ -260,22 +261,36 @@
               <div class="title">Actie verwijderen?</div>
             </v-card-title>
             <v-card-actions>
-              <v-btn color="primary" flat @click.stop="deleteAction = {}; deleteActionDialog = false">Sluiten</v-btn>
+              <v-btn flat @click.stop="deleteAction = {}; deleteActionDialog = false">Sluiten</v-btn>
               <v-spacer></v-spacer>
               <v-btn color="red" flat @click.stop="deleteActionOnAPI()">Verwijderen</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
-        <v-dialog v-if="afterCallAction && afterCallAction.id" v-model="afterCallActionDialog" max-width="500px">
+        <v-dialog v-if="afterCallAction && afterCallAction.id" v-model="afterCallActionDialog" max-width="350px">
           <v-card>
             <v-card-title>
-              <div class="title"></div>
+              <div class="title">Telefoongesprek met {{ afterCallSupplier.name }}</div>
             </v-card-title>
-            <v-card-text>
-
+            <v-card-text class="text-xs-center">
+              <v-switch
+                :label="`Wordt er geleverd?`"
+                v-model="afterCallAction.result.delivery"
+              ></v-switch>
+              <p class="text-xs-left mb-2" style="color: rgba(0,0,0,.54); font-size: 16px">Om hoe laat <span v-if="afterCallAction.result.delivery">levert men</span><span v-else>afhalen</span>?</p>
+              <v-spacer></v-spacer>
+              <v-time-picker
+                v-model="afterCallAction.result.time"
+                format="24hr"
+                max-width="200px"
+                scrollable
+              ></v-time-picker>
+              <v-text-field class="mt-1" v-model="afterCallAction.info" rows="2" multi-line label="Info" clearable></v-text-field>
             </v-card-text>
             <v-card-actions>
-              <v-btn color="primary" flat @click.stop="afterCallAction = {}; afterCallActionDialog = false">Sluiten</v-btn>
+              <v-btn flat @click.stop="afterCallAction = {}; afterCallActionDialog = false">Sluiten</v-btn>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" flat @click.stop="saveAfterCallActionOnAPI()">Opslaan</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -287,6 +302,19 @@
 <style scoped>
 .card__title > div {
   cursor: pointer;
+}
+
+.list__tile__title {
+  height: auto;
+  max-height: 72px;
+  white-space: normal;
+  min-width: 75px;
+}
+
+.list__tile__sub-title {
+  height: auto;
+  max-height: 72px;
+  white-space: normal;
 }
 </style>
 
@@ -314,7 +342,8 @@ export default {
       showActionStateChangeTimePicker: false,
       // Popup after call action
       afterCallActionDialog: false,
-      afterCallAction: {}
+      afterCallAction: {},
+      afterCallSupplier: {}
     }
   },
   created: function() {
@@ -403,7 +432,7 @@ export default {
           this.errors.unshift(error)
         })
     },
-    updateStateOfAction(action, state) {
+    updateStateOfAction(action, state, supplier = null) {
       // If the action has a start date and the state is inProgress or done, update the start date to now
       if ((state === 'inProgress' || state === 'done') && action.startDate) {
         action.startDate = moment().toISOString()
@@ -429,11 +458,29 @@ export default {
 
           // After call action
           if (action.type === 'call' && action.state === 'done') {
+            this.afterCallSupplier = supplier
             this.afterCallAction = action
+            this.afterCallAction.result = { delivery: false, time: this.now.add(30, 'minutes').format('HH:mm') }
             this.afterCallActionDialog = true
           }
 
           this.actionStateChangeTime = null
+        })
+        .catch(error => {
+          this.errors.unshift(error)
+        })
+    },
+    saveAfterCallActionOnAPI() {
+      this.$axios
+        .patch(process.env.API + '/Actions/' + this.afterCallAction.id, {
+          result: this.afterCallAction.result,
+          info: this.afterCallAction.info
+        })
+        .then(response => {
+          this.afterCallSupplier = {}
+          this.afterCallAction = {}
+          this.afterCallAction.result = { delivery: false, time: null }
+          this.afterCallActionDialog = false
         })
         .catch(error => {
           this.errors.unshift(error)

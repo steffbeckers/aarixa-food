@@ -33,7 +33,8 @@
       "type": "date"
     },
     "result": {
-      "type": "object"
+      "type": "object",
+      "default": {}
     },
     "info": {
       "type": "string"

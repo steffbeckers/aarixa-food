@@ -146,7 +146,14 @@ Vue.filter('formatMoney', function(value) {
 })
 
 // Vuetify
-Vue.use(Vuetify)
+Vue.use(Vuetify, {
+  theme: {
+    primary: '#2072b9',
+    secondary: '#27293e',
+    accent: '#27293e',
+    red: '#f13542'
+  }
+})
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
