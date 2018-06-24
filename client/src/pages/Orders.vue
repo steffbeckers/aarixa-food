@@ -12,13 +12,13 @@
         <v-flex xs12>
           <div class="title">Bestellingen</div>
         </v-flex>
-        <!-- <v-flex
+        <v-flex
           xs12
-          v-show="!$store.state.loading && suppliersWithOrders[0] && ordersByState(suppliersWithOrders[0].orders, 'ready').length === 0"
+          v-show="!$store.state.loading && (suppliersWithOrders[0] && ordersByState(suppliersWithOrders[0].orders, 'ready').length === 0)"
         >
           <p>Iedereen is gezonder bezig vandaag, er is nog niets besteld.</p>
           <v-btn class="ml-0" color="primary" flat @click="$router.push('leveranciers')">Maak je keuze</v-btn>
-        </v-flex> -->
+        </v-flex>
       </v-layout>
       <v-layout row wrap>
         <v-flex
@@ -87,6 +87,8 @@
                 </v-dialog>
                 <v-btn v-if="!goingToTime" @click="callNow(supplier)" color="primary" class="elevation-0 ml-0" small>Ga nu bellen</v-btn>
                 <v-btn v-if="goingToTime" @click="scheduleCall(supplier)" color="primary" class="elevation-0 ml-0" small>Ga bellen om {{ goingToTime }}</v-btn>
+                <v-btn v-if="!goingToTime" @click="pickUpNow(supplier)" color="primary" class="elevation-0 ml-0" small>Ga nu afhalen</v-btn>
+                <v-btn v-if="goingToTime" @click="schedulePickUp(supplier)" color="primary" class="elevation-0 ml-0" small>Ga afhalen om {{ goingToTime }}</v-btn>
               </div>
               <v-list three-line class="pt-1 pb-1">
                 <template v-for="(item, itemIndex) in ordersAndActions(ordersByState(supplier.orders, 'ready'), supplier.actions)">
@@ -158,11 +160,15 @@
                           Heeft gebeld naar {{ supplier.name }}<span v-if="item.result.delivery">. Er wordt <span v-if="item.result.time">rond {{ item.result.time }} </span>geleverd</span><span v-else>. Iemand mag <span v-if="item.result.time">rond {{ item.result.time }} </span>afhalen</span>.
                           <v-icon v-if="$store.state.isAdmin || $store.state.authenticated && item.userModelId === $store.state.user.id" small @click="afterCallSupplier = supplier; afterCallAction = item; afterCallActionDialog = true">edit</v-icon>
                         </v-list-tile-title>
-                        <v-list-tile-title v-if="item.type === 'pickup' && item.state === 'todo'">
-                          Gaat<span v-if="item.startDate"> rond {{ item.startDate | formatTime }}</span> de bestelling af te halen.
+                        <v-list-tile-title v-if="item.type === 'pickUp' && item.state === 'todo'">
+                          Gaat<span v-if="item.startDate"> rond {{ item.startDate | formatTime }}</span> de bestelling afhalen.
                         </v-list-tile-title>
-                        <v-list-tile-title v-if="item.type === 'pickup' && item.state === 'inProgress'">
+                        <v-list-tile-title v-if="item.type === 'pickUp' && item.state === 'inProgress'">
                           Is naar {{ supplier.name }} om de bestelling af te halen.
+                        </v-list-tile-title>
+                        <v-list-tile-title v-if="item.type === 'pickUp' && item.state === 'done'">
+                          Smakelijk! <span v-if="item.result.paidBy">{{ item.result.paidBy }} heeft betaald.</span>
+                          <v-icon v-if="$store.state.isAdmin || $store.state.authenticated && item.userModelId === $store.state.user.id" small @click="afterPickUpSupplier = supplier; afterPickUpAction = item; afterPickUpActionDialog = true">edit</v-icon>
                         </v-list-tile-title>
                         <v-list-tile-sub-title v-if="item.info">
                           {{ item.info }}
@@ -194,7 +200,7 @@
                             <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'inProgress'" @click="updateStateOfAction(item, 'inProgress')" small>Ga nu bellen</v-btn>
                             <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'done'" @click="updateStateOfAction(item, 'done', supplier)" small>Heb gebeld<span v-show="actionStateChangeTime">&nbsp;om {{ actionStateChangeTime }}</span></v-btn>
                           </template>
-                          <template v-if="item.type === 'pickup'">
+                          <template v-if="item.type === 'pickUp'">
                             <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'todo'" @click="updateStateOfAction(item, 'todo')" small>Moet nog afhalen</v-btn>
                             <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'inProgress'" @click="updateStateOfAction(item, 'inProgress')" small>Ga nu afhalen</v-btn>
                             <v-btn color="primary" class="elevation-0 ml-0" v-if="item.state !== 'done'" @click="updateStateOfAction(item, 'done', supplier)" small>Ben gaan afhalen</v-btn>
@@ -267,7 +273,7 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-        <v-dialog v-if="afterCallAction && afterCallAction.id" v-model="afterCallActionDialog" max-width="350px">
+        <v-dialog v-if="afterCallAction && afterCallAction.id" v-model="afterCallActionDialog" max-width="350px" persistent>
           <v-card>
             <v-card-title>
               <div class="title">Telefoongesprek met {{ afterCallSupplier.name }}</div>
@@ -291,6 +297,21 @@
               <v-btn flat @click.stop="afterCallAction = {}; afterCallActionDialog = false">Sluiten</v-btn>
               <v-spacer></v-spacer>
               <v-btn color="primary" flat @click.stop="saveAfterCallActionOnAPI()">Opslaan</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <v-dialog v-if="afterPickUpAction && afterPickUpAction.id" v-model="afterPickUpActionDialog" max-width="350px" persistent>
+          <v-card>
+            <v-card-title>
+              <div class="title">Smakelijk!</div>
+            </v-card-title>
+            <v-card-text>
+              <v-text-field v-model="afterPickUpAction.result.paidBy" label="Wie heeft er betaald?" clearable></v-text-field>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn flat @click.stop="afterPickUpAction = {}; afterPickUpActionDialog = false">Sluiten</v-btn>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" flat @click.stop="saveAfterPickUpActionOnAPI()">Opslaan</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -343,7 +364,11 @@ export default {
       // Popup after call action
       afterCallActionDialog: false,
       afterCallAction: {},
-      afterCallSupplier: {}
+      afterCallSupplier: {},
+      // Popup after pick up action
+      afterPickUpActionDialog: false,
+      afterPickUpAction: {},
+      afterPickUpSupplier: {}
     }
   },
   created: function() {
@@ -366,7 +391,7 @@ export default {
     totalOfAllOrdersPerSupplier(supplier) {
       let total = 0
       supplier.orders.forEach(order => {
-        total += order.price
+        if (order.state === 'ready' && order.price) total += order.price
       })
       return total
     },
@@ -393,12 +418,28 @@ export default {
     },
     callNow(supplier) {
       this.$axios
-        .post(process.env.API + '/Suppliers/' + supplier.id + '/actions',
-          {
-            type: 'call',
-            state: 'inProgress'
-          }
-        )
+        .post(process.env.API + '/Suppliers/' + supplier.id + '/actions', {
+          type: 'call',
+          state: 'inProgress'
+        })
+        .then(response => {
+          supplier.actions.unshift({
+            ...response.data,
+            userModel: {
+              username: this.$store.state.user.username
+            }
+          })
+        })
+        .catch(error => {
+          this.errors.unshift(error)
+        })
+    },
+    pickUpNow(supplier) {
+      this.$axios
+        .post(process.env.API + '/Suppliers/' + supplier.id + '/actions', {
+          type: 'pickUp',
+          state: 'inProgress'
+        })
         .then(response => {
           supplier.actions.unshift({
             ...response.data,
@@ -426,7 +467,28 @@ export default {
             }
           })
 
-          this.goingToCallTime = null
+          this.goingToTime = null
+        })
+        .catch(error => {
+          this.errors.unshift(error)
+        })
+    },
+    schedulePickUp(supplier) {
+      this.$axios
+        .post(process.env.API + '/Suppliers/' + supplier.id + '/actions', {
+          startDate: moment(this.goingToTime, 'HH:mm').toISOString(),
+          type: 'pickUp',
+          state: 'todo'
+        })
+        .then(response => {
+          supplier.actions.unshift({
+            ...response.data,
+            userModel: {
+              username: this.$store.state.user.username
+            }
+          })
+
+          this.goingToTime = null
         })
         .catch(error => {
           this.errors.unshift(error)
@@ -464,6 +526,14 @@ export default {
             this.afterCallActionDialog = true
           }
 
+          // After pick up action
+          if (action.type === 'pickUp' && action.state === 'done') {
+            this.afterPickUpSupplier = supplier
+            this.afterPickUpAction = action
+            this.afterPickUpAction.result = { paidBy: this.$store.state.user.username }
+            this.afterPickUpActionDialog = true
+          }
+
           this.actionStateChangeTime = null
         })
         .catch(error => {
@@ -481,6 +551,22 @@ export default {
           this.afterCallAction = {}
           this.afterCallAction.result = { delivery: false, time: null }
           this.afterCallActionDialog = false
+        })
+        .catch(error => {
+          this.errors.unshift(error)
+        })
+    },
+    saveAfterPickUpActionOnAPI() {
+      this.$axios
+        .patch(process.env.API + '/Actions/' + this.afterPickUpAction.id, {
+          result: this.afterPickUpAction.result,
+          info: this.afterPickUpAction.info
+        })
+        .then(response => {
+          this.afterPickUpSupplier = {}
+          this.afterPickUpAction = {}
+          this.afterPickUpAction.result = { paidBy: this.$store.state.user.username }
+          this.afterPickUpActionDialog = false
         })
         .catch(error => {
           this.errors.unshift(error)
