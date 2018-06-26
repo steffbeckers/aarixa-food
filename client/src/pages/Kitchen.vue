@@ -8,19 +8,19 @@
           </v-alert>
         </v-flex>
       </v-layout>
-      <v-layout row wrap>
+      <!-- <v-layout row wrap>
         <v-flex xs12>
           <v-alert :value="true" type="info">
             Deze pagina is nog niet volledig klaar.
           </v-alert>
         </v-flex>
-      </v-layout>
+      </v-layout> -->
       <v-layout row wrap>
         <v-flex xs12>
           <div class="title">Keuken</div>
         </v-flex>
-        <v-flex xs12>
-          <p class="mb-0"><v-icon>assignment_ind</v-icon> Steff staat deze week in voor de keuken.</p>
+        <v-flex v-if="onDuty" xs12>
+          <p class="mb-0"><v-icon>assignment_ind</v-icon> {{ onDuty }} staat deze week in voor de keuken.</p>
         </v-flex>
       </v-layout>
       <v-layout row wrap class="mt-0">
@@ -72,7 +72,7 @@ export default {
     return {
       errors: [],
       dutyPeriodsList: JSON.parse(localStorage.getItem('kitchen:dutyPeriods')) || [],
-      dateTime: moment(),
+      onDuty: JSON.parse(localStorage.getItem('kitchen:onDuty')) || null,
       search: '',
       rowsPerPageItems: [5, 10, 25, 50, { text: 'Alles', value: -1 }],
       pagination: {
@@ -102,16 +102,52 @@ export default {
   },
   methods: {
     listDutyPeriods() {
-      let filter = {include: {relation: 'userModel', scope: {fields: ['id', 'username']}}}
+      let filter = {
+        include: {
+          relation: 'userModel',
+          scope: {
+            fields: ['id', 'username']
+          }
+        },
+        where: {
+          endDate: {
+            gte: moment().format('YYYY-MM-DD')
+          }
+        }
+      }
       this.$axios
         .get(process.env.API + '/KitchenDuties?filter=' + JSON.stringify(filter))
         .then(response => {
           this.dutyPeriodsList = response.data
           localStorage.setItem('kitchen:dutyPeriods', JSON.stringify(this.dutyPeriodsList))
+
+          // Check who is on duty right now
+          this.onDutyRightNow()
         })
         .catch(error => {
           this.errors.unshift(error)
         })
+    },
+    onDutyRightNow() {
+      let now = moment()
+      let assigned = false
+
+      for (let i = 0; i < this.dutyPeriodsList.length; i++) {
+        const period = this.dutyPeriodsList[i]
+
+        if (moment(period.startDate) <= now && now <= moment(period.endDate).add(1, 'day')) {
+          if (period.userModel && period.userModel.username) {
+            this.onDuty = period.userModel.username
+            localStorage.setItem('kitchen:onDuty', JSON.stringify(this.onDuty))
+            assigned = true
+            continue
+          }
+        }
+      }
+
+      if (!assigned) {
+        this.onDuty = null
+      }
     }
   },
   name: 'Kitchen'

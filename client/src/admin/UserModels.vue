@@ -15,7 +15,7 @@
     </v-layout>
     <v-layout row>
       <v-flex>
-        <v-btn class="ml-0" color="primary" @click="createDialog = true" dark>Toevoegen</v-btn>                
+        <v-btn class="ml-0" color="primary" @click="createDialog = true" dark>Toevoegen</v-btn>
       </v-flex>
     </v-layout>
     <v-layout row>
@@ -53,7 +53,7 @@
           :items="userModels"
           hide-actions
           :loading="this.$store.state.loading"
-          :search="search"          
+          :search="search"
         >
           <template slot="items" slot-scope="props">
             <td>
@@ -102,7 +102,7 @@ export default {
       search: '',
       headers: [
         {
-          text: 'Gebruikersnaam',
+          text: 'Naam',
           align: 'left',
           value: 'username'
         },
@@ -111,7 +111,7 @@ export default {
           align: 'left',
           value: 'email'
         },
-        { text: 'Acties', value: 'email', sortable: false }
+        { text: 'Verwijder', sortable: false }
       ]
     }
   },
