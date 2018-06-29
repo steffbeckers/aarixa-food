@@ -12,13 +12,13 @@
         <v-flex xs12>
           <div class="title">Bestellingen</div>
         </v-flex>
-        <v-flex
+        <!-- <v-flex
           xs12
-          v-show="!$store.state.loading && (suppliersWithOrders[0] && ordersByState(suppliersWithOrders[0].orders, 'ready').length === 0)"
+          v-show="!$store.state.loading && suppliersWithOrders.length === 0 || (suppliersWithOrders[0] && ordersByState(suppliersWithOrders[0].orders, 'ready').length === 0)"
         >
           <p>Iedereen is gezonder bezig vandaag, er is nog niets besteld.</p>
           <v-btn class="ml-0" color="primary" flat @click="$router.push('leveranciers')">Maak je keuze</v-btn>
-        </v-flex>
+        </v-flex> -->
       </v-layout>
       <v-layout row wrap>
         <v-flex
