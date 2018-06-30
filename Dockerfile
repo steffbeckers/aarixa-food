@@ -8,8 +8,6 @@ RUN npm install
 
 COPY . /app
 
-CMD export NODE_ENV='production'
-
-CMD node server/server.js
+CMD NODE_ENV=production AARIXAFOOD_MONGODB_USER node server/server.js
 
 EXPOSE 3333
