@@ -4,7 +4,7 @@ module.exports = {
   mongodb: {
     connector: 'mongodb',
     name: 'mongodb',
-    host: 'localhost',
+    host: 'mongodb',
     port: 25015,
     user: process.env.AARIXAFOOD_MONGODB_USER,
     password: process.env.AARIXAFOOD_MONGODB_PASSWORD,
