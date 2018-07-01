@@ -1,15 +1,6 @@
 'use strict';
 
 module.exports = {
-  mongodb: {
-    connector: 'mongodb',
-    name: 'mongodb',
-    host: 'mongodb',
-    port: 25015,
-    user: 'aariXaFood',
-    password: 'NsXttYn8vdYTrjLzEZsm',
-    database: 'aariXaFood',
-  },
   email: {
     name: 'email',
     connector: 'mail',
