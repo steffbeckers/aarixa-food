@@ -6,8 +6,8 @@ module.exports = {
     name: 'mongodb',
     host: 'mongodb',
     port: 25015,
-    user: process.env.AARIXAFOOD_MONGODB_USER,
-    password: process.env.AARIXAFOOD_MONGODB_PASSWORD,
+    user: 'aariXaFood',
+    password: 'NsXttYn8vdYTrjLzEZsm',
     database: 'aariXaFood',
   },
   email: {
