@@ -1,0 +1,76 @@
+{
+  "_meta": {
+    "sources": [
+      "loopback/common/models",
+      "loopback/server/models",
+      "../common/models",
+      "./models"
+    ],
+    "mixins": [
+      "loopback/common/mixins",
+      "loopback/server/mixins",
+      "../common/mixins",
+      "./mixins",
+      "../node_modules/loopback-ds-timestamp-mixin",
+      "../node_modules/loopback-softdelete-mixin3"
+    ]
+  },
+  "User": {
+    "dataSource": "mongodb",
+    "public": false
+  },
+  "UserModel": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "AccessToken": {
+    "dataSource": "mongodb",
+    "public": false
+  },
+  "ACL": {
+    "dataSource": "mongodb",
+    "public": false
+  },
+  "RoleMapping": {
+    "dataSource": "mongodb",
+    "public": false,
+    "options": {
+      "strictObjectIDCoercion": true
+    }
+  },
+  "Role": {
+    "dataSource": "mongodb",
+    "public": false
+  },
+  "Email": {
+    "dataSource": "email"
+  },
+  "Action": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "Supplier": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "Order": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "MenuItem": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "OrderItem": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "FridgeItem": {
+    "dataSource": "mongodb",
+    "public": true
+  },
+  "KitchenDuty": {
+    "dataSource": "mongodb",
+    "public": true
+  }
+}

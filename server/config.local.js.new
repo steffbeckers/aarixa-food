@@ -1,4 +1,6 @@
+'use strict';
+
 module.exports = {
   host: 'localhost or 192.168. ...',
-  port: 3000
+  port: 3000,
 }

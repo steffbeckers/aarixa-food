@@ -5,11 +5,11 @@
     "file": "database.json"
   },
   "mongodb": {
-    "name": "mongodb",
-    "connector": "mongodb",
-    "host": "localhost",
+    "host": "mongodb",
     "port": 27017,
-    "database": "aariXaFood"
+    "database": "aariXaFood",
+    "name": "mongodb",
+    "connector": "mongodb"
   },
   "email": {
     "name": "email",
