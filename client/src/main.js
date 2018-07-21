@@ -12,8 +12,10 @@ import axios from 'axios'
 import store from './store'
 import moment from 'moment'
 import VueCookie from 'vue-cookie'
+import VueSSE from 'vue-sse'
 
 Vue.use(VueCookie)
+Vue.use(VueSSE)
 Vue.prototype.$axios = axios
 
 // Set Authorization header, if token exists

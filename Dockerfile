@@ -8,6 +8,6 @@ RUN npm install
 
 COPY . /app
 
-CMD NODE_ENV=docker node server/server.js
+CMD NODE_ENV=production node server/server.js
 
 EXPOSE 3333
