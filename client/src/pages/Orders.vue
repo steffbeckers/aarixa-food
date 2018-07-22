@@ -343,6 +343,10 @@
 import _ from 'lodash'
 import moment from 'moment'
 
+// Realtime updates
+let orderStream
+let actionStream
+
 export default {
   data() {
     return {
@@ -368,10 +372,7 @@ export default {
       // Popup after pick up action
       afterPickUpActionDialog: false,
       afterPickUpAction: {},
-      afterPickUpSupplier: {},
-      // Realtime updates
-      orderStream: null,
-      actionStream: null
+      afterPickUpSupplier: {}
     }
   },
   created: function() {
@@ -381,7 +382,7 @@ export default {
     // Update Orders realtime
     this.$sse(process.env.API + '/Orders/change-stream?_format=event-stream', {format: 'json'}).then(sse => {
       // Store SSE object at a higher scope
-      this.orderStream = sse
+      orderStream = sse
 
       // Listen for messages based on their event
       sse.subscribe('data', (event) => {
@@ -401,7 +402,7 @@ export default {
     // Update Actions realtime
     this.$sse(process.env.API + '/Actions/change-stream?_format=event-stream', {format: 'json'}).then(sse => {
       // Store SSE object at a higher scope
-      this.actionStream = sse
+      actionStream = sse
 
       // Listen for messages based on their event
       sse.subscribe('data', (event) => {
@@ -417,9 +418,9 @@ export default {
   },
   beforeDestroy() {
     // Update Orders realtime
-    if (this.orderStream) this.orderStream.close()
+    if (orderStream) orderStream.close()
     // Update Actions realtime
-    if (this.actionStream) this.actionStream.close()
+    if (actionStream) actionStream.close()
   },
   methods: {
     listSuppliersWithOrders() {
