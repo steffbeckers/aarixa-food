@@ -1,4 +1,4 @@
-FROM node:8
+FROM node:alpine
 
 WORKDIR /app
 
@@ -10,4 +10,4 @@ COPY . /app
 
 CMD NODE_ENV=production node server/server.js
 
-EXPOSE 3333
+EXPOSE 3000
