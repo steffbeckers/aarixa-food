@@ -343,6 +343,10 @@
 import _ from 'lodash'
 import moment from 'moment'
 
+// Realtime updates
+let orderStream
+let actionStream
+
 export default {
   data() {
     return {
@@ -373,6 +377,50 @@ export default {
   },
   created: function() {
     this.listSuppliersWithOrders()
+  },
+  mounted: function() {
+    // Update Orders realtime
+    this.$sse(process.env.API + '/Orders/change-stream?_format=event-stream', {format: 'json'}).then(sse => {
+      // Store SSE object at a higher scope
+      orderStream = sse
+
+      // Listen for messages based on their event
+      sse.subscribe('data', (event) => {
+        console.log(event)
+
+        // Check when we don't need an update
+        if (event.type === 'create' && event.data.state === 'draft') return
+
+        this.listSuppliersWithOrders()
+      })
+    }).catch(err => {
+      // When this error is caught, it means the initial connection to the
+      // events server failed.  No automatic attempts to reconnect will be made.
+      console.error('Failed to connect to server', err)
+    })
+
+    // Update Actions realtime
+    this.$sse(process.env.API + '/Actions/change-stream?_format=event-stream', {format: 'json'}).then(sse => {
+      // Store SSE object at a higher scope
+      actionStream = sse
+
+      // Listen for messages based on their event
+      sse.subscribe('data', (event) => {
+        console.log(event)
+
+        this.listSuppliersWithOrders()
+      })
+    }).catch(err => {
+      // When this error is caught, it means the initial connection to the
+      // events server failed.  No automatic attempts to reconnect will be made.
+      console.error('Failed to connect to server', err)
+    })
+  },
+  beforeDestroy() {
+    // Update Orders realtime
+    if (orderStream) orderStream.close()
+    // Update Actions realtime
+    if (actionStream) actionStream.close()
   },
   methods: {
     listSuppliersWithOrders() {

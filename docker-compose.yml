@@ -1,0 +1,53 @@
+version: "3.7"
+
+services:
+  app:
+    environment:
+      - NODE_ENV=production
+      - AARIXAFOOD_MONGODB_PASSWORD=NsXttYn8vdYTrjLzEZsm
+      - GMAIL_PASSWORD=qkwezhwchapbcsnl
+    image: registry.gitlab.com/steffbeckers/aarixafood
+    networks:
+      - reverse-proxy_default
+      - default
+    deploy:
+      mode: replicated
+      replicas: 2
+    depends_on:
+      - mongodb
+  mongodb:
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=4nmUirGoP39Qbckkilz6
+      - MONGO_INITDB_DATABASE=aariXaFood
+    image: mongo
+    networks:
+      - reverse-proxy_default
+      - default
+    volumes:
+      - /root/aarixafood/mongodb-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - /root/aarixafood/mongodb:/data/db
+  mongodb-express:
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=false
+      - ME_CONFIG_MONGODB_AUTH_DATABASE=aariXaFood
+      - ME_CONFIG_MONGODB_AUTH_USERNAME=aariXaFood
+      - ME_CONFIG_MONGODB_AUTH_PASSWORD=NsXttYn8vdYTrjLzEZsm
+    image: mongo-express
+    networks:
+      - default
+    depends_on:
+      - mongodb
+  ssh:
+    image: corbinu/ssh-server
+    networks:
+      - default
+    volumes:
+      - /root/.ssh/authorized_keys:/root/.ssh/authorized_keys:ro
+
+networks:
+  reverse-proxy_default:
+    external: true
+  default:
+    internal: true

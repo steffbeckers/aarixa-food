@@ -4,9 +4,9 @@ module.exports = {
   mongodb: {
     connector: 'mongodb',
     name: 'mongodb',
-    host: 'localhost',
+    host: 'mongodb',
     port: 27017,
-    user: process.env.AARIXAFOOD_MONGODB_USER,
+    user: 'aariXaFood',
     password: process.env.AARIXAFOOD_MONGODB_PASSWORD,
     database: 'aariXaFood',
   },
@@ -23,7 +23,7 @@ module.exports = {
           'rejectUnauthorized': true,
         },
         auth: {
-          user: process.env.GMAIL_EMAIL || 'steff@steffbeckers.eu',
+          user: 'steff@steffbeckers.eu',
           pass: process.env.GMAIL_PASSWORD,
         },
       },

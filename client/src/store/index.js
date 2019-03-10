@@ -40,9 +40,9 @@ export default new Vuex.Store({
     },
     authenticate(state, credentials) {
       // Set favoriteMenuItems
-      state.favoriteMenuItems = credentials.user.favoriteMenuItems || {}
-      localStorage.setItem('$aariXaFood$favoriteMenuItems', encodeURIComponent(JSON.stringify(state.favoriteMenuItems)))
-      delete credentials.user.favoriteMenuItems
+      // state.favoriteMenuItems = credentials.user.favoriteMenuItems || {}
+      // localStorage.setItem('$aariXaFood$favoriteMenuItems', encodeURIComponent(JSON.stringify(state.favoriteMenuItems)))
+      // delete credentials.user.favoriteMenuItems
 
       // Set state
       state.authenticated = true
