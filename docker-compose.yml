@@ -22,7 +22,6 @@ services:
       - MONGO_INITDB_DATABASE=aariXaFood
     image: mongo
     networks:
-      - reverse-proxy_default
       - default
     volumes:
       - /root/aarixafood/mongodb-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
