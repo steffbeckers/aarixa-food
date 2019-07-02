@@ -34,11 +34,11 @@
                 <div>
                   <span v-if="supplier.telephone" class="telephone">{{ supplier.telephone }}</span>
                   <span v-if="supplier.telephone && supplier.website"> - </span>
-                  <span v-if="supplier.website" class="website">{{ supplier.website | formatWebsite }}</span>
+                  <a :href="supplier.website" target="_blank" v-if="supplier.website" class="website">{{ supplier.website | formatWebsite }}</a>
                 </div>
                 <div v-if="supplier.openingHours && supplier.openingHours[dayOfWeek]">
                   <span v-for="(timespan, i) in supplier.openingHours[dayOfWeek]" v-bind:key="i">
-                    {{ timespan.from }} - {{ timespan.until }}
+                    {{ timespan.from }} - {{ timespan.until }}<span v-if="i !== supplier.openingHours[dayOfWeek].length - 1"> &amp; </span>
                   </span>
                 </div>
                 <div v-else>

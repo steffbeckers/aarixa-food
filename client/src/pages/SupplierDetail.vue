@@ -51,16 +51,18 @@
                     <v-icon color="grey lighten-1">add</v-icon>
                   </v-btn>
                 </v-list-tile-action>
-                <v-list-tile-action v-else-if="item.menuItem" class="quantitySelector">
-                  <v-spacer></v-spacer>
-                  <v-btn class="mb-2" @click="menuItemQuantity(item, 1)" icon ripple>
-                    <v-icon color="grey lighten-1">add</v-icon>
-                  </v-btn>
-                  <v-btn class="mt-2" @click="menuItemQuantity(item, -1)" icon ripple>
-                    <v-icon color="grey lighten-1">remove</v-icon>
-                  </v-btn>
-                  <v-spacer></v-spacer>
-                </v-list-tile-action>
+                <div v-else-if="item.menuItem">
+                  <v-list-tile-action class="quantitySelector">
+                    <v-btn class="mb-2" @click="menuItemQuantity(item, 1)" icon ripple>
+                      <v-icon color="grey lighten-1">add</v-icon>
+                    </v-btn>
+                  </v-list-tile-action>
+                  <v-list-tile-action class="quantitySelector">
+                    <v-btn class="mt-2" @click="menuItemQuantity(item, -1)" icon ripple>
+                      <v-icon color="grey lighten-1">remove</v-icon>
+                    </v-btn>
+                  </v-list-tile-action>
+                </div>
                 <v-list-tile-content>
                   <v-list-tile-title v-if="item.menuItem">
                     <span v-if="item.quantity > 1">{{ item.quantity }} </span>
@@ -125,11 +127,9 @@
                   </v-btn>
                 </v-list-tile-action>
                 <v-list-tile-action v-else-if="item.menuItem" class="mr-2" style="min-width: 40px;">
-                  <v-spacer></v-spacer>
                   <v-btn icon ripple @click="toggleEditItemInfoOnOrder(item); calculateOrderPrice()">
                     <v-icon color="grey lighten-1">done</v-icon>
                   </v-btn>
-                  <v-spacer></v-spacer>
                   <!-- <v-btn class="mt-2" icon ripple @click="favoriteItem(item); search = ''"> ; search = '': Hack to trigger update UI
                     <v-icon v-if="item.favorite" color='yellow accent-3'>star</v-icon>
                     <v-icon v-else color='grey lighten-1'>star</v-icon>
@@ -141,7 +141,8 @@
                   </v-btn>
                 </v-list-tile-action>
               </v-list-tile>
-              <v-select
+              <!-- <v-combobox
+                multiple
                 v-model="item.subItems"
                 v-if="item.editInfo"
                 :label="'Toevoegen aan ' + (item.quantity > 1 ? item.menuItem.namePlural : item.menuItem.name)"
@@ -160,9 +161,9 @@
                   >
                     <strong>{{ data.item.name || data.item }}</strong>
                     <!-- <strong>{{ data.item.name || data.item }}<span v-if="data.item.price > 0"> - {{ data.item.price | formatMoney }}</span></strong> -->
-                  </v-chip>
+                  <!--</v-chip>
                 </template>
-              </v-select>
+              </v-combobox>
               <v-flex v-if="item.editInfo && selected" class="text-xs-center mx-2">
                 <v-btn
                   color="primary"
@@ -173,7 +174,7 @@
                 >
                   Selectie toevoegen
                 </v-btn>
-              </v-flex>
+              </v-flex> -->
               <v-divider class="mt-2 mb-2" v-if="index + 1 < order.orderItems.length"></v-divider>
               </div>
             </template>
@@ -388,8 +389,8 @@ table.datatable > tbody > tr {
 }
 
 /* Overridden on index.html to fix datatable selection fix */
-.application .theme--light.table tbody tr[active],
-.theme--light .table tbody tr[active] {
+.application .theme--light.v-table tbody tr[active],
+.theme--light .v-table tbody tr[active] {
   background: #1976d2 !important;
   color: #ffffff;
 }
@@ -728,13 +729,14 @@ export default {
       this.calculateOrderPrice()
     },
     subItemsListing(item) {
-      let list = 'met '
+      let list = ' '
 
       for (let i = 0; i < item.subItems.length; i++) {
         const subItem = item.subItems[i]
         // Add comma or end with ampersand
         if (item.subItems.length > 1 && i === item.subItems.length - 1) {
-          list += ' & '
+          // list += ' & '
+          list += ', '
         } else if (i > 0) {
           list += ', '
         }

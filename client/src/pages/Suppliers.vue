@@ -22,8 +22,8 @@
           v-for="supplier in suppliers" :key="supplier.id"
         >
           <v-card>
-            <v-card-media @click="navigateToSupplier(supplier.slug)" v-if="supplier.slug" :src="'/static/img/suppliers/' + supplier.slug + '/1_min.jpg'" height="150px">
-            </v-card-media>
+            <v-img @click="navigateToSupplier(supplier.slug)" v-if="supplier.slug" :src="'/static/img/suppliers/' + supplier.slug + '/1_min.jpg'" height="150px">
+            </v-img>
             <v-card-title @click="navigateToSupplier(supplier.slug)" primary-title>
               <div>
                 <h3 class="headline mb-1">{{ supplier.name }}</h3>

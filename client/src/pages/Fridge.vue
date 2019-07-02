@@ -93,7 +93,7 @@
                 <v-btn style="margin-top: 5px" color="primary" flat @click="makePaymentDialog = true">Betalen</v-btn>
               </div>
               <v-container v-if="fridgeDataOfUser.saldo !== undefined" grid-list-xl fluid class="pt-0">
-                <v-layout v-if="fridgeDataOfUser.total || fridgeDataOfUser.dateTime" row wrap>
+                <v-layout class="pa-2 pb-0" v-if="fridgeDataOfUser.total || fridgeDataOfUser.dateTime" row wrap>
                   <v-flex v-if="fridgeDataOfUser.total && fridgeDataOfUser.total.items">
                     <span class="mr-4">Totaal aantal items: <span class="ml-2">{{ fridgeDataOfUser.total.items }}</span></span>
                   </v-flex>
@@ -101,10 +101,10 @@
                     <span class="mr-4">Totaal uitgave: <span class="ml-2">{{ fridgeDataOfUser.total.price | formatMoney }}</span></span>
                   </v-flex>
                   <v-flex>
-                    <span v-if="fridgeDataOfUser.dateTime">Sinds: <span class="ml-2">{{ fridgeDataOfUser.dateTime | formatDateTime }}</span></span>
+                    <span v-if="fridgeDataOfUser && fridgeDataOfUser.dateTime">Sinds: <span class="ml-2">{{ fridgeDataOfUser.dateTime | formatDateTime }}</span></span>
                   </v-flex>
                 </v-layout>
-                <v-layout row wrap>
+                <v-layout class="pa-2 pt-0" row wrap>
                   <v-flex
                     v-if="fridgeDataOfUser.payments"
                     xs12
@@ -252,6 +252,10 @@ export default {
 
       // Retrieve latest data
       await this.getFridgeDataOfUser()
+
+      if (!this.fridgeDataOfUser) {
+        this.fridgeDataOfUser = {}
+      }
 
       // Since date time
       if (!this.fridgeDataOfUser.dateTime) {

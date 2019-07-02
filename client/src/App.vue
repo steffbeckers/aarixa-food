@@ -15,7 +15,7 @@
             column
             align-center
           >
-            <img class="mt-3 mb-3" src="@/assets/aariXa_Logo.png" alt="aariXa" />
+            <img class="logo mt-3 mb-3" src="@/assets/aariXa_Logo.png" alt="aariXa" />
             <p>Bestel eten bij aariXa!</p>
           </v-layout>
         </v-layout>
@@ -172,16 +172,16 @@
 </template>
 
 <style scoped>
-aside.navigation-drawer img {
+img.logo {
   max-width: 200px;
 }
 
-main.content {
+main.v-content {
   margin-bottom: 60px;
 }
 
-div.bottom-nav--fixed {
-  margin-bottom: 36px;
+div.v-bottom-nav--fixed {
+  margin-bottom: 36px !important;
 }
 
 #buildInfo {
