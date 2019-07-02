@@ -12,10 +12,10 @@ import axios from 'axios'
 import store from './store'
 import moment from 'moment'
 import VueCookie from 'vue-cookie'
-import VueSSE from 'vue-sse'
+// import VueSSE from 'vue-sse'
 
 Vue.use(VueCookie)
-Vue.use(VueSSE)
+// Vue.use(VueSSE)
 Vue.prototype.$axios = axios
 
 // Set Authorization header, if token exists
@@ -63,15 +63,24 @@ Vue.prototype.$axios.interceptors.response.use(
     if (error.request.status === 0 && statusCode0Count === 0) {
       statusCode0Count++
       // Custom response
-      error.response = {data: {error: {message: 'Kan niet connecteren naar API.'}}}
+      error.response = {
+        data: {error: {message: 'Kan niet connecteren naar API.'}}
+      }
       return Promise.reject(error.response.data.error)
     } else if (error.request.status === 0) {
       return Promise.resolve(error)
     }
 
     // Logging
-    if (error.request) console.log(error.request.responseURL)
-    if (error.response) console.log(error.response.status, JSON.parse(JSON.stringify(error.response.data)))
+    if (error.request) {
+      console.log(error.request.responseURL)
+    }
+    if (error.response) {
+      console.log(
+        error.response.status,
+        JSON.parse(JSON.stringify(error.response.data))
+      )
+    }
 
     // Log out on unauthorized
     if (error.response && error.response.status === 401) {
@@ -89,7 +98,7 @@ router.beforeEach((to, from, next) => {
     if (!store.state.isAdmin) {
       next({
         name: 'Root',
-        query: { redirect: to.fullPath }
+        query: {redirect: to.fullPath}
       })
     } else {
       next()
@@ -98,7 +107,7 @@ router.beforeEach((to, from, next) => {
     if (!store.state.authenticated) {
       next({
         name: 'Root',
-        query: { redirect: to.fullPath }
+        query: {redirect: to.fullPath}
       })
     } else {
       next()
@@ -163,6 +172,6 @@ new Vue({
   el: '#app',
   router,
   store,
-  components: { App },
+  components: {App},
   template: '<App/>'
 })
