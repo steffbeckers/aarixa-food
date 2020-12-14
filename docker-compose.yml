@@ -4,8 +4,8 @@ services:
   app:
     environment:
       - NODE_ENV=production
-      - AARIXAFOOD_MONGODB_PASSWORD=NsXttYn8vdYTrjLzEZsm
-      - GMAIL_PASSWORD=qkwezhwchapbcsnl
+      - AARIXAFOOD_MONGODB_PASSWORD=SECRET
+      - GMAIL_PASSWORD=SECRET
     image: registry.gitlab.com/steffbeckers/aarixafood
     networks:
       - reverse-proxy_default
@@ -18,7 +18,7 @@ services:
   mongodb:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=4nmUirGoP39Qbckkilz6
+      - MONGO_INITDB_ROOT_PASSWORD=SECRET
       - MONGO_INITDB_DATABASE=aariXaFood
     image: mongo
     networks:
@@ -32,7 +32,7 @@ services:
       - ME_CONFIG_MONGODB_ENABLE_ADMIN=false
       - ME_CONFIG_MONGODB_AUTH_DATABASE=aariXaFood
       - ME_CONFIG_MONGODB_AUTH_USERNAME=aariXaFood
-      - ME_CONFIG_MONGODB_AUTH_PASSWORD=NsXttYn8vdYTrjLzEZsm
+      - ME_CONFIG_MONGODB_AUTH_PASSWORD=SECRET
     image: mongo-express
     networks:
       - default
